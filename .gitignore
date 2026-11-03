@@ -1,0 +1,10 @@
+/vendor/
+.env.local.tests
+.DS_Store
+/node_modules/
+/tests/E2E/.auth/
+/test-results/
+/playwright-report/
+/phpstan.neon
+/phpcs.xml
+/.phpcs.cache

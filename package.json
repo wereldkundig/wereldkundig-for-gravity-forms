@@ -1,0 +1,13 @@
+{
+    "name": "gravityformswereldkundig",
+    "private": true,
+    "description": "Development tooling for the Wereldkundig Gravity Forms add-on: browser tests and git hooks.",
+    "scripts": {
+        "test:e2e": "playwright test",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "@playwright/test": "1.64.1",
+        "husky": "^9.1.7"
+    }
+}

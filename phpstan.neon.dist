@@ -1,0 +1,16 @@
+# WordPress and Gravity Forms stubs instead of scanning the WordPress & plugin install.
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 8
+    editorUrl: 'vscode://file/%%file%%:%%line%%'
+    paths:
+      - app
+      - gravityformswereldkundig.php
+    stubFiles:
+      - tests/phpstan/gravityforms.stub
+    # WordPress comes from php-stubs/wordpress-stubs (through phpstan-wordpress) and Gravity Forms from these stubs,
+    # so no WordPress install or Gravity Forms copy is needed.
+    scanFiles:
+      - vendor/php-stubs/gravity-forms-stubs/gravity-forms-stubs.php

@@ -1,0 +1,39 @@
+<?php
+// PHPStan only: corrects Gravity Forms docblocks that are narrower than what the code accepts.
+
+/**
+ * Also reads ArrayAccess objects, such as GF_Field; the default can be any value.
+ *
+ * @param mixed      $array
+ * @param string|int $prop
+ * @param mixed      $default
+ * @return mixed
+ */
+function rgar($array, $prop, $default = null) {}
+
+/**
+ * Arrays are never blank.
+ *
+ * @param mixed $text
+ * @return bool
+ */
+function rgblank($text) {}
+
+class GFAddOn {
+    /**
+     * @param int|string  $entry_id
+     * @param string      $note
+     * @param string|null $sub_type E.g. success or error.
+     * @return int
+     */
+    public function add_note($entry_id, $note, $sub_type = null) {}
+}
+
+class GF_Field {
+    /**
+     * @param bool                 $force_frontend_label
+     * @param string|array<mixed> $value Choice fields get an array.
+     * @return string
+     */
+    public function get_field_label($force_frontend_label = true, $value = '') {}
+}

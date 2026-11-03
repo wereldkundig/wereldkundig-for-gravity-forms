@@ -1,0 +1,13 @@
+# Runs before every git push (husky); skip once with `git push --no-verify`.
+
+# Composer validation, unit tests and PHPStan.
+composer test
+
+# Regenerates the hooks reference; also fails on a hook without a docblock.
+composer docs:hooks
+
+# The pushed commits must hold the reference as generated, so stop when it changed.
+if [ -n "$(git status --porcelain -- docs/src/data/hooks)" ]; then
+    echo "composer docs:hooks changed the hooks reference in docs/src/data/hooks. Commit it, then push again." >&2
+    exit 1
+fi

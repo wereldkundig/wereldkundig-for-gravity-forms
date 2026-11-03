@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<ruleset name="Gravity Forms Wereldkundig">
+	<description>WordPress coding standards, with PSR-4 file names, camelCase allowed and no Yoda conditions required.</description>
+
+	<file>./app</file>
+	<file>./gravityformswereldkundig.php</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+	<arg name="parallel" value="8"/>
+	<arg name="cache" value=".phpcs.cache"/>
+
+	<!-- Requires PHP: 8.2 and Requires at least: 6.9 in gravityformswereldkundig.php. -->
+	<config name="testVersion" value="8.2-"/>
+	<config name="minimum_wp_version" value="6.9"/>
+
+	<rule ref="PHPCompatibilityWP"/>
+
+	<rule ref="WordPress-Extra">
+		<!-- PSR-4 autoloading: app/Api/Client.php, not class-client.php. -->
+		<exclude name="WordPress.Files.FileName"/>
+
+		<!-- camelCase methods and classes are allowed; snake_case stays valid (Gravity Forms overrides need it). -->
+		<exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid"/>
+		<exclude name="PEAR.NamingConventions.ValidClassName"/>
+
+		<!-- Yoda conditions are not required. -->
+		<exclude name="WordPress.PHP.YodaConditions"/>
+	</rule>
+
+	<!-- Gravity Forms' own add-on properties ($_slug, $_title, ...). -->
+	<rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+		<exclude-pattern>/app/Addon\.php$</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="gravityformswereldkundig"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="Wereldkundig\GravityForms"/>
+				<element value="wk_gf"/>
+				<element value="wk_api"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<!-- Gravity Forms. -->
+				<element value="gform_full_access"/>
+				<element value="gravityforms_edit_forms"/>
+				<!-- This add-on, see Addon::$_capabilities. -->
+				<element value="gravityforms_wereldkundig"/>
+				<element value="gravityforms_wereldkundig_uninstall"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>
