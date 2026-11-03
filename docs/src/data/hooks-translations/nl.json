@@ -1,0 +1,98 @@
+{
+	"wk_api_base_url": {
+		"source": {
+			"description": "The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_API_URL.",
+			"long_description": "The settings page doesn't validate a filtered URL, but every request still refuses plain http except for `localhost`, `*.localhost` and `*.test`.",
+			"params": {}
+		},
+		"description": "De basis-URL van de API, bijvoorbeeld https://subdomein.domein.nl, uit de instellingen of WK_API_URL.",
+		"long_description": "De instellingenpagina controleert een gefilterde URL niet, maar elk verzoek weigert nog steeds gewoon http, behalve voor `localhost`, `*.localhost` en `*.test`.",
+		"params": {}
+	},
+	"wk_api_timeout": {
+		"source": {
+			"description": "The API request timeout in seconds. Default 10.",
+			"long_description": "",
+			"params": {
+				"$method": "GET or POST.",
+				"$path": "/v1/subscribe/fields or /v1/subscribe."
+			}
+		},
+		"description": "De time-out van een API-verzoek, in seconden. Standaard 10.",
+		"long_description": "",
+		"params": {
+			"$method": "GET of POST.",
+			"$path": "/v1/subscribe/fields of /v1/subscribe."
+		}
+	},
+	"wk_gf_auto_map_fields": {
+		"source": {
+			"description": "Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field, or the form has no feed. Default `false`.",
+			"long_description": "Return true to fill them from the first matching form field. While it is false, a form without a feed has no email address, so nothing is sent.",
+			"params": {}
+		},
+		"description": "Of e-mailadres, voornaam, tussenvoegsel en achternaam automatisch worden gezocht als de feed geen koppeling voor dat veld heeft, of het formulier geen feed heeft. Standaard `false`.",
+		"long_description": "Geef true terug om ze te vullen met het eerste passende formulierveld. Zolang het false is, heeft een formulier zonder feed geen e-mailadres, en wordt er niets verstuurd.",
+		"params": {}
+	},
+	"wk_gf_refresh_fields_initial_delay": {
+		"source": {
+			"description": "Seconds until the first background refresh after the API becomes configured. Default one hour.",
+			"long_description": "Later runs follow wk_gf_refresh_fields_recurrence. Negative values count as 0.",
+			"params": {}
+		},
+		"description": "Seconden tot de eerste verversing op de achtergrond nadat de API is ingesteld. Standaard een uur.",
+		"long_description": "Latere keren volgen wk_gf_refresh_fields_recurrence. Negatieve waarden tellen als 0.",
+		"params": {}
+	},
+	"wk_gf_refresh_fields_recurrence": {
+		"source": {
+			"description": "The WP-Cron schedule of the background refresh: hourly (default), twicedaily, daily, or one added with cron_schedules.",
+			"long_description": "Unknown schedule names fall back to hourly.",
+			"params": {}
+		},
+		"description": "Het WP-Cron-schema van de verversing op de achtergrond: hourly (standaard), twicedaily, daily, of een schema toegevoegd met cron_schedules.",
+		"long_description": "Onbekende schemanamen vallen terug op hourly.",
+		"params": {}
+	},
+	"wk_gf_subscribe_themes": {
+		"source": {
+			"description": "The themes to subscribe to: theme ID => category option keys, none meaning the whole theme.",
+			"long_description": "Return an empty array to skip the subscribe. A per-form variant runs after it: wk_gf_subscribe_themes_{form_id}. For example `['theme-1' => [], 'theme-2' => ['category-3', 'category-4']]` subscribes to the whole of theme-1 and to two categories of theme-2.",
+			"params": {}
+		},
+		"description": "De thema's om voor in te schrijven: thema-ID => categoriesleutels, waarbij geen categorieën het hele thema betekent.",
+		"long_description": "Geef een lege array terug om de inschrijving over te slaan. Een variant per formulier draait daarna: wk_gf_subscribe_themes_{form_id}. Zo schrijft `['theme-1' => [], 'theme-2' => ['category-3', 'category-4']]` in voor heel theme-1 en voor twee categorieën van theme-2.",
+		"params": {}
+	},
+	"wk_gf_subscribe_themes_{$form_id}": {
+		"source": {
+			"description": "The themes to subscribe to for one form, e.g. wk_gf_subscribe_themes_3 for form 3. Runs after wk_gf_subscribe_themes.",
+			"long_description": "",
+			"params": {}
+		},
+		"description": "De thema's om voor in te schrijven voor één formulier, bijvoorbeeld wk_gf_subscribe_themes_3 voor formulier 3. Draait na wk_gf_subscribe_themes.",
+		"long_description": "",
+		"params": {}
+	},
+	"wk_gf_subscriber_pre_subscribe": {
+		"source": {
+			"description": "The subscriber fields sent to POST /v1/subscribe (email, first_name, middle_name, last_name, company, ...).",
+			"long_description": "Return false to skip the subscribe. A per-form variant runs after it: wk_gf_subscriber_pre_subscribe_{form_id}.",
+			"params": {}
+		},
+		"description": "De abonneevelden die naar POST /v1/subscribe gaan (email, first_name, middle_name, last_name, company, ...).",
+		"long_description": "Geef false terug om de inschrijving over te slaan. Een variant per formulier draait daarna: wk_gf_subscriber_pre_subscribe_{form_id}.",
+		"params": {}
+	},
+	"wk_gf_subscriber_pre_subscribe_{$form_id}": {
+		"source": {
+			"description": "The subscriber fields for one form, e.g. wk_gf_subscriber_pre_subscribe_3 for form 3. Runs after wk_gf_subscriber_pre_subscribe.",
+			"long_description": "",
+			"params": {}
+		},
+		"description": "De abonneevelden voor één formulier, bijvoorbeeld wk_gf_subscriber_pre_subscribe_3 voor formulier 3. Draait na wk_gf_subscriber_pre_subscribe.",
+		"long_description": "",
+		"params": {}
+	}
+}

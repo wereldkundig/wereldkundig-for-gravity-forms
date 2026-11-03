@@ -1,0 +1,25 @@
+{
+    "name": "wereldkundig/gravityforms-docs-tools",
+    "description": "Generates the hooks reference of the docs site. Separate from the plugin's composer.json: the generator needs PHP 8.3+ and pins its own parser versions.",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.3",
+        "wp-hooks/generator": "^1.0.2"
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
+        }
+    },
+    "extra": {
+        "wp-hooks": {
+            "ignore-hooks": [
+                "wk_api_use_mock"
+            ]
+        }
+    }
+}

@@ -1,0 +1,17 @@
+---
+// The page title, followed by the page's description as a lead line, like docs.wereldkundig.nl.
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+
+const { description } = Astro.locals.starlightRoute.entry.data;
+---
+
+<Default />
+{description && <p class="lead">{description}</p>}
+
+<style>
+	.lead {
+		margin-top: 0.5rem;
+		font-size: var(--sl-text-lg);
+		color: var(--sl-color-gray-3);
+	}
+</style>

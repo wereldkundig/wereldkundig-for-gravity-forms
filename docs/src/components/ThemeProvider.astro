@@ -1,0 +1,9 @@
+---
+// Dark only, like docs.wereldkundig.nl: replaces Starlight's light/dark/auto handling.
+---
+
+<script is:inline>
+	document.documentElement.dataset.theme = 'dark';
+	// Starlight's theme select calls this; it is replaced by an empty component, but keep the global safe.
+	window.StarlightThemeProvider = { updatePickers() {} };
+</script>

@@ -1,0 +1,39 @@
+---
+title: Gravity Forms Wereldkundig Add-On
+description: Subscribe Gravity Forms submitters to Wereldkundig themes.
+template: splash
+hero:
+  tagline: Add a subscribe checkbox to any Gravity Form. Visitors who check it are added to your Wereldkundig themes, or only to the categories you choose.
+  actions:
+    - text: Get started
+      link: /getting-started/installation/
+      icon: right-arrow
+    - text: Hooks reference
+      link: /reference/hooks/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## How it works
+
+<CardGrid>
+	<Card title="Connect" icon="setting">
+		Enter the platform URL and the Basic Auth code supplied by Wereldkundig under **Forms > Settings >
+		Wereldkundig**.
+	</Card>
+	<Card title="Add the checkbox field" icon="pencil">
+		Add a **Wereldkundig subscribe me** field to a form and check the themes, or only some of their
+		categories. Then add a feed that maps the Email field.
+	</Card>
+	<Card title="Visitors subscribe" icon="rocket">
+		When the checkbox is checked, their email address and the other mapped fields are sent to Wereldkundig. The entry gets a note with the result.
+	</Card>
+	<Card title="Go further" icon="puzzle">
+		Map more fields in the feed, add conditional logic, or change what is sent with filters.
+	</Card>
+</CardGrid>
+
+## Requirements
+
+WordPress 6.9+, PHP 8.2+ and Gravity Forms 2.5+. Works on single sites and on multisite networks.

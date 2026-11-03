@@ -1,0 +1,67 @@
+---
+title: Hooks
+description: Filters om aan te passen wat de add-on verstuurt en wanneer, gegenereerd uit de broncode van de plugin.
+---
+
+import HookList from '../../../../components/HookList.astro';
+
+Voeg deze filters toe in een plugin, een must-use-plugin of de `functions.php` van je WordPress-thema. De lijst hieronder is gegenereerd uit de broncode van de add-on, dus hij klopt met de code waaruit deze documentatie is gebouwd.
+
+## Filters
+
+<HookList />
+
+## Gravity Forms-filters
+
+Deze Gravity Forms-filters veranderen hoe de feeds van de add-on worden uitgevoerd. Zie [Versturen op de achtergrond](/nl/guides/background-sending/).
+
+| Filter | Standaard | Gebruik |
+|---|---|---|
+| `gform_is_feed_asynchronous` | `true` voor deze add-on | Geef `false` terug om feeds tijdens het versturen af te handelen. De slug van de add-on is `wereldkundig`. |
+| `gform_max_async_feed_attempts` | `1` | Verhoog dit om mislukte feeds op de achtergrond opnieuw te proberen. |
+
+## Actions
+
+| Action | Gebruik |
+|---|---|
+| `wk_gf_refresh_fields` | De WP-Cron-gebeurtenis van de [verversing op de achtergrond](/nl/guides/themes-and-refresh/). Start hem met de hand met `wp cron event run wk_gf_refresh_fields`. |
+
+## Voorbeelden
+
+Voeg een organisatie toe aan elke abonnee van formulier 3, en schrijf testadressen nooit in:
+
+```php
+add_filter('wk_gf_subscriber_pre_subscribe_3', function ($subscriber) {
+    $subscriber['company'] = 'Gemeente Voorbeeld';
+
+    return $subscriber;
+});
+
+add_filter('wk_gf_subscriber_pre_subscribe', function ($subscriber) {
+    if (str_ends_with($subscriber['email'] ?? '', '@example.com')) {
+        return false;
+    }
+
+    return $subscriber;
+});
+```
+
+Schrijf iedereen die op formulier 5 een vinkje aanzet ook in voor het hele thema `theme-1`:
+
+```php
+add_filter('wk_gf_subscribe_themes_5', function ($themes) {
+    $themes['theme-1'] = [];
+
+    return $themes;
+});
+```
+
+De themafilters draaien alleen als minstens één aangevinkt veld een geldig thema heeft. Thema's die je in een filter toevoegt, worden niet gecontroleerd tegen de thema's van het platform, dus gebruik ID's die bestaan.
+
+Geef het platform meer tijd om te antwoorden:
+
+```php
+add_filter('wk_api_timeout', function () {
+    return 20;
+});
+```

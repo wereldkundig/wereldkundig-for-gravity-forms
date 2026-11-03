@@ -1,0 +1,16 @@
+---
+// Starlight's search. Its button is named "Search" but also shows the shortcut (Ctrl K / ⌘ K), which fails
+// WCAG 2.5.3 (Label in Name): the name must contain all visible text. Starlight sets the shortcut in an inline
+// script while the page loads, so this runs after it and adds the shortcut to the name, e.g. "Search ⌘K".
+import Default from '@astrojs/starlight/components/Search.astro';
+---
+
+<Default />
+
+<script>
+	const button = document.querySelector('button[data-open-modal]');
+	const shortcut = button?.querySelector(':scope > kbd');
+	if (button && shortcut) {
+		button.setAttribute('aria-label', `${button.getAttribute('aria-label')} ${shortcut.textContent?.trim()}`);
+	}
+</script>

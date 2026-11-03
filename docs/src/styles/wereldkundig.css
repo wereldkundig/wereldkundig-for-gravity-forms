@@ -1,0 +1,191 @@
+/*
+ * The look of docs.wereldkundig.nl: dark only, navy with a yellow accent, Ubuntu.
+ * Colours are its oklch tokens converted to hex. Unlayered, so it wins over Starlight's own @layer styles.
+ */
+
+:root {
+	color-scheme: dark;
+
+	--wk-navy: #0c1530;
+	--wk-card: #182241;
+	--wk-muted: #263151;
+	--wk-text: #ffffff;
+	--wk-text-muted: #a2afc1;
+	--wk-yellow: #f4bf1b;
+	--wk-radius: 0.625rem;
+
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: var(--wk-text);
+	--sl-color-gray-2: var(--wk-text);
+	--sl-color-gray-3: var(--wk-text-muted);
+	--sl-color-gray-4: #5d6987;
+	--sl-color-gray-5: var(--wk-muted);
+	--sl-color-gray-6: var(--wk-card);
+	--sl-color-black: var(--wk-navy);
+
+	--sl-color-accent-low: #463f2b;
+	--sl-color-accent: var(--wk-yellow);
+	--sl-color-accent-high: #f8d466;
+	--sl-color-text-accent: var(--wk-yellow);
+	--sl-color-text-invert: var(--wk-navy);
+	--sl-color-bg-accent: var(--wk-yellow);
+
+	--sl-color-bg-nav: var(--wk-navy);
+	--sl-color-bg-sidebar: var(--wk-navy);
+	--sl-color-bg-inline-code: var(--wk-muted);
+	--sl-color-hairline-light: var(--wk-muted);
+	--sl-color-hairline: var(--wk-muted);
+	--sl-color-hairline-shade: var(--wk-muted);
+
+	--sl-font: 'Ubuntu', var(--sl-font-system);
+
+	/* A taller header gives the logo room, like the reference. */
+	--sl-nav-height: 4rem;
+
+	--sl-text-h1: 1.875rem;
+	--sl-text-h2: 1.5rem;
+	--sl-text-h3: 1.25rem;
+	--sl-text-h4: 1.125rem;
+}
+
+@media (min-width: 50em) {
+	:root {
+		--sl-nav-height: 4.75rem;
+		--sl-text-h1: 2.25rem;
+	}
+}
+
+/* Headings */
+
+h1#_top,
+.hero h1 {
+	font-weight: 700;
+	letter-spacing: -0.025em;
+}
+
+.hero h1 {
+	font-size: clamp(var(--sl-text-3xl), calc(0.25rem + 4vw), 3rem);
+}
+
+/* Header: no divider after the docs link, there's no theme switch behind it. */
+
+.header .social-icons::after {
+	content: none;
+}
+
+/* Sidebar: small uppercase group labels, and the current page in yellow on a muted background. */
+
+.sidebar-content .group-label .large {
+	font-size: var(--sl-text-2xs);
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--sl-color-gray-3);
+}
+
+.sidebar-content a {
+	border-radius: 0.375rem;
+}
+
+.sidebar-content a:hover {
+	background-color: var(--sl-color-gray-5);
+}
+
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+	background-color: var(--sl-color-gray-5);
+	color: var(--sl-color-accent);
+	font-weight: 500;
+}
+
+/* Buttons: pills, light with navy text, yellow on hover. */
+
+.sl-link-button.primary {
+	background: var(--sl-color-gray-1);
+	border-color: var(--sl-color-gray-1);
+	color: var(--sl-color-black);
+	font-weight: 600;
+	transition: background-color 0.15s, border-color 0.15s;
+}
+
+.sl-link-button.primary:hover {
+	background: var(--wk-yellow);
+	border-color: var(--wk-yellow);
+}
+
+.sl-link-button.minimal:hover {
+	color: var(--wk-yellow);
+}
+
+/* Cards and asides */
+
+.card {
+	--sl-card-border: var(--wk-yellow);
+	--sl-card-bg: var(--sl-color-accent-low);
+	border-radius: var(--wk-radius);
+	background-color: var(--wk-card);
+}
+
+.starlight-aside {
+	border-radius: var(--wk-radius);
+}
+
+/*
+ * Accessibility, WCAG 2.2 AA. All text colours pass 4.5:1 (body text 14:1, muted text 8:1); these fix the rest.
+ */
+
+/* Body text in Ubuntu Light. Small interface text (sidebar, table of contents, footer) stays regular. */
+.sl-markdown-content,
+.lead,
+.hero .tagline {
+	font-weight: 300;
+}
+
+.sl-markdown-content :is(strong, b, th) {
+	font-weight: 500;
+}
+
+.sl-markdown-content :is(code, kbd) {
+	font-weight: 400;
+}
+
+/* One clear yellow focus outline (10:1), instead of the browser's own, which is weak on navy in some browsers. */
+:focus-visible {
+	outline: 2px solid var(--wk-yellow);
+	outline-offset: 2px;
+}
+
+.sidebar-content :focus-visible {
+	outline-offset: -2px;
+}
+
+/* Form fields need a 3:1 border (1.4.11): the search button in the header and the search dialog's input. */
+button[data-open-modal] {
+	border-color: var(--sl-color-gray-4);
+}
+
+#starlight__search {
+	--pagefind-ui-border: var(--sl-color-gray-4);
+}
+
+/*
+ * Tables in a narrow content column may break long words, so they fit instead of scrolling sideways:
+ * a scroll region keyboard users can't reach fails 2.1.1. Wider columns keep whole words, the tables fit there.
+ */
+.sl-markdown-content {
+	container-type: inline-size;
+}
+
+@container (max-width: 40rem) {
+	.sl-markdown-content :is(td, th),
+	.sl-markdown-content :is(td, th) code {
+		overflow-wrap: anywhere;
+	}
+}
+
+/* Pagefind shows its placeholder at 20% opacity (about 2:1), and it is the field's only visible label. */
+#starlight__search .pagefind-ui__search-input::placeholder {
+	color: var(--sl-color-gray-3);
+	opacity: 1;
+}

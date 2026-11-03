@@ -1,0 +1,50 @@
+---
+// Starlight's footer (pagination), followed by a small site footer like docs.wereldkundig.nl's.
+import Default from '@astrojs/starlight/components/Footer.astro';
+---
+
+<Default />
+
+<div class="site-footer">
+	<p>{Astro.locals.t('wk.footer.tagline')}</p>
+	<ul>
+		<li><a href="https://wereldkundig.nl/">wereldkundig.nl</a></li>
+		<li><a href="https://docs.wereldkundig.nl/">{Astro.locals.t('wk.mainDocs')}</a></li>
+	</ul>
+</div>
+
+<style>
+	.site-footer {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.5rem 1.5rem;
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--sl-color-gray-5);
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-sm);
+	}
+
+	.site-footer p {
+		margin: 0;
+	}
+
+	.site-footer ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.site-footer a {
+		color: var(--sl-color-gray-3);
+		text-decoration: none;
+	}
+
+	.site-footer a:hover {
+		color: var(--sl-color-accent);
+	}
+</style>

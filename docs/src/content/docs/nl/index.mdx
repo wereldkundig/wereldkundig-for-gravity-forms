@@ -1,0 +1,41 @@
+---
+title: Gravity Forms Wereldkundig Add-On
+description: Schrijf mensen die een Gravity Forms-formulier versturen in voor Wereldkundig-thema's.
+template: splash
+hero:
+  tagline: Voeg aan elk Gravity Forms-formulier een inschrijfvinkje toe. Wie het aanvinkt, wordt ingeschreven voor je Wereldkundig-thema's, of alleen voor de categorieën die je kiest.
+  actions:
+    - text: Aan de slag
+      link: /nl/getting-started/installation/
+      icon: right-arrow
+    - text: Hooks
+      link: /nl/reference/hooks/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Zo werkt het
+
+<CardGrid>
+	<Card title="Koppelen" icon="setting">
+		Vul onder **Formulieren > Instellingen > Wereldkundig** de platform-URL en de Basic Auth-code van
+		Wereldkundig in.
+	</Card>
+	<Card title="Vinkje toevoegen" icon="pencil">
+		Voeg een veld **Wereldkundig subscribe me** toe aan een formulier en vink de thema's aan, of alleen
+		een deel van hun categorieën. Voeg daarna een feed toe die het veld E-mailadres koppelt.
+	</Card>
+	<Card title="Bezoekers schrijven zich in" icon="rocket">
+		Is het vinkje aangevinkt, dan gaan het e-mailadres en de gekoppelde velden naar Wereldkundig. De
+		inzending krijgt een notitie met het resultaat.
+	</Card>
+	<Card title="Verder gaan" icon="puzzle">
+		Koppel meer velden in de feed, voeg voorwaardelijke logica toe, of pas met filters aan wat er wordt
+		verstuurd.
+	</Card>
+</CardGrid>
+
+## Vereisten
+
+WordPress 6.9+, PHP 8.2+ en Gravity Forms 2.5+. Werkt op losse sites en op multisite-netwerken.

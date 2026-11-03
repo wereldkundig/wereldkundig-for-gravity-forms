@@ -1,0 +1,67 @@
+---
+title: Hooks
+description: Filters to change what the add-on sends and when, generated from the plugin's source code.
+---
+
+import HookList from '../../../components/HookList.astro';
+
+Add these filters in a plugin, a must-use plugin or your theme's `functions.php`. The list below is generated from the add-on's source code, so it matches the code these docs were built from.
+
+## Filters
+
+<HookList />
+
+## Gravity Forms filters
+
+These Gravity Forms filters change how the add-on's feeds run. See [Sending in the background](/guides/background-sending/).
+
+| Filter | Default | Use |
+|---|---|---|
+| `gform_is_feed_asynchronous` | `true` for this add-on | Return `false` to send feeds during the submit. The add-on's slug is `wereldkundig`. |
+| `gform_max_async_feed_attempts` | `1` | Raise it to retry failed background feeds. |
+
+## Actions
+
+| Action | Use |
+|---|---|
+| `wk_gf_refresh_fields` | The WP-Cron event of the [background refresh](/guides/themes-and-refresh/). Run it by hand with `wp cron event run wk_gf_refresh_fields`. |
+
+## Examples
+
+Add a company to every subscriber of form 3, and never subscribe test addresses:
+
+```php
+add_filter('wk_gf_subscriber_pre_subscribe_3', function ($subscriber) {
+    $subscriber['company'] = 'Gemeente Voorbeeld';
+
+    return $subscriber;
+});
+
+add_filter('wk_gf_subscriber_pre_subscribe', function ($subscriber) {
+    if (str_ends_with($subscriber['email'] ?? '', '@example.com')) {
+        return false;
+    }
+
+    return $subscriber;
+});
+```
+
+Also subscribe everyone who checks a box on form 5 to the whole theme `theme-1`:
+
+```php
+add_filter('wk_gf_subscribe_themes_5', function ($themes) {
+    $themes['theme-1'] = [];
+
+    return $themes;
+});
+```
+
+The theme filters only run when at least one checked field has a valid theme. Themes you add in a filter aren't checked against the platform's themes, so use IDs that exist.
+
+Give the platform more time to answer:
+
+```php
+add_filter('wk_api_timeout', function () {
+    return 20;
+});
+```

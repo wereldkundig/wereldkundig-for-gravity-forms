@@ -1,0 +1,128 @@
+---
+// Renders the filters from src/data/hooks/filters.json, generated from the docblocks in app/ by `composer docs:hooks`.
+// On Dutch pages the descriptions come from src/data/hooks-translations/nl.json instead.
+import filters from '../data/hooks/filters.json';
+import nl from '../data/hooks-translations/nl.json';
+
+type Hook = (typeof filters.hooks)[number];
+type Tag = Hook['doc']['tags'][number];
+type Texts = { description: string; long_description: string; params: Record<string, string> };
+type Translation = Texts & { source: Texts };
+
+const hooks = filters.hooks;
+const { t } = Astro.locals;
+
+// wk_gf_subscribe_themes_{$form_id} → wk_gf_subscribe_themes_form_id
+const anchor = (name: string) => name.replace(/\{\$(\w+)\}/g, '$1');
+const params = (hook: Hook) => hook.doc.tags.filter((tag: Tag) => tag.name === 'param');
+
+/** A hook's English texts, in the shape of an entry in nl.json. */
+const english = (hook: Hook): Texts => ({
+	description: hook.doc.description ?? '',
+	long_description: hook.doc.long_description ?? '',
+	params: Object.fromEntries(params(hook).filter((tag) => tag.content).map((tag) => [tag.variable, tag.content])),
+});
+
+const same = (a: Texts, b: Texts) =>
+	a.description === b.description &&
+	a.long_description === b.long_description &&
+	Object.keys(a.params).length === Object.keys(b.params).length &&
+	Object.entries(a.params).every(([variable, content]) => b.params[variable] === content);
+
+/**
+ * The Dutch texts per hook. Every entry keeps the English it was translated from as `source`. When a docblock
+ * changes, that no longer matches and the build fails, so a translation can't go out of date unnoticed.
+ */
+function dutch(): Map<string, Texts> {
+	const translations = nl as Record<string, Translation>;
+	const problems = [
+		...hooks.filter((hook) => !translations[hook.name]).map((hook) => `${hook.name}: not translated`),
+		...hooks
+			.filter((hook) => translations[hook.name] && !same(translations[hook.name].source, english(hook)))
+			.map((hook) => `${hook.name}: the English docblock changed since it was translated`),
+		...Object.keys(translations)
+			.filter((name) => !hooks.some((hook) => hook.name === name))
+			.map((name) => `${name}: no such hook anymore`),
+	];
+	if (problems.length) {
+		throw new Error(`Update docs/src/data/hooks-translations/nl.json:\n- ${problems.join('\n- ')}`);
+	}
+
+	return new Map(Object.entries(translations));
+}
+
+const translations = Astro.locals.starlightRoute.lang === 'nl' ? dutch() : null;
+const texts = (hook: Hook): Texts => translations?.get(hook.name) ?? english(hook);
+
+// The docblocks only use inline code, so that is all a translated long description needs.
+const escape = (text: string) => text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
+const longHtml = (hook: Hook) =>
+	translations
+		? texts(hook).long_description && `<p>${escape(texts(hook).long_description).replace(/`([^`]+)`/g, '<code>$1</code>')}</p>`
+		: hook.doc.long_description_html;
+---
+
+<table>
+	<thead>
+		<tr>
+			<th>{t('wk.hooks.filter')}</th>
+			<th>{t('wk.hooks.use')}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{
+			hooks.map((hook) => (
+				<tr>
+					<td>
+						<a href={`#${anchor(hook.name)}`}>
+							<code>{hook.name}</code>
+						</a>
+					</td>
+					<td>{texts(hook).description}</td>
+				</tr>
+			))
+		}
+	</tbody>
+</table>
+
+{
+	hooks.map((hook) => (
+		<section class="hook">
+			<h3 id={anchor(hook.name)}>
+				<code>{hook.name}</code>
+			</h3>
+			<p>{texts(hook).description}</p>
+			{longHtml(hook) && <Fragment set:html={longHtml(hook)} />}
+			{params(hook).length > 0 && (
+				<table>
+					<thead>
+						<tr>
+							<th>{t('wk.hooks.parameter')}</th>
+							<th>{t('wk.hooks.type')}</th>
+							<th>{t('wk.hooks.description')}</th>
+						</tr>
+					</thead>
+					<tbody>
+						{params(hook).map((tag) => (
+							<tr>
+								<td>
+									<code>{tag.variable}</code>
+								</td>
+								<td>
+									<code>{(tag.types ?? []).join('|')}</code>
+								</td>
+								<td>{texts(hook).params[tag.variable] ?? ''}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)}
+		</section>
+	))
+}
+
+<style>
+	.hook {
+		margin-top: 2.5rem;
+	}
+</style>

@@ -1,0 +1,55 @@
+---
+title: Entry notes and errors
+description: What happens on submit, the notes an entry gets, and every error code with its cause.
+---
+
+## What happens on submit
+
+For a form with or without a feed:
+
+1. Spam entries are skipped.
+2. No subscribe field on the form, or none checked: skipped. Nothing is noted, only logged when [logging](/troubleshooting/#logging) is on.
+3. The themes of every checked field are checked against the platform's themes, and only categories of that theme are kept.
+4. The subscriber fields are [mapped](/guides/feeds-and-mapping/), then the [`wk_gf_subscribe_themes` and `wk_gf_subscriber_pre_subscribe`](/reference/hooks/) filters run. They can change or skip the subscribe.
+5. One request to the platform, with all themes and categories.
+6. The entry gets a note with the result.
+
+## Entry notes
+
+On success:
+
+> **reader@example.com was sent to Wereldkundig (platform user ID 12). Themes: Nieuwsbrief; Wijken (Noord, Zuid).**
+
+The note also lists any options the platform rejected.
+
+On failure:
+
+> **reader@example.com was not sent to Wereldkundig: {message} (code: {code})**
+
+Errors found before the request is sent read **{message} (code: {code})**.
+
+With a feed, a failure is a feed error: it shows as an entry note, in the Gravity Forms log, and as the feed status of the entry. Without a feed it is an entry note.
+
+## Errors before the request
+
+| Code | Message | Cause |
+|---|---|---|
+| `wk_themes_unavailable` | Could not load the Wereldkundig themes; check the API connection. Subscriber not sent. | No themes at all: the platform isn't connected or can't be reached. |
+| `wk_theme_invalid` | Invalid Wereldkundig theme: theme-9. | A checked field has a theme the platform doesn't have (anymore), or no theme at all. The valid themes are still subscribed, but the result counts as failed. |
+| `wk_email_invalid` | No valid email address to subscribe. | No feed maps the email address (and [auto-detected fields](/guides/feeds-and-mapping/#auto-detected-fields) are off), or the email field is empty or not a valid address. |
+
+## Errors from the platform
+
+| Code | Cause |
+|---|---|
+| `wk_api_credentials_missing` | No platform URL or Basic Auth code. |
+| `wk_api_insecure_url` | The URL doesn't use `https://`. |
+| `wk_api_json_encode` | The subscriber data couldn't be converted to JSON, e.g. text that isn't valid UTF-8. Nothing was sent. |
+| `member-exists` | The email address is already a member of the platform site. The platform saves nothing, not even the new themes. |
+| The platform's own error code, or `wk_api_http` | Any other response that isn't a success. The note shows the platform's message when it sends one. |
+| `wk_api_subscribe_failed` | The platform answered, but didn't confirm the subscribe. |
+| `wk_api_json` | The platform's answer isn't valid JSON. |
+| `wk_api_fields_invalid` | The themes and subscriber fields couldn't be read from the platform's answer. |
+| `http_request_failed` | WordPress couldn't complete the request, e.g. a timeout. |
+
+Which of these are retried in the background is described under [Retrying failed feeds](/guides/background-sending/#retrying-failed-feeds).
