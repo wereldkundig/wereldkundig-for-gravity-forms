@@ -1,0 +1,30 @@
+# Not part of the plugin: left out of `git archive` exports. This is the one list of what doesn't ship: the release
+# workflow builds the zip and the WordPress.org package with `git archive` (there is no .distignore).
+
+# Development files.
+/.claude export-ignore
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.husky export-ignore
+/composer.json export-ignore
+/composer.lock export-ignore
+/todo.md export-ignore
+
+# Documentation: the developer README and the docs site (published separately). The plugin ships readme.txt.
+/README.md export-ignore
+/docs export-ignore
+
+# WordPress.org listing assets, deployed to SVN assets/ instead.
+/.wordpress-org export-ignore
+
+# Tests and their tooling (Pest/PHPUnit, PHPStan, PHPCS and Playwright).
+/tests export-ignore
+/phpstan.neon.dist export-ignore
+/phpcs.xml.dist export-ignore
+/phpunit.xml.dist export-ignore
+/phpunit.live.xml.dist export-ignore
+/playwright.config.ts export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/.env.local.tests.example export-ignore

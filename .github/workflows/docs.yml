@@ -1,0 +1,43 @@
+# Checks the docs site: the generated hooks reference must match the code, and the site must build.
+# Sevalla builds and deploys the site itself on every push to main; see "Documentation" in README.md.
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths: ['app/**', 'docs/**', '.github/workflows/docs.yml']
+  pull_request:
+    paths: ['app/**', 'docs/**', '.github/workflows/docs.yml']
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # The hooks generator needs PHP 8.3+, the plugin itself 8.2+.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+
+      - name: Hooks reference matches the code
+        run: |
+          sh docs/tools/hooks.sh
+          if [ -n "$(git status --porcelain -- docs/src/data/hooks)" ]; then
+            git diff -- docs/src/data/hooks
+            echo "::error::The hooks reference is out of date. Run composer docs:hooks and commit docs/src/data/hooks."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Build the site
+        working-directory: docs
+        run: |
+          npm ci
+          npm run build

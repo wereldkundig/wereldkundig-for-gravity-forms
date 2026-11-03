@@ -1,0 +1,83 @@
+# Deploys the WordPress.org listing (readme.txt and the .wordpress-org/ assets: icon, banner, screenshots) without a new
+# plugin version, e.g. for a readme fix or new screenshots between releases.
+#
+# Not the release path: a release goes through release.yml (push a `v*` tag), which deploys the plugin together with
+# the readme and assets.
+#
+# The `paths` filter is a first check only. The job compares the whole push and skips the deploy when any other file
+# changed too, so a release commit that also touches readme.txt doesn't start a second, competing deploy.
+name: Plugin assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.wordpress-org/**'
+      - 'readme.txt'
+  workflow_dispatch:
+
+# release.yml commits to the same SVN repository; never run both at once.
+concurrency:
+  group: wordpress-org-svn
+  cancel-in-progress: false
+
+env:
+  SLUG: gravityformswereldkundig
+
+jobs:
+  assets:
+    name: Update WordPress.org assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # History, to compare the commits of the push.
+          fetch-depth: 0
+
+      - name: Only readme and assets changed?
+        id: check
+        if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          # The first push to a branch has no previous commit to compare with, so don't deploy.
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "First push to this branch, nothing to compare with: no deploy."
+            echo "only_assets=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          only_assets=true
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            echo "Changed: $file"
+            case "$file" in
+              .wordpress-org/*|readme.txt) ;;
+              *)
+                only_assets=false
+                echo "Not only the readme and assets changed, so no deploy (a release deploys them)."
+                break
+                ;;
+            esac
+          done <<< "$(git diff --name-only "$BEFORE" "$AFTER")"
+
+          echo "only_assets=$only_assets" >> "$GITHUB_OUTPUT"
+
+      # The 10up action runs svn, which the ubuntu-24.04 runner image no longer includes.
+      - name: Install Subversion
+        if: github.event_name == 'workflow_dispatch' || steps.check.outputs.only_assets == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y subversion
+
+      - name: Deploy to WordPress.org
+        # A manual run always deploys; a push only when nothing but the readme and assets changed.
+        if: github.event_name == 'workflow_dispatch' || steps.check.outputs.only_assets == 'true'
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: ${{ env.SLUG }}
+          IGNORE_OTHER_FILES: true
