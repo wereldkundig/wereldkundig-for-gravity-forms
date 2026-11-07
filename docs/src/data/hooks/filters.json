@@ -2,7 +2,7 @@
     "$schema": "https://raw.githubusercontent.com/wp-hooks/generator/1.0.2/schema.json",
     "hooks": [
         {
-            "name": "wk_api_base_url",
+            "name": "wk_gf_api_base_url",
             "file": "Api/Client.php",
             "type": "filter",
             "doc": {
@@ -23,7 +23,7 @@
             "args": 1
         },
         {
-            "name": "wk_api_timeout",
+            "name": "wk_gf_api_timeout",
             "file": "Api/Client.php",
             "type": "filter",
             "doc": {

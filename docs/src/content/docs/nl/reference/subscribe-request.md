@@ -5,8 +5,8 @@ description: De endpoints van het platform die de add-on gebruikt en wat hij ver
 
 De add-on gebruikt twee endpoints van de Wereldkundig API. De volledige API staat beschreven op [docs.wereldkundig.nl/api](https://docs.wereldkundig.nl/api).
 
-- Basis-URL: `{platform}/wp-json/wereldkundig`, aan te passen met [`wk_api_base_url`](/nl/reference/hooks/#wk_api_base_url).
-- Elk verzoek stuurt de Basic Auth-header en JSON mee, en wacht maximaal 10 seconden ([`wk_api_timeout`](/nl/reference/hooks/#wk_api_timeout)).
+- Basis-URL: `{platform}/wp-json/wereldkundig`, aan te passen met [`wk_gf_api_base_url`](/nl/reference/hooks/#wk_gf_api_base_url).
+- Elk verzoek stuurt de Basic Auth-header en JSON mee, en wacht maximaal 10 seconden ([`wk_gf_api_timeout`](/nl/reference/hooks/#wk_gf_api_timeout)).
 
 ## GET /v1/subscribe/fields
 

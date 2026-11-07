@@ -10,7 +10,7 @@ export default defineConfig({
 	// site: '',
 	integrations: [
 		starlight({
-			title: { en: 'Gravity Forms Wereldkundig', nl: 'Gravity Forms Wereldkundig' },
+			title: { en: 'Wereldkundig for Gravity Forms', nl: 'Wereldkundig for Gravity Forms' },
 			description: 'Subscribe Gravity Forms submitters to Wereldkundig themes.',
 			// English at the root, so the existing URLs keep working; Dutch under /nl/, in src/content/docs/nl/.
 			defaultLocale: 'root',

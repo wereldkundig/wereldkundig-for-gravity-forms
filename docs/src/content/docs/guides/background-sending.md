@@ -42,4 +42,4 @@ add_filter('gform_is_feed_asynchronous', function ($async, $feed) {
 }, 10, 2);
 ```
 
-The visitor then waits for the platform's answer, up to the [request timeout](/reference/hooks/#wk_api_timeout).
+The visitor then waits for the platform's answer, up to the [request timeout](/reference/hooks/#wk_gf_api_timeout).

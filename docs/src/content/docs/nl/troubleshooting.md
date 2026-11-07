@@ -32,7 +32,7 @@ De abonnee heeft geen e-mailadres. Koppel het veld E-mailadres onder **Map Field
 Het e-mailadres is al lid van de platformsite, en het platform heeft niets opgeslagen. Voeg de thema's voor deze persoon op het platform zelf toe.
 
 **Verzoeken lopen in een time-out.**
-Het platform krijgt 10 seconden om te antwoorden. Verhoog dat met [`wk_api_timeout`](/nl/reference/hooks/#wk_api_timeout). Feeds versturen op de achtergrond, dus bezoekers wachten niet.
+Het platform krijgt 10 seconden om te antwoorden. Verhoog dat met [`wk_gf_api_timeout`](/nl/reference/hooks/#wk_gf_api_timeout). Feeds versturen op de achtergrond, dus bezoekers wachten niet.
 
 **De verversing op de achtergrond is mislukt.**
 De instellingenpagina toont wanneer en waarom. De thema's die je had, blijven werken; de volgende verversing, of het opslaan van de instellingen, probeert het opnieuw.

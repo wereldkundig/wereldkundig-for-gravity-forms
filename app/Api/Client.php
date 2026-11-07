@@ -130,7 +130,7 @@ class Client {
 		}
 
 		if ( ! is_array( $response['fields'] ?? null ) && ! is_array( $response['options'] ?? null ) ) {
-			return new \WP_Error( 'wk_api_fields_invalid', __( 'Invalid subscribe fields response.', 'gravityformswereldkundig' ) );
+			return new \WP_Error( 'wk_api_fields_invalid', __( 'Invalid subscribe fields response.', 'wereldkundig-for-gravity-forms' ) );
 		}
 
 		if ( function_exists( 'update_option' ) ) {
@@ -295,7 +295,7 @@ class Client {
 		if ( empty( $response['success'] ) ) {
 			return new \WP_Error(
 				'wk_api_subscribe_failed',
-				! empty( $response['message'] ) ? (string) $response['message'] : __( 'Wereldkundig API request failed.', 'gravityformswereldkundig' )
+				! empty( $response['message'] ) ? (string) $response['message'] : __( 'Wereldkundig API request failed.', 'wereldkundig-for-gravity-forms' )
 			);
 		}
 
@@ -393,7 +393,7 @@ class Client {
 		if ( ! self::is_configured() ) {
 			return new \WP_Error(
 				'wk_api_credentials_missing',
-				__( 'Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_API_URL and WK_API_AUTH in wp-config.php.', 'gravityformswereldkundig' ),
+				__( 'Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_API_URL and WK_API_AUTH in wp-config.php.', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -403,7 +403,7 @@ class Client {
 		if ( ! self::is_secure_url( $url ) ) {
 			return new \WP_Error(
 				'wk_api_insecure_url',
-				__( 'The Wereldkundig API URL must use https:// (plain http is only allowed for localhost and *.test).', 'gravityformswereldkundig' ),
+				__( 'The Wereldkundig API URL must use https:// (plain http is only allowed for localhost and *.test).', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -415,7 +415,7 @@ class Client {
 		 * @param string $method  GET or POST.
 		 * @param string $path    /v1/subscribe/fields or /v1/subscribe.
 		 */
-		$timeout = (int) apply_filters( 'wk_api_timeout', 10, $method, $path );
+		$timeout = (int) apply_filters( 'wk_gf_api_timeout', 10, $method, $path );
 
 		$args = array(
 			'method'  => $method,
@@ -430,7 +430,7 @@ class Client {
 		if ( 'GET' !== $method ) {
 			$json = wp_json_encode( $body );
 			if ( false === $json ) {
-				return new \WP_Error( 'wk_api_json_encode', __( 'Could not encode the API request.', 'gravityformswereldkundig' ) );
+				return new \WP_Error( 'wk_api_json_encode', __( 'Could not encode the API request.', 'wereldkundig-for-gravity-forms' ) );
 			}
 
 			$args['body'] = $json;
@@ -459,13 +459,13 @@ class Client {
 
 			return new \WP_Error(
 				'' !== $error ? $error : 'wk_api_http',
-				'' !== $message ? $message : __( 'API request failed.', 'gravityformswereldkundig' ),
+				'' !== $message ? $message : __( 'API request failed.', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => $code )
 			);
 		}
 
 		if ( ! is_array( $decoded ) ) {
-			return new \WP_Error( 'wk_api_json', __( 'Invalid API response.', 'gravityformswereldkundig' ) );
+			return new \WP_Error( 'wk_api_json', __( 'Invalid API response.', 'wereldkundig-for-gravity-forms' ) );
 		}
 
 		return $decoded;
@@ -507,7 +507,7 @@ class Client {
 	 * The mock only runs under the test suite: tests/bootstrap.php defines WK_GF_RUNNING_TESTS and PHPUnit must be loaded.
 	 * On a site it never runs, not even as a fallback for missing credentials or an unreachable API,
 	 * because the mock always succeeds and would silently drop real subscribers.
-	 * Inside the tests, the wk_api_use_mock filter switches it off to exercise the live HTTP path.
+	 * Inside the tests, the wk_gf_api_use_mock filter switches it off to exercise the live HTTP path.
 	 *
 	 * @param string              $method
 	 * @param string              $path
@@ -518,7 +518,7 @@ class Client {
 			return false;
 		}
 
-		return (bool) apply_filters( 'wk_api_use_mock', true, $method, $path, $body );
+		return (bool) apply_filters( 'wk_gf_api_use_mock', true, $method, $path, $body );
 	}
 
 	/**
@@ -585,7 +585,7 @@ class Client {
 		 *
 		 * @param string $url
 		 */
-		return (string) apply_filters( 'wk_api_base_url', $url );
+		return (string) apply_filters( 'wk_gf_api_base_url', $url );
 	}
 
 	private function url( string $path ): string {

@@ -1,6 +1,6 @@
 ---
 name: update-docs
-description: Writes and updates the public documentation of the Gravity Forms Wereldkundig add-on, the bilingual Starlight site in docs/ (English at /, Dutch at /nl/), including the Dutch page twins, sidebar and component translations, the generated hooks reference and its hand-translated Dutch hook descriptions. Use this whenever the user asks to update, write, fix, extend or translate "the documentation", "the docs", the docs site, a docs page, the hooks reference or the Dutch/Nederlandse docs, and also after a code change in app/ that changes behaviour, settings, labels, messages, error codes or a hook docblock, since those must be reflected in both languages, even if the user only says "update the docs for this".
+description: Writes and updates the public documentation of the Wereldkundig add-on for Gravity Forms, the bilingual Starlight site in docs/ (English at /, Dutch at /nl/), including the Dutch page twins, sidebar and component translations, the generated hooks reference and its hand-translated Dutch hook descriptions. Use this whenever the user asks to update, write, fix, extend or translate "the documentation", "the docs", the docs site, a docs page, the hooks reference or the Dutch/Nederlandse docs, and also after a code change in app/ that changes behaviour, settings, labels, messages, error codes or a hook docblock, since those must be reflected in both languages, even if the user only says "update the docs for this".
 ---
 
 # Updating the add-on documentation
@@ -9,7 +9,7 @@ The docs are a [Starlight](https://starlight.astro.build) site in `docs/` (its o
 
 The site is bilingual, and both languages are always updated together: a change in only one language leaves the other wrong, and the language picker sends people straight from one to the other.
 
-Paths and commands below are relative to the plugin root (`wp-content/plugins/gravityformswereldkundig`).
+Paths and commands below are relative to the plugin root (`wp-content/plugins/wereldkundig-for-gravity-forms`).
 
 ## The map
 
@@ -68,7 +68,7 @@ PHP examples never use arrow functions (`fn () => 20`) or one-line ternaries: wr
 Read `references/dutch.md` before writing Dutch: it has the terminology, the tone and the rules for screen labels. The essentials:
 
 - Same path under `nl/`, translated `title` and `description`.
-- Links get the `/nl/` prefix (Starlight doesn't rewrite Markdown links), and anchors follow the **Dutch** headings: `/nl/guides/feeds-and-mapping/#automatisch-gevonden-velden`. Hook anchors (`#wk_api_timeout`) are the same in both languages.
+- Links get the `/nl/` prefix (Starlight doesn't rewrite Markdown links), and anchors follow the **Dutch** headings: `/nl/guides/feeds-and-mapping/#automatisch-gevonden-velden`. Hook anchors (`#wk_gf_api_timeout`) are the same in both languages.
 - Gravity Forms and WordPress screen labels in Dutch, looked up with `scripts/gf_label.py`; the add-on's own labels, messages, entry notes and error messages stay English, because that is what a Dutch admin sees.
 - Code blocks, hook names, option names, error codes and payload keys are not translated.
 - An `.mdx` page that imports a component needs one more `../` under `nl/`.

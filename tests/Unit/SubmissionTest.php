@@ -34,7 +34,7 @@ beforeEach(function () {
  * @param array $bodies Captured request bodies.
  */
 function wk_submission_live_api(array $themes, ?array &$bodies, array $response = ['success' => true, 'data' => ['user_id' => 12]], int $status = 201): void {
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->alias(static function ($name) use ($themes) {
         return Wereldkundig\GravityForms\Api\Client::FIELDS_OPTION === $name
             ? ['key' => md5('https://platform.example.nl/wp-json/wereldkundig|abc'), 'response' => ['options' => ['categories' => $themes]]]
@@ -247,7 +247,7 @@ it('sends nothing without an email mapping while auto-detection is off', functio
 
 it('does not report success when the API is not configured', function () {
     // What a site without credentials gets: no mock, so no fake success.
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\expect('wp_remote_request')->never();
 
     $addon = wk_submission_addon();

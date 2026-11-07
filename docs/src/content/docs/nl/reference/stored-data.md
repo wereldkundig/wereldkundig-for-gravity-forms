@@ -32,4 +32,4 @@ Alleen geldige thema- en categorie-ID's worden opgeslagen.
 |---|---|
 | Slug van de add-on | `wereldkundig`, bijvoorbeeld als `addon_slug` van een feed |
 | WP-Cron-gebeurtenis | `wk_gf_refresh_fields` |
-| Text domain | `gravityformswereldkundig` |
+| Text domain | `wereldkundig-for-gravity-forms` |

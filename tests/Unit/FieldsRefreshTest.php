@@ -84,7 +84,7 @@ it('keeps the cache and stores the error when the background refresh fails', fun
     wk_configured();
     Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
     Functions\when('wp_remote_request')->justReturn(new WP_Error('http_request_failed', 'cURL error 28: Operation timed out'));
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     $stored = [];
     Functions\when('update_option')->alias(static function ($name, $value) use (&$stored) {

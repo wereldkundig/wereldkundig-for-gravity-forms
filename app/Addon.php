@@ -43,11 +43,11 @@ class Addon extends \GFFeedAddOn {
 	protected $_async_feed_processing = true;
 
 	public function __construct() {
-		$this->_full_path = dirname( __DIR__ ) . '/gravityformswereldkundig.php';
+		$this->_full_path = dirname( __DIR__ ) . '/wereldkundig-for-gravity-forms.php';
 		// Derived, so a renamed or symlinked plugin folder still matches the activated plugin.
 		$this->_path = function_exists( 'plugin_basename' )
 			? plugin_basename( $this->_full_path )
-			: basename( dirname( __DIR__ ) ) . '/gravityformswereldkundig.php';
+			: basename( dirname( __DIR__ ) ) . '/wereldkundig-for-gravity-forms.php';
 		parent::__construct();
 	}
 
@@ -109,14 +109,14 @@ class Addon extends \GFFeedAddOn {
 	 * @return string
 	 */
 	public function configure_addon_message() {
-		$settings = esc_html__( 'Wereldkundig settings', 'gravityformswereldkundig' );
+		$settings = esc_html__( 'Wereldkundig settings', 'wereldkundig-for-gravity-forms' );
 		if ( self::can_manage_settings() ) {
 			$settings = sprintf( '<a href="%s">%s</a>', esc_url( self::settings_url() ), $settings );
 		}
 
 		return sprintf(
 			/* translators: %s: "Wereldkundig settings", linked to the settings page for users who may open it. */
-			esc_html__( 'Enter the platform URL and Basic Auth code under %s (Forms > Settings > Wereldkundig) to start sending subscribers.', 'gravityformswereldkundig' ),
+			esc_html__( 'Enter the platform URL and Basic Auth code under %s (Forms > Settings > Wereldkundig) to start sending subscribers.', 'wereldkundig-for-gravity-forms' ),
 			$settings
 		);
 	}
@@ -126,8 +126,8 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public function feed_list_columns() {
 		return array(
-			'feedName'  => esc_html__( 'Name', 'gravityformswereldkundig' ),
-			'wk_themes' => esc_html__( 'Themes', 'gravityformswereldkundig' ),
+			'feedName'  => esc_html__( 'Name', 'wereldkundig-for-gravity-forms' ),
+			'wk_themes' => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
 		);
 	}
 
@@ -157,7 +157,7 @@ class Addon extends \GFFeedAddOn {
 
 		return array(
 			array(
-				'title'  => esc_html__( 'Wereldkundig Feed', 'gravityformswereldkundig' ),
+				'title'  => esc_html__( 'Wereldkundig Feed', 'wereldkundig-for-gravity-forms' ),
 				'fields' => array(
 					array(
 						'name' => 'api_error_notice',
@@ -166,7 +166,7 @@ class Addon extends \GFFeedAddOn {
 					),
 					array(
 						'name'          => 'feedName',
-						'label'         => esc_html__( 'Name', 'gravityformswereldkundig' ),
+						'label'         => esc_html__( 'Name', 'wereldkundig-for-gravity-forms' ),
 						'type'          => 'text',
 						'required'      => true,
 						'default_value' => $this->get_default_feed_name(),
@@ -175,34 +175,34 @@ class Addon extends \GFFeedAddOn {
 					...$this->subscribe_field_settings(),
 					$themes ? array(
 						'name'     => 'wk_themes',
-						'label'    => esc_html__( 'Themes', 'gravityformswereldkundig' ),
+						'label'    => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
 						'type'     => 'wk_themes',
 						'required' => true,
-						'tooltip'  => '<h6>' . esc_html__( 'Themes', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'Subscribers are added to every checked Wereldkundig theme. Check categories of a theme to subscribe to only those; without checked categories the whole theme is subscribed.', 'gravityformswereldkundig' ),
+						'tooltip'  => '<h6>' . esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Subscribers are added to every checked Wereldkundig theme. Check categories of a theme to subscribe to only those; without checked categories the whole theme is subscribed.', 'wereldkundig-for-gravity-forms' ),
 					) : array(
 						'name'  => 'wk_themes_unavailable',
-						'label' => esc_html__( 'Themes', 'gravityformswereldkundig' ),
+						'label' => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
 						'type'  => 'html',
-						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the themes from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. The checked themes are kept.', 'gravityformswereldkundig' ) . '</div>',
+						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the themes from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. The checked themes are kept.', 'wereldkundig-for-gravity-forms' ) . '</div>',
 					),
 					$field_map ? array(
 						'name'        => 'mapped_fields',
-						'label'       => esc_html__( 'Map Fields', 'gravityformswereldkundig' ),
+						'label'       => esc_html__( 'Map Fields', 'wereldkundig-for-gravity-forms' ),
 						'type'        => 'field_map',
 						'field_map'   => $field_map,
-						'tooltip'     => '<h6>' . esc_html__( 'Map Fields', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'Select which form field fills each Wereldkundig subscriber field. Map at least the email address: without it, the subscriber is not sent.', 'gravityformswereldkundig' ),
-						'description' => esc_html__( 'An empty mapping is not sent. To fill empty email and name mappings from the first matching form field, turn on auto-mapping with the wk_gf_auto_map_fields filter.', 'gravityformswereldkundig' ),
+						'tooltip'     => '<h6>' . esc_html__( 'Map Fields', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Select which form field fills each Wereldkundig subscriber field. Map at least the email address: without it, the subscriber is not sent.', 'wereldkundig-for-gravity-forms' ),
+						'description' => esc_html__( 'An empty mapping is not sent. To fill empty email and name mappings from the first matching form field, turn on auto-mapping with the wk_gf_auto_map_fields filter.', 'wereldkundig-for-gravity-forms' ),
 					) : array(
 						'name'  => 'mapped_fields_unavailable',
-						'label' => esc_html__( 'Map Fields', 'gravityformswereldkundig' ),
+						'label' => esc_html__( 'Map Fields', 'wereldkundig-for-gravity-forms' ),
 						'type'  => 'html',
-						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the subscriber fields from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. Existing mappings are kept.', 'gravityformswereldkundig' ) . '</div>',
+						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the subscriber fields from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. Existing mappings are kept.', 'wereldkundig-for-gravity-forms' ) . '</div>',
 					),
 					array(
 						'name'    => 'feed_condition',
-						'label'   => esc_html__( 'Conditional Logic', 'gravityformswereldkundig' ),
+						'label'   => esc_html__( 'Conditional Logic', 'wereldkundig-for-gravity-forms' ),
 						'type'    => 'feed_condition',
-						'tooltip' => '<h6>' . esc_html__( 'Conditional Logic', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'When enabled, the subscriber is only sent when the condition is met. The subscribe checkbox chosen above must still be checked.', 'gravityformswereldkundig' ),
+						'tooltip' => '<h6>' . esc_html__( 'Conditional Logic', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'When enabled, the subscriber is only sent when the condition is met. The subscribe checkbox chosen above must still be checked.', 'wereldkundig-for-gravity-forms' ),
 					),
 				),
 			),
@@ -213,7 +213,7 @@ class Addon extends \GFFeedAddOn {
 	 * @return array<int,array<string,mixed>>
 	 */
 	public function plugin_settings_fields() {
-		$description = esc_html__( 'Connect to your Wereldkundig platform with the Basic Auth code supplied by Wereldkundig.', 'gravityformswereldkundig' );
+		$description = esc_html__( 'Connect to your Wereldkundig platform with the Basic Auth code supplied by Wereldkundig.', 'wereldkundig-for-gravity-forms' );
 
 		$constants = array_filter(
 			array( 'WK_API_URL', 'WK_API_AUTH' ),
@@ -225,7 +225,7 @@ class Addon extends \GFFeedAddOn {
 			$description .= '<br /><strong>' . esc_html(
 				sprintf(
 				/* translators: %s: comma separated constant names. */
-					__( '%s defined in wp-config.php, so the matching field below is ignored.', 'gravityformswereldkundig' ),
+					__( '%s defined in wp-config.php, so the matching field below is ignored.', 'wereldkundig-for-gravity-forms' ),
 					implode( ', ', $constants )
 				)
 			) . '</strong>';
@@ -235,7 +235,7 @@ class Addon extends \GFFeedAddOn {
 
 		return array(
 			array(
-				'title'       => esc_html__( 'Wereldkundig API', 'gravityformswereldkundig' ),
+				'title'       => esc_html__( 'Wereldkundig API', 'wereldkundig-for-gravity-forms' ),
 				'description' => wp_kses_post( $description ),
 				'fields'      => array(
 					array(
@@ -245,7 +245,7 @@ class Addon extends \GFFeedAddOn {
 					),
 					array(
 						'name'                => 'api_url',
-						'label'               => esc_html__( 'Platform URL', 'gravityformswereldkundig' ),
+						'label'               => esc_html__( 'Platform URL', 'wereldkundig-for-gravity-forms' ),
 						'type'                => 'text',
 						'class'               => 'large',
 						'placeholder'         => 'https://subdomein.domein.nl',
@@ -254,14 +254,14 @@ class Addon extends \GFFeedAddOn {
 					array_filter(
 						array(
 							'name'         => 'api_auth',
-							'label'        => esc_html__( 'Basic Auth code', 'gravityformswereldkundig' ),
+							'label'        => esc_html__( 'Basic Auth code', 'wereldkundig-for-gravity-forms' ),
 							// Without the masked type (older Gravity Forms), at least hide the code on screen.
 							'type'         => $masked ? 'wk_api_auth' : 'text',
 							'input_type'   => $masked ? null : 'password',
 							'class'        => 'large',
 							'autocomplete' => 'off',
 							'readonly'     => defined( 'WK_API_AUTH' ) && '' !== trim( (string) constant( 'WK_API_AUTH' ) ) ? 'readonly' : null,
-							'description'  => esc_html__( 'The base64 encoded credentials, without "Basic ". Only the start is shown once saved; leave it as is to keep the saved code, or paste a new one.', 'gravityformswereldkundig' ),
+							'description'  => esc_html__( 'The base64 encoded credentials, without "Basic ". Only the start is shown once saved; leave it as is to keep the saved code, or paste a new one.', 'wereldkundig-for-gravity-forms' ),
 						)
 					),
 					array(
@@ -322,7 +322,7 @@ class Addon extends \GFFeedAddOn {
 	private function subscribe_field_settings(): array {
 		$form   = $this->get_current_form();
 		$fields = Submission::subscribe_fields( is_array( $form ) ? $form : array() );
-		$label  = esc_html__( 'Subscribe checkbox', 'gravityformswereldkundig' );
+		$label  = esc_html__( 'Subscribe checkbox', 'wereldkundig-for-gravity-forms' );
 
 		if ( ! $fields ) {
 			return array(
@@ -330,7 +330,7 @@ class Addon extends \GFFeedAddOn {
 					'name'  => 'subscribe_field_unavailable',
 					'label' => $label,
 					'type'  => 'html',
-					'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'This form has no Wereldkundig subscribe me field. Add one in the form editor: the feed then uses it, no need to edit the feed again.', 'gravityformswereldkundig' ) . '</div>',
+					'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'This form has no Wereldkundig subscribe me field. Add one in the form editor: the feed then uses it, no need to edit the feed again.', 'wereldkundig-for-gravity-forms' ) . '</div>',
 				),
 			);
 		}
@@ -345,7 +345,7 @@ class Addon extends \GFFeedAddOn {
 					'type'  => 'html',
 					'html'  => '<p>' . sprintf(
 						/* translators: %s: the field label and ID, like "Nieuwsbrief (field 5)". */
-						esc_html__( '%s, the only subscribe checkbox of this form.', 'gravityformswereldkundig' ),
+						esc_html__( '%s, the only subscribe checkbox of this form.', 'wereldkundig-for-gravity-forms' ),
 						'<code>' . esc_html( self::subscribe_field_label( $fields[0] ) ) . '</code>'
 					) . '</p>',
 				),
@@ -363,7 +363,7 @@ class Addon extends \GFFeedAddOn {
 
 		$choices = array(
 			array(
-				'label' => esc_html__( 'Select a checkbox', 'gravityformswereldkundig' ),
+				'label' => esc_html__( 'Select a checkbox', 'wereldkundig-for-gravity-forms' ),
 				'value' => '',
 			),
 		);
@@ -381,7 +381,7 @@ class Addon extends \GFFeedAddOn {
 				'type'     => 'select',
 				'required' => true,
 				'choices'  => $choices,
-				'tooltip'  => '<h6>' . $label . '</h6>' . esc_html__( 'The Wereldkundig subscribe me field of this form that gives consent. The feed only sends the subscriber when this checkbox is checked. For other themes behind another checkbox, add a feed for that checkbox.', 'gravityformswereldkundig' ),
+				'tooltip'  => '<h6>' . $label . '</h6>' . esc_html__( 'The Wereldkundig subscribe me field of this form that gives consent. The feed only sends the subscriber when this checkbox is checked. For other themes behind another checkbox, add a feed for that checkbox.', 'wereldkundig-for-gravity-forms' ),
 			),
 		);
 	}
@@ -395,7 +395,7 @@ class Addon extends \GFFeedAddOn {
 
 		return sprintf(
 			/* translators: 1: field label, 2: field ID. */
-			__( '%1$s (field %2$s)', 'gravityformswereldkundig' ),
+			__( '%1$s (field %2$s)', 'wereldkundig-for-gravity-forms' ),
 			$label,
 			(string) $field->id
 		);
@@ -489,7 +489,7 @@ class Addon extends \GFFeedAddOn {
 	public function validate_api_url( $field, $value ) {
 		$value = trim( (string) $value );
 		if ( '' !== $value && ! Client::is_secure_url( $value ) ) {
-			$field->set_error( esc_html__( 'Use an https:// URL. Plain http is only allowed for localhost and *.test.', 'gravityformswereldkundig' ) );
+			$field->set_error( esc_html__( 'Use an https:// URL. Plain http is only allowed for localhost and *.test.', 'wereldkundig-for-gravity-forms' ) );
 		}
 	}
 
@@ -556,13 +556,13 @@ class Addon extends \GFFeedAddOn {
 		// WordPress green (#00a32a) border on its lightest tint (#edfaef), with dark green (#003008) text.
 		return sprintf(
 			'<div class="wk-api-status-notice" style="padding: 8px 12px; border-left: 4px solid #00a32a; background: #edfaef; color: #003008;"><strong>%s</strong><br />%s: %s<br />%s</div>',
-			esc_html__( 'Successfully connected to Wereldkundig.', 'gravityformswereldkundig' ),
-			esc_html__( 'Platform', 'gravityformswereldkundig' ),
+			esc_html__( 'Successfully connected to Wereldkundig.', 'wereldkundig-for-gravity-forms' ),
+			esc_html__( 'Platform', 'wereldkundig-for-gravity-forms' ),
 			esc_html( Client::credentials()['url'] ),
 			esc_html(
 				sprintf(
 				/* translators: 1: number of themes, 2: date and time the themes were fetched. */
-					_n( 'Connected, %1$d theme (fetched %2$s).', 'Connected, %1$d themes (fetched %2$s).', $count, 'gravityformswereldkundig' ),
+					_n( 'Connected, %1$d theme (fetched %2$s).', 'Connected, %1$d themes (fetched %2$s).', $count, 'wereldkundig-for-gravity-forms' ),
 					$count,
 					$this->format_time( $fetched_at )
 				)
@@ -584,17 +584,17 @@ class Addon extends \GFFeedAddOn {
 		return sprintf(
 			'<div class="wk-api-error-notice" role="alert" style="padding: 8px 12px; border-left: 4px solid #d63638; background: #fcf0f1; color: #3f0001;"><strong>%s</strong><br />%s<br />%s</div>',
 			'cron' === ( $error['source'] ?? '' )
-					? esc_html__( 'The background refresh of the Wereldkundig themes failed.', 'gravityformswereldkundig' )
-					: esc_html__( 'Settings saved, but the Wereldkundig API call failed.', 'gravityformswereldkundig' ),
+					? esc_html__( 'The background refresh of the Wereldkundig themes failed.', 'wereldkundig-for-gravity-forms' )
+					: esc_html__( 'Settings saved, but the Wereldkundig API call failed.', 'wereldkundig-for-gravity-forms' ),
 			esc_html(
 				sprintf(
 					/* translators: 1: date and time of the failed call, 2: API error message. */
-					__( 'Last attempt %1$s: %2$s', 'gravityformswereldkundig' ),
+					__( 'Last attempt %1$s: %2$s', 'wereldkundig-for-gravity-forms' ),
 					$this->format_time( (int) $error['time'] ),
 					$error['message']
 				)
 			),
-			esc_html__( 'The themes and subscriber fields were not updated. Check the URL and Basic Auth code, then save the settings to try again. The background refresh also retries every hour.', 'gravityformswereldkundig' )
+			esc_html__( 'The themes and subscriber fields were not updated. Check the URL and Basic Auth code, then save the settings to try again. The background refresh also retries every hour.', 'wereldkundig-for-gravity-forms' )
 		);
 	}
 

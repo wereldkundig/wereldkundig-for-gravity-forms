@@ -4,7 +4,7 @@ use Brain\Monkey\Functions;
 use Wereldkundig\GravityForms\Api\Client;
 
 function wk_client_live_api(array $response_body, int $code = 200, ?array &$captured = null): void {
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     Functions\when('get_option')->justReturn([
         'api_url'      => 'platform.example.nl',
@@ -63,7 +63,7 @@ it('reads the themes from the subscribe fields endpoint', function () {
 });
 
 it('serves themes from the fields option', function () {
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     $settings = ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
     Functions\when('get_option')->alias(static function ($name) use ($settings) {
         return Client::FIELDS_OPTION === $name
@@ -163,7 +163,7 @@ it('returns the API error message on a failed request', function () {
 });
 
 it('reads all subscriber fields from the fields option', function () {
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     $settings = ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
     Functions\when('get_option')->alias(static function ($name) use ($settings) {
         return Client::FIELDS_OPTION === $name
@@ -200,7 +200,7 @@ it('decodes HTML entities in theme names', function () {
 });
 
 it('requires credentials before calling the live API', function () {
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->justReturn([]);
     Functions\expect('wp_remote_request')->never();
 
@@ -211,7 +211,7 @@ it('requires credentials before calling the live API', function () {
 });
 
 it('does not fall back to the mock when credentials are missing', function () {
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->justReturn([]);
     Functions\expect('wp_remote_request')->never();
 

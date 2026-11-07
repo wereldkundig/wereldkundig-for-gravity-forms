@@ -10,6 +10,7 @@
 /composer.json export-ignore
 /composer.lock export-ignore
 /todo.md export-ignore
+/.pcpignore export-ignore
 
 # Documentation: the developer README and the docs site (published separately). The plugin ships readme.txt.
 /README.md export-ignore

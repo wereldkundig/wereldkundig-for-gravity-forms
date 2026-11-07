@@ -1,10 +1,10 @@
-# Gravity Forms Wereldkundig Add-On
+# Wereldkundig Add-On for Gravity Forms
 
 Subscribes Gravity Forms submitters to Wereldkundig themes. A visitor ticks a **Wereldkundig subscribe me** checkbox on a form; on submit the add-on sends their email (and name, and any other mapped fields) to the Wereldkundig platform, which adds them to the themes (and optionally only some of their categories) chosen in the form's Wereldkundig feed for that checkbox.
 
 - Requires WordPress 6.9+, PHP 8.2+, Gravity Forms 2.5+ (developed on 2.10).
 - Works on single sites and multisite (network-activated); every site has its own settings, cache, feeds and cron event.
-- Text domain `gravityformswereldkundig`; all user-facing strings are English and translatable.
+- Text domain `wereldkundig-for-gravity-forms`; all user-facing strings are English and translatable.
 
 **How to set up and use the add-on, and the hooks reference, are in the docs site: [`docs/src/content/docs/`](docs/src/content/docs/).** This README is for working on the add-on: how it's built, the internals the public docs leave out, and how to test it. Keep internals here; everything under `docs/` is published.
 
@@ -39,7 +39,7 @@ Hourly WP-Cron ──────► (themes + subscriber fields,       (email, 
 ## Code structure
 
 ```
-gravityformswereldkundig.php    bootstrap: autoloader, Component, deactivation hook
+wereldkundig-for-gravity-forms.php    bootstrap: autoloader, Component, deactivation hook
 app/
   Component.php                 on gform_loaded: registers the add-on and the field
   Addon.php                     GFFeedAddOn: settings, feed settings (checkbox, themes, mapping), status notice
@@ -92,7 +92,7 @@ Feeds are processed asynchronously, like Brevo (`$_async_feed_processing = true`
 
 ### The mock
 
-`Client` has a mock of both endpoints, shaped like the OpenAPI spec. It **only** runs under the test suite: `tests/bootstrap.php` defines `WK_GF_RUNNING_TESTS` and PHPUnit must be loaded. On a site it never runs, not even as a fallback for missing credentials or an unreachable API, because it always succeeds and would silently drop real subscribers. Inside the tests the `wk_api_use_mock` filter turns it off to test the real HTTP path. That filter is left out of the public hooks reference (`extra.wp-hooks.ignore-hooks` in `docs/tools/composer.json`).
+`Client` has a mock of both endpoints, shaped like the OpenAPI spec. It **only** runs under the test suite: `tests/bootstrap.php` defines `WK_GF_RUNNING_TESTS` and PHPUnit must be loaded. On a site it never runs, not even as a fallback for missing credentials or an unreachable API, because it always succeeds and would silently drop real subscribers. Inside the tests the `wk_gf_api_use_mock` filter turns it off to test the real HTTP path. That filter is left out of the public hooks reference (`extra.wp-hooks.ignore-hooks` in `docs/tools/composer.json`).
 
 ### Themes and subscriber fields cache
 
@@ -221,9 +221,9 @@ composer docs:hooks   # needs PHP 8.3+
 
 ## Releasing
 
-The add-on is released on GitHub and on WordPress.org as `gravityformswereldkundig`, by two workflows that use [10up's deploy actions](https://github.com/10up/action-wordpress-plugin-deploy).
+The add-on is released on GitHub and on WordPress.org as `wereldkundig-for-gravity-forms`, by two workflows that use [10up's deploy actions](https://github.com/10up/action-wordpress-plugin-deploy).
 
-1. Set the new version in three places: `Version:` and `const VERSION` in `gravityformswereldkundig.php`, and `Stable tag:` in `readme.txt`. Add a `= x.y.z =` section to the changelog in `readme.txt`.
+1. Set the new version in three places: `Version:` and `const VERSION` in `wereldkundig-for-gravity-forms.php`, and `Stable tag:` in `readme.txt`. Add a `= x.y.z =` section to the changelog in `readme.txt`.
 2. Commit and push to `main`, then tag and push the tag: `git tag v1.2.0 && git push origin v1.2.0`.
 
 `.github/workflows/release.yml` then:

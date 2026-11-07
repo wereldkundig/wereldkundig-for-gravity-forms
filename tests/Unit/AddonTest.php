@@ -116,7 +116,7 @@ it('derives the plugin path from the plugin folder', function () {
     $addon = new Addon();
     $path  = (new ReflectionProperty(Addon::class, '_path'))->getValue($addon);
 
-    expect($path)->toBe('renamed-folder/gravityformswereldkundig.php');
+    expect($path)->toBe('renamed-folder/wereldkundig-for-gravity-forms.php');
 });
 
 it('has its own capabilities for the API settings and uninstall', function () {
@@ -163,7 +163,7 @@ it('stores the API error when saving the settings fetches nothing', function () 
     Functions\when('get_option')->justReturn(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
     Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
     Functions\when('wp_remote_request')->justReturn(new WP_Error('http_request_failed', 'cURL error 28: Operation timed out'));
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     $stored = null;
     Functions\when('update_option')->alias(static function ($name, $value) use (&$stored) {
@@ -186,7 +186,7 @@ it('removes the stored API error once fetching succeeds', function () {
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\when('get_option')->justReturn(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
     Functions\when('update_option')->justReturn(true);
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = true;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = true;
     Functions\expect('delete_option')->once()->with(Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION);
 
     (new Addon())->update_plugin_settings(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
@@ -216,7 +216,7 @@ it('shows the connection status from the cache, without calling the API', functi
     Functions\when('_n')->alias(static fn ($single, $plural, $n): string => 1 === $n ? $single : $plural);
     Functions\when('wp_date')->alias(static fn ($format, $time): string => gmdate('Y-m-d H:i', $time));
     Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->alias(static function ($name) {
         return match ($name) {
             Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION => false,
@@ -240,7 +240,7 @@ it('shows the connection status from the cache, without calling the API', functi
 it('shows no connection status without a cache for the current credentials', function () {
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->alias(static function ($name) {
         return match ($name) {
             Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION => false,
@@ -359,7 +359,7 @@ it('keeps the saved themes when a feed is saved without themes from the platform
     Functions\when('update_option')->justReturn(true);
     Functions\when('delete_option')->justReturn(true);
     // No credentials and no mock: no themes.
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     $addon = Mockery::mock(Addon::class)->makePartial();
     $addon->shouldReceive('fields_for_feed_mapping')->andReturn([['name' => 'email', 'label' => 'E-mail', 'required' => false]]);
@@ -406,7 +406,7 @@ it('shows the feed\'s theme names in the feed list, from the cache only', functi
     Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     expect((new Addon())->get_column_value_wk_themes(['meta' => ['wk_themes' => ['theme-1' => [], 'theme-9' => []]]]))->toBe('Nieuwsbrief, theme-9');
 });

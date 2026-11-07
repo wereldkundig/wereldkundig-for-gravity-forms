@@ -28,7 +28,7 @@ class Submission {
 
 		$field = $this->feed_subscribe_field( $form, $feed );
 		if ( ! $field ) {
-			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_subscribe_field_missing', __( 'The subscribe checkbox chosen in the feed is not on the form; choose one in the feed settings. Subscriber not sent.', 'gravityformswereldkundig' ) ) );
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_subscribe_field_missing', __( 'The subscribe checkbox chosen in the feed is not on the form; choose one in the feed settings. Subscriber not sent.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
 		if ( ! $this->is_checked( $field, $entry ) ) {
@@ -39,7 +39,7 @@ class Submission {
 		// No themes at all means the API isn't configured or reachable, not a bad theme choice.
 		$client = new Client();
 		if ( ! $client->themes() ) {
-			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_themes_unavailable', __( 'Could not load the Wereldkundig themes; check the API connection. Subscriber not sent.', 'gravityformswereldkundig' ) ) );
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_themes_unavailable', __( 'Could not load the Wereldkundig themes; check the API connection. Subscriber not sent.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
 		// Prevention: only theme IDs the API knows, and only categories of that theme. IDs are public, not secrets.
@@ -66,8 +66,8 @@ class Submission {
 					'wk_theme_invalid',
 					sprintf(
 					/* translators: %s: comma separated theme IDs, empty when the feed has no theme. */
-						__( 'Invalid Wereldkundig theme: %s.', 'gravityformswereldkundig' ),
-						implode( ', ', array_map( static fn ( $id ): string => '' === $id ? __( 'none selected', 'gravityformswereldkundig' ) : $id, array_unique( $invalid ) ) )
+						__( 'Invalid Wereldkundig theme: %s.', 'wereldkundig-for-gravity-forms' ),
+						implode( ', ', array_map( static fn ( $id ): string => '' === $id ? __( 'none selected', 'wereldkundig-for-gravity-forms' ) : $id, array_unique( $invalid ) ) )
 					)
 				)
 			);
@@ -133,7 +133,7 @@ class Submission {
 
 		$subscriber['email'] = sanitize_email( (string) ( $subscriber['email'] ?? '' ) );
 		if ( '' === $subscriber['email'] ) {
-			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_email_invalid', __( 'No valid email address to subscribe.', 'gravityformswereldkundig' ) ) );
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_email_invalid', __( 'No valid email address to subscribe.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
 		$result = $client->subscribe( $themes, $subscriber );
@@ -195,26 +195,26 @@ class Submission {
 		$note = isset( $data['user_id'] )
 			? sprintf(
 				/* translators: 1: email address, 2: user ID on the platform. */
-				__( '%1$s was sent to Wereldkundig (platform user ID %2$s).', 'gravityformswereldkundig' ),
+				__( '%1$s was sent to Wereldkundig (platform user ID %2$s).', 'wereldkundig-for-gravity-forms' ),
 				$email,
 				(string) $data['user_id']
 			)
 			: sprintf(
 				/* translators: %s: email address. */
-				__( '%s was sent to Wereldkundig.', 'gravityformswereldkundig' ),
+				__( '%s was sent to Wereldkundig.', 'wereldkundig-for-gravity-forms' ),
 				$email
 			);
 
 		$note .= ' ' . sprintf(
 			/* translators: %s: semicolon separated theme names, with the chosen categories in parentheses. */
-			__( 'Themes: %s.', 'gravityformswereldkundig' ),
+			__( 'Themes: %s.', 'wereldkundig-for-gravity-forms' ),
 			implode( '; ', $names )
 		);
 
 		if ( ! empty( $data['rejected_options'] ) ) {
 			$note .= ' ' . sprintf(
 				/* translators: %s: the options the platform did not accept, as JSON. */
-				__( 'Rejected by the platform: %s.', 'gravityformswereldkundig' ),
+				__( 'Rejected by the platform: %s.', 'wereldkundig-for-gravity-forms' ),
 				(string) wp_json_encode( $data['rejected_options'] )
 			);
 		}
@@ -281,14 +281,14 @@ class Submission {
 		$message = '' !== $email
 			? sprintf(
 				/* translators: 1: email address, 2: error message, 3: error code. */
-				__( '%1$s was not sent to Wereldkundig: %2$s (code: %3$s)', 'gravityformswereldkundig' ),
+				__( '%1$s was not sent to Wereldkundig: %2$s (code: %3$s)', 'wereldkundig-for-gravity-forms' ),
 				$email,
 				$error->get_error_message(),
 				(string) $error->get_error_code()
 			)
 			: sprintf(
 				/* translators: 1: error message, 2: error code. */
-				__( '%1$s (code: %2$s)', 'gravityformswereldkundig' ),
+				__( '%1$s (code: %2$s)', 'wereldkundig-for-gravity-forms' ),
 				$error->get_error_message(),
 				(string) $error->get_error_code()
 			);

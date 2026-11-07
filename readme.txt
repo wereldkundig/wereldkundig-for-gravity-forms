@@ -1,8 +1,8 @@
-=== Gravity Forms Wereldkundig Add-On ===
+=== Wereldkundig Add-On for Gravity Forms ===
 Contributors: wereldkundig, jmslbam
 Tags: gravity forms, newsletter, subscribe, subscription, wereldkundig
 Requires at least: 6.9
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 8.2
 Stable tag: 1.0.0
 License: MIT
@@ -28,7 +28,7 @@ The add-on requires [Gravity Forms](https://www.gravityforms.com/) 2.5 or later 
 == Installation ==
 
 1. Install and activate Gravity Forms 2.5 or later.
-2. Upload the plugin through **Plugins > Add New Plugin**, or put the `gravityformswereldkundig` folder in `wp-content/plugins/`.
+2. Upload the plugin through **Plugins > Add New Plugin**, or put the `wereldkundig-for-gravity-forms` folder in `wp-content/plugins/`.
 3. Activate the plugin. On multisite, network-activate it.
 4. Go to **Forms > Settings > Wereldkundig**, enter the platform URL and Basic Auth code, and save.
 5. Add a **Wereldkundig subscribe me** field to a form, then add a Wereldkundig feed under **Form Settings > Wereldkundig** that chooses its themes and the email field. With more than one subscribe field on the form, the feed also chooses the checkbox.

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<ruleset name="Gravity Forms Wereldkundig">
+<ruleset name="Wereldkundig for Gravity Forms">
 	<description>WordPress coding standards, with PSR-4 file names, camelCase allowed and no Yoda conditions required.</description>
 
 	<file>./app</file>
-	<file>./gravityformswereldkundig.php</file>
+	<file>./wereldkundig-for-gravity-forms.php</file>
 
 	<arg name="extensions" value="php"/>
 	<arg name="colors"/>
@@ -11,7 +11,7 @@
 	<arg name="parallel" value="8"/>
 	<arg name="cache" value=".phpcs.cache"/>
 
-	<!-- Requires PHP: 8.2 and Requires at least: 6.9 in gravityformswereldkundig.php. -->
+	<!-- Requires PHP: 8.2 and Requires at least: 6.9 in wereldkundig-for-gravity-forms.php. -->
 	<config name="testVersion" value="8.2-"/>
 	<config name="minimum_wp_version" value="6.9"/>
 
@@ -37,7 +37,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="gravityformswereldkundig"/>
+				<element value="wereldkundig-for-gravity-forms"/>
 			</property>
 		</properties>
 	</rule>

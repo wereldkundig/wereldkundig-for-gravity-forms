@@ -14,7 +14,7 @@ De add-on werkt op losse sites en op multisite-netwerken. In een netwerk heeft e
 
 ## Installeren en activeren
 
-1. Zet de map `gravityformswereldkundig` in `wp-content/plugins/`, of upload de zip van de plugin op het scherm **Plugins**.
+1. Zet de map `wereldkundig-for-gravity-forms` in `wp-content/plugins/`, of upload de zip van de plugin op het scherm **Plugins**.
 2. Activeer de plugin. Op multisite activeer je hem voor het hele netwerk.
 3. Ga verder met [Koppelen aan het platform](/nl/getting-started/connect/).
 

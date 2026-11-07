@@ -20,7 +20,7 @@ function wk_live_api(?string $auth = null): void {
         test()->markTestSkipped('WK_TEST_API_URL is not set in .env.local.tests.');
     }
 
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     Functions\when('get_option')->justReturn([
         'api_url'      => wk_live_env('WK_TEST_API_URL'),

@@ -82,7 +82,7 @@ class ThemesSettingField extends Base {
 			$html .= '</div>';
 		}
 
-		$html .= '</div><p class="description wk-themes-help">' . esc_html__( 'A checked theme without checked categories is subscribed whole.', 'gravityformswereldkundig' ) . '</p>';
+		$html .= '</div><p class="description wk-themes-help">' . esc_html__( 'A checked theme without checked categories is subscribed whole.', 'wereldkundig-for-gravity-forms' ) . '</p>';
 		$html .= '<style>' . self::STYLES . '</style>';
 
 		// Categories only count for a checked theme; disabled ones aren't posted.
@@ -99,7 +99,7 @@ class ThemesSettingField extends Base {
 	 */
 	public function do_validation( $value ) {
 		if ( ! Addon::themes_from_posted( $value ) ) {
-			$this->set_error( esc_html__( 'Check at least one theme.', 'gravityformswereldkundig' ) );
+			$this->set_error( esc_html__( 'Check at least one theme.', 'wereldkundig-for-gravity-forms' ) );
 		}
 	}
 

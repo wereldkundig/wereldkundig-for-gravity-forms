@@ -32,7 +32,7 @@ The subscriber has no email address. Map the Email field under **Map Fields** in
 The email address is already a member of the platform site, and the platform saved nothing. Add the themes for this person on the platform itself.
 
 **Requests time out.**
-The platform gets 10 seconds to answer. Raise it with [`wk_api_timeout`](/reference/hooks/#wk_api_timeout). Feeds send in the background, so visitors don't wait.
+The platform gets 10 seconds to answer. Raise it with [`wk_gf_api_timeout`](/reference/hooks/#wk_gf_api_timeout). Feeds send in the background, so visitors don't wait.
 
 **The background refresh failed.**
 The settings page shows when and why. The themes you had keep working; the next refresh, or saving the settings, tries again.

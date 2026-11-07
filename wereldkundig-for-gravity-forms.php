@@ -1,15 +1,19 @@
 <?php
 /**
- * Plugin Name: Gravity Forms Wereldkundig Add-On
+ * Plugin Name: Wereldkundig Add-On for Gravity Forms
  * Description: Subscribe Gravity Forms submitters to Wereldkundig themes.
  * Version: 1.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.2
  * License: MIT
- * Text Domain: gravityformswereldkundig
+ * Text Domain: wereldkundig-for-gravity-forms
  */
 
 namespace Wereldkundig\GravityForms;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 const VERSION = '1.0.0';
 

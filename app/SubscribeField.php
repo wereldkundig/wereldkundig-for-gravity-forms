@@ -14,14 +14,14 @@ class SubscribeField extends \GF_Field {
 	 * @return string
 	 */
 	public function get_form_editor_field_title() {
-		return esc_attr__( 'Wereldkundig subscribe me', 'gravityformswereldkundig' );
+		return esc_attr__( 'Wereldkundig subscribe me', 'wereldkundig-for-gravity-forms' );
 	}
 
 	/**
 	 * @return string
 	 */
 	public function get_form_editor_field_description() {
-		return esc_attr__( 'Adds a subscribe checkbox. The Wereldkundig feed of the form chooses the themes it subscribes to.', 'gravityformswereldkundig' );
+		return esc_attr__( 'Adds a subscribe checkbox. The Wereldkundig feed of the form chooses the themes it subscribes to.', 'wereldkundig-for-gravity-forms' );
 	}
 
 	/**
@@ -183,7 +183,7 @@ class SubscribeField extends \GF_Field {
 			return '';
 		}
 
-		return esc_html__( 'Yes', 'gravityformswereldkundig' );
+		return esc_html__( 'Yes', 'wereldkundig-for-gravity-forms' );
 	}
 
 	/**
@@ -196,7 +196,7 @@ class SubscribeField extends \GF_Field {
 	public function get_value_export( $entry, $input_id = '', $use_text = false, $is_csv = false ) {
 		$value = rgar( $entry, (string) $this->id );
 
-		return rgblank( $value ) ? '' : __( 'Yes', 'gravityformswereldkundig' );
+		return rgblank( $value ) ? '' : __( 'Yes', 'wereldkundig-for-gravity-forms' );
 	}
 
 	public static function register_editor(): void {
@@ -217,14 +217,14 @@ class SubscribeField extends \GF_Field {
 		$feeds = admin_url( 'admin.php?page=gf_edit_forms&view=settings&subview=wereldkundig&id=' . absint( $form_id ) );
 		?>
 		<li class="wk_feed_notice_setting field_setting">
-			<label class="section_label"><?php esc_html_e( 'Themes', 'gravityformswereldkundig' ); ?></label>
+			<label class="section_label"><?php esc_html_e( 'Themes', 'wereldkundig-for-gravity-forms' ); ?></label>
 			<?php // A WordPress info notice: blue (#72aee6) border on its lightest tint (#f0f6fc), with the default text color (#1d2327). ?>
 			<div class="wk-feed-notice" role="note" style="padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
 				<?php
 				printf(
 					/* translators: %s: "Wereldkundig feed", linked to the form's Wereldkundig feeds. */
-					esc_html__( 'Choose the themes in a %s of this form, which also chooses this checkbox. Without a feed, nothing is sent.', 'gravityformswereldkundig' ),
-					sprintf( '<a href="%s">%s</a>', esc_url( $feeds ), esc_html__( 'Wereldkundig feed', 'gravityformswereldkundig' ) )
+					esc_html__( 'Choose the themes in a %s of this form, which also chooses this checkbox. Without a feed, nothing is sent.', 'wereldkundig-for-gravity-forms' ),
+					sprintf( '<a href="%s">%s</a>', esc_url( $feeds ), esc_html__( 'Wereldkundig feed', 'wereldkundig-for-gravity-forms' ) )
 				);
 				?>
 			</div>
@@ -232,12 +232,12 @@ class SubscribeField extends \GF_Field {
 		<li class="wk_default_checked_setting field_setting">
 			<input type="checkbox" id="field_wk_default_checked" onclick="SetFieldProperty('wk_default_checked', this.checked);" />
 			<label for="field_wk_default_checked" class="inline">
-				<?php esc_html_e( 'Checked by default', 'gravityformswereldkundig' ); ?>
+				<?php esc_html_e( 'Checked by default', 'wereldkundig-for-gravity-forms' ); ?>
 				<?php gform_tooltip( 'wk_default_checked' ); ?>
 			</label>
 			<?php // A WordPress info notice: blue (#72aee6) border on its lightest tint (#f0f6fc), with the default text color (#1d2327). ?>
 			<div class="wk-default-checked-warning" role="note" style="display: none; margin-top: 8px; padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
-				<?php esc_html_e( 'A pre-checked box is not valid consent under the GDPR. Only use this when visitors expect to be subscribed by submitting this form.', 'gravityformswereldkundig' ); ?>
+				<?php esc_html_e( 'A pre-checked box is not valid consent under the GDPR. Only use this when visitors expect to be subscribed by submitting this form.', 'wereldkundig-for-gravity-forms' ); ?>
 			</div>
 		</li>
 		<?php
@@ -247,7 +247,7 @@ class SubscribeField extends \GF_Field {
 		?>
 		<script type="text/javascript">
 			function SetDefaultValues_wk_subscribe(field) {
-				field.label = <?php echo wp_json_encode( __( 'Wereldkundig subscribe me', 'gravityformswereldkundig' ) ); ?>;
+				field.label = <?php echo wp_json_encode( __( 'Wereldkundig subscribe me', 'wereldkundig-for-gravity-forms' ) ); ?>;
 			}
 
 			jQuery(document).on('gform_load_field_settings', function (evt, field) {
@@ -281,7 +281,7 @@ class SubscribeField extends \GF_Field {
 	 * @return array<string,string>
 	 */
 	public static function tooltips( $tooltips ): array {
-		$tooltips['wk_default_checked'] = '<h6>' . esc_html__( 'Checked by default', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'Shows the checkbox already checked when the form loads. Visitors can still uncheck it; that choice is kept when the form is shown again after a validation error.', 'gravityformswereldkundig' );
+		$tooltips['wk_default_checked'] = '<h6>' . esc_html__( 'Checked by default', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Shows the checkbox already checked when the form loads. Visitors can still uncheck it; that choice is kept when the form is shown again after a validation error.', 'wereldkundig-for-gravity-forms' );
 
 		return $tooltips;
 	}

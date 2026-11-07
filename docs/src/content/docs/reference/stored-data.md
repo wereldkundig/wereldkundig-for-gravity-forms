@@ -32,4 +32,4 @@ Only valid theme and category IDs are saved.
 |---|---|
 | Add-on slug | `wereldkundig`, e.g. as `addon_slug` of a feed |
 | WP-Cron event | `wk_gf_refresh_fields` |
-| Text domain | `gravityformswereldkundig` |
+| Text domain | `wereldkundig-for-gravity-forms` |

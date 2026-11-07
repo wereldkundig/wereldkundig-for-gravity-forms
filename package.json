@@ -1,5 +1,5 @@
 {
-    "name": "gravityformswereldkundig",
+    "name": "wereldkundig-for-gravity-forms",
     "private": true,
     "description": "Development tooling for the Wereldkundig Gravity Forms add-on: browser tests and git hooks.",
     "scripts": {

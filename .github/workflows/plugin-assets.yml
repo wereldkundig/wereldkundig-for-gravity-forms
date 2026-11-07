@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SLUG: gravityformswereldkundig
+  SLUG: wereldkundig-for-gravity-forms
 
 jobs:
   assets:

@@ -1,0 +1,35 @@
+# Plugin Check exclusions for local and CI scans: `wp plugin check wereldkundig-for-gravity-forms --use-pcpignore`.
+# Mirrors the export-ignore entries in .gitattributes, plus local files that git ignores, so the scan
+# covers only what ships. Entries are anchored to the plugin root; a trailing slash means a directory.
+
+# Development files.
+.claude/
+.github/
+.husky/
+.gitattributes
+.gitignore
+composer.json
+composer.lock
+todo.md
+
+# Documentation and WordPress.org listing assets.
+README.md
+docs/
+.wordpress-org/
+
+# Tests and their tooling.
+tests/
+test-results/
+phpstan.neon.dist
+phpcs.xml.dist
+phpunit.xml.dist
+phpunit.live.xml.dist
+playwright.config.ts
+package.json
+package-lock.json
+.env.local.tests
+.env.local.tests.example
+.phpcs.cache
+
+# macOS metadata.
+.DS_Store

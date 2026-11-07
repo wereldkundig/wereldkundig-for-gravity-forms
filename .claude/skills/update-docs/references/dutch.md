@@ -52,7 +52,7 @@ A Dutch admin sees two languages at once, and the docs follow what is on screen:
 
 - **The add-on's own labels and texts: English**, because the add-on has no Dutch translation yet. Quote them exactly: **Wereldkundig subscribe me**, **Themes**, **Checked by default**, **Platform URL**, **Basic Auth code**, the feed settings **Name**, **Map Fields** and **Conditional Logic**, the editor notices, connection status messages, entry notes ("… was sent to Wereldkundig …"), error messages and **Yes** in entries. Explain them in Dutch around the quote.
 
-When the add-on gets a Dutch translation (`languages/gravityformswereldkundig-nl_NL.po`), switch these to the Dutch strings and remove the note about English labels from `nl/getting-started/installation.md`.
+When the add-on gets a Dutch translation (`languages/wereldkundig-for-gravity-forms-nl_NL.po`), switch these to the Dutch strings and remove the note about English labels from `nl/getting-started/installation.md`.
 
 ## Links and anchors
 
