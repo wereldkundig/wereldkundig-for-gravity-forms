@@ -7,6 +7,6 @@ The add-on has its own capabilities, so you can grant them separately, for examp
 
 | Capability | Allows |
 |---|---|
-| `gravityforms_wereldkundig` | The Wereldkundig settings page, and the link to it in the form editor's notices. |
+| `gravityforms_wereldkundig` | The Wereldkundig settings page, and the link to it on a form's Wereldkundig feed page while the platform isn't connected. |
 | `gravityforms_wereldkundig_uninstall` | Uninstalling the add-on from Gravity Forms. |
 | `gravityforms_edit_forms` (Gravity Forms) | Wereldkundig feeds under **Form Settings**. |

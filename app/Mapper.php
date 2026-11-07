@@ -13,26 +13,22 @@ class Mapper {
 	/**
 	 * @param array<string,mixed>      $form
 	 * @param array<int|string,mixed>  $entry
-	 * @param array<string,mixed>|null $feed
+	 * @param array<string,mixed>      $feed
 	 * @return array<string,string> Subscriber field key => value; always has email, first_name, middle_name and last_name.
 	 */
-	public function map( array $form, array $entry, $feed = null ): array {
+	public function map( array $form, array $entry, array $feed ): array {
 		/**
-		 * Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field, or the form has no feed. Default `false`.
+		 * Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field. Default `false`.
 		 *
-		 * Return true to fill them from the first matching form field. While it is false, a form without a feed has no email address, so nothing is sent.
+		 * Return true to fill them from the first matching form field. While it is false, a feed without an email mapping has no email address, so nothing is sent.
 		 *
 		 * @param bool       $enabled
 		 * @param array      $form
 		 * @param array      $entry
-		 * @param array|null $feed
+		 * @param array      $feed
 		 */
 		$auto_enabled = (bool) apply_filters( 'wk_gf_auto_map_fields', false, $form, $entry, $feed );
 		$values       = $auto_enabled ? $this->from_auto( $form, $entry ) : $this->empty_map();
-
-		if ( ! is_array( $feed ) ) {
-			return $values;
-		}
 
 		$mapped = $this->addon->get_field_map_fields( $feed, 'mapped_fields' );
 		foreach ( (array) $mapped as $key => $field_id ) {

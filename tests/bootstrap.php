@@ -70,6 +70,10 @@ if (! class_exists('GFFeedAddOn')) {
 
         public function update_plugin_settings($settings) {}
 
+        public function get_current_form() {
+            return false;
+        }
+
         public function get_feed($id) {
             return false;
         }

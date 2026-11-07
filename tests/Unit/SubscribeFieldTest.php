@@ -44,119 +44,26 @@ it('exports consent as Yes only when checked', function () {
         ->and($field->get_value_export(['5' => '']))->toBe('');
 });
 
-it('asks to configure the API in the editor when there are no credentials, without calling it', function () {
-    Brain\Monkey\Functions\when('get_option')->justReturn([]);
+it('points to the form\'s Wereldkundig feeds for the themes, without calling the API', function () {
     wk_editor_stubs();
+    Brain\Monkey\Functions\expect('get_option')->never();
     Brain\Monkey\Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
 
     ob_start();
-    SubscribeField::editor_settings(0, 1);
+    SubscribeField::editor_settings(0, 3);
     $html = ob_get_clean();
 
-    expect($html)->toContain('Configure Wereldkundig API settings')
-        ->not->toContain('No Wereldkundig themes available');
+    expect($html)->toContain('<a href="https://site.test/wp-admin/admin.php?page=gf_edit_forms&view=settings&subview=wereldkundig&id=3">Wereldkundig feed</a>')
+        ->not->toContain('wk-theme-checkbox');
 });
 
-it('says no themes are available in the editor when configured but nothing is cached, without calling the API', function () {
-    Brain\Monkey\Functions\when('get_option')->justReturn(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
-    wk_editor_stubs();
-    Brain\Monkey\Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
-
-    ob_start();
-    SubscribeField::editor_settings(0, 1);
-    $html = ob_get_clean();
-
-    expect($html)->toContain('No Wereldkundig themes available')
-        ->not->toContain('Configure Wereldkundig API settings');
-});
-
-it('lists the cached themes in the editor', function () {
-    Brain\Monkey\Functions\when('get_option')->alias(static function ($name) {
-        return Wereldkundig\GravityForms\Api\Client::FIELDS_OPTION === $name
-            ? ['key' => md5('https://platform.example.nl/wp-json/wereldkundig|abc'), 'response' => ['options' => ['categories' => [['id' => 'theme-9', 'name' => 'Cached']]]]]
-            : ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
-    });
-    wk_editor_stubs();
-    Brain\Monkey\Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
-
-    ob_start();
-    SubscribeField::editor_settings(0, 1);
-    $html = ob_get_clean();
-
-    expect($html)->toContain('class="wk-theme-checkbox" id="wk_theme_theme-9" value="theme-9"')
-        ->toContain('>Cached</label>')
-        ->not->toContain('wk-theme-notice');
-});
-
-it('shows the categories of each theme, children indented', function () {
-    Brain\Monkey\Functions\when('get_option')->alias(static function ($name) {
-        return Wereldkundig\GravityForms\Api\Client::FIELDS_OPTION === $name
-            ? ['key' => md5('https://platform.example.nl/wp-json/wereldkundig|abc'), 'response' => ['options' => ['categories' => [[
-                'id'         => 'theme-13281',
-                'name'       => 'Gebieden',
-                'categories' => [['id' => 'select-all-36', 'name' => 'Alles in Gebieden', 'children' => [['id' => 'category-36-37', 'name' => 'Bergschenhoek']]]],
-            ]]]]]
-            : ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
-    });
-    wk_editor_stubs();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
-
-    ob_start();
-    SubscribeField::editor_settings(0, 1);
-    $html = ob_get_clean();
-
-    expect($html)->toContain('value="select-all-36" data-theme="theme-13281"')
-        ->toContain('value="category-36-37" data-theme="theme-13281"')
-        ->toContain('<div style="margin-left: 20px;">')
-        ->toContain('>Alles in Gebieden</label>');
-});
-
-it('reads only valid theme and category IDs of a field', function () {
-    expect(SubscribeField::theme_ids_of((object) ['wk_theme_ids' => ['theme-1', 'theme-1', '', '<b>']]))->toBe(['theme-1'])
-        ->and(SubscribeField::theme_ids_of((object) []))->toBe([])
-        ->and(SubscribeField::category_ids_of((object) ['wk_category_ids' => ['category-1', 'category-1-2', 'select-all-3', 'theme-1', 'x']]))->toBe(['category-1', 'category-1-2', 'select-all-3']);
-});
-
-it('keeps only theme and category IDs when the form is saved', function () {
+it('keeps the checked by default setting a boolean when the form is saved', function () {
     $field                     = new SubscribeField();
-    $field->wk_theme_ids       = ['theme-2', '"><script>'];
-    $field->wk_category_ids    = ['category-5', '"><script>'];
     $field->wk_default_checked = '1';
 
     $field->sanitize_settings();
 
-    expect($field->wk_theme_ids)->toBe(['theme-2'])
-        ->and($field->wk_category_ids)->toBe(['category-5'])
-        ->and($field->wk_default_checked)->toBeTrue();
-});
-
-it('links the editor notice to the Wereldkundig settings page', function () {
-    Brain\Monkey\Functions\when('get_option')->justReturn([]);
-    wk_editor_stubs();
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
-
-    ob_start();
-    SubscribeField::editor_settings(0, 1);
-    $html = ob_get_clean();
-
-    expect($html)->toContain('<a href="https://site.test/wp-admin/admin.php?page=gf_settings&subview=wereldkundig" style="color: #3f0001;">Configure Wereldkundig API settings</a>')
-        ->toContain('border-left: 4px solid #d63638; background: #fcf0f1; color: #3f0001;');
-});
-
-it('shows the editor notice without a link to users who cannot open the settings', function () {
-    Brain\Monkey\Functions\when('get_option')->justReturn([]);
-    wk_editor_stubs(false);
-    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
-
-    ob_start();
-    SubscribeField::editor_settings(0, 1);
-    $html = ob_get_clean();
-
-    expect($html)->toContain('Configure Wereldkundig API settings')
-        ->not->toContain('<a href=');
+    expect($field->wk_default_checked)->toBeTrue();
 });
 
 function wk_default_checked_field(): SubscribeField {

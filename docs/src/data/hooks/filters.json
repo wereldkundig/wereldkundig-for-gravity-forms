@@ -64,8 +64,8 @@
             "file": "Mapper.php",
             "type": "filter",
             "doc": {
-                "description": "Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field, or the form has no feed. Default `false`.",
-                "long_description": "Return true to fill them from the first matching form field. While it is false, a form without a feed has no email address, so nothing is sent.",
+                "description": "Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field. Default `false`.",
+                "long_description": "Return true to fill them from the first matching form field. While it is false, a feed without an email mapping has no email address, so nothing is sent.",
                 "tags": [
                     {
                         "name": "param",
@@ -95,13 +95,12 @@
                         "name": "param",
                         "content": "",
                         "types": [
-                            "array",
-                            "null"
+                            "array"
                         ],
                         "variable": "$feed"
                     }
                 ],
-                "long_description_html": "<p>Return true to fill them from the first matching form field. While it is false, a form without a feed has no email address, so nothing is sent.</p>"
+                "long_description_html": "<p>Return true to fill them from the first matching form field. While it is false, a feed without an email mapping has no email address, so nothing is sent.</p>"
             },
             "args": 4
         },
@@ -183,8 +182,7 @@
                         "name": "param",
                         "content": "",
                         "types": [
-                            "array",
-                            "null"
+                            "array"
                         ],
                         "variable": "$feed"
                     }
@@ -229,8 +227,7 @@
                         "name": "param",
                         "content": "",
                         "types": [
-                            "array",
-                            "null"
+                            "array"
                         ],
                         "variable": "$feed"
                     }
@@ -284,8 +281,7 @@
                         "name": "param",
                         "content": "",
                         "types": [
-                            "array",
-                            "null"
+                            "array"
                         ],
                         "variable": "$feed"
                     }
@@ -339,8 +335,7 @@
                         "name": "param",
                         "content": "",
                         "types": [
-                            "array",
-                            "null"
+                            "array"
                         ],
                         "variable": "$feed"
                     }

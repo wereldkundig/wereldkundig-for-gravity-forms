@@ -21,6 +21,17 @@ uses(TestCase::class)
             return $default;
         });
 
+        Functions\when('rgars')->alias(static function ($value, $path, $default = null) {
+            foreach (explode('/', $path) as $key) {
+                if (!is_array($value) || !array_key_exists($key, $value)) {
+                    return $default;
+                }
+                $value = $value[$key];
+            }
+
+            return $value;
+        });
+
         Functions\when('rgblank')->alias(static fn ($value): bool => null === $value || '' === $value || [] === $value);
         Functions\when('sanitize_email')->alias(static fn ($value): string => trim((string) $value));
         Functions\when('sanitize_text_field')->alias(static fn ($value): string => trim(strip_tags((string) $value)));

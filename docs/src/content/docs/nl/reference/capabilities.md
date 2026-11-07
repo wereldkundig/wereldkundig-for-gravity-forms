@@ -7,6 +7,6 @@ De add-on heeft eigen rechten (capabilities), zodat je ze los kunt toekennen, bi
 
 | Recht | Geeft toegang tot |
 |---|---|
-| `gravityforms_wereldkundig` | De Wereldkundig-instellingenpagina, en de link daarheen in de meldingen in de formuliereditor. |
+| `gravityforms_wereldkundig` | De Wereldkundig-instellingenpagina, en de link daarheen op de Wereldkundig-feedpagina van een formulier zolang het platform niet is gekoppeld. |
 | `gravityforms_wereldkundig_uninstall` | De add-on verwijderen uit Gravity Forms. |
 | `gravityforms_edit_forms` (Gravity Forms) | Wereldkundig-feeds onder **Formulierinstellingen**. |

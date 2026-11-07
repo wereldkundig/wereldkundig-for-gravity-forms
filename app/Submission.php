@@ -13,25 +13,25 @@ class Submission {
 	}
 
 	/**
-	 * @param array<int|string,mixed>  $entry
-	 * @param array<string,mixed>      $form
-	 * @param array<string,mixed>|null $feed
+	 * Sends the subscriber of a feed: the feed's subscribe checkbox must be checked, the feed's themes are subscribed.
+	 *
+	 * @param array<int|string,mixed> $entry
+	 * @param array<string,mixed>     $form
+	 * @param array<string,mixed>     $feed
 	 * @return true|\WP_Error|null True on success, a WP_Error on failure, null when skipped.
 	 *                             Gravity Forms saves the error's code and message as the feed status.
 	 */
-	public function handle( array $entry, array $form, $feed = null ) {
+	public function handle( array $entry, array $form, array $feed ) {
 		if ( 'spam' === rgar( $entry, 'status' ) ) {
 			return null;
 		}
 
-		$subscribe_fields = $this->subscribe_fields( $form );
-		if ( ! $subscribe_fields ) {
-			$this->addon->log_debug( __METHOD__ . '(): Wereldkundig field not on form; skipping API.' );
-			return null;
+		$field = $this->feed_subscribe_field( $form, $feed );
+		if ( ! $field ) {
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_subscribe_field_missing', __( 'The subscribe checkbox chosen in the feed is not on the form; choose one in the feed settings. Subscriber not sent.', 'gravityformswereldkundig' ) ) );
 		}
 
-		$checked = array_filter( $subscribe_fields, fn ( $field ): bool => $this->is_checked( $field, $entry ) );
-		if ( ! $checked ) {
+		if ( ! $this->is_checked( $field, $entry ) ) {
 			$this->addon->log_debug( __METHOD__ . '(): Subscribe checkbox not checked; skipping API.' );
 			return null;
 		}
@@ -42,26 +42,18 @@ class Submission {
 			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_themes_unavailable', __( 'Could not load the Wereldkundig themes; check the API connection. Subscriber not sent.', 'gravityformswereldkundig' ) ) );
 		}
 
-		// Every checked field adds its themes. Prevention: only theme IDs the API knows, and only categories of that theme. IDs are public, not secrets.
+		// Prevention: only theme IDs the API knows, and only categories of that theme. IDs are public, not secrets.
 		$themes  = array();
-		$invalid = array();
-		foreach ( $checked as $field ) {
-			$theme_ids = SubscribeField::theme_ids_of( $field );
-			if ( ! $theme_ids ) {
-				$invalid[] = '';
+		$chosen  = Addon::feed_themes( $feed );
+		$invalid = $chosen ? array() : array( '' );
+		foreach ( $chosen as $theme_id => $categories ) {
+			$theme = $client->find_theme( $theme_id );
+			if ( ! $theme ) {
+				$invalid[] = $theme_id;
+				continue;
 			}
 
-			$categories = SubscribeField::category_ids_of( $field );
-			foreach ( $theme_ids as $theme_id ) {
-				$theme = $client->find_theme( $theme_id );
-				if ( ! $theme ) {
-					$invalid[] = $theme_id;
-					continue;
-				}
-
-				$chosen                 = array_values( array_intersect( $categories, array_keys( $theme['categories'] ) ) );
-				$themes[ $theme['id'] ] = $this->merge_categories( $themes[ $theme['id'] ] ?? null, $chosen );
-			}
+			$themes[ $theme['id'] ] = array_values( array_intersect( $categories, array_keys( $theme['categories'] ) ) );
 		}
 
 		$error = null;
@@ -73,7 +65,7 @@ class Submission {
 				new \WP_Error(
 					'wk_theme_invalid',
 					sprintf(
-					/* translators: %s: comma separated theme IDs, empty when the field has no theme. */
+					/* translators: %s: comma separated theme IDs, empty when the feed has no theme. */
 						__( 'Invalid Wereldkundig theme: %s.', 'gravityformswereldkundig' ),
 						implode( ', ', array_map( static fn ( $id ): string => '' === $id ? __( 'none selected', 'gravityformswereldkundig' ) : $id, array_unique( $invalid ) ) )
 					)
@@ -96,7 +88,7 @@ class Submission {
 		 * @param array<string,string[]> $themes
 		 * @param array                  $entry
 		 * @param array                  $form
-		 * @param array|null             $feed
+		 * @param array                  $feed
 		 */
 		$themes = apply_filters( 'wk_gf_subscribe_themes', $themes, $entry, $form, $feed );
 
@@ -106,7 +98,7 @@ class Submission {
 		 * @param array<string,string[]> $themes
 		 * @param array                  $entry
 		 * @param array                  $form
-		 * @param array|null             $feed
+		 * @param array                  $feed
 		 */
 		$themes = apply_filters( "wk_gf_subscribe_themes_{$form_id}", $themes, $entry, $form, $feed );
 
@@ -118,7 +110,7 @@ class Submission {
 		 * @param array<string,string[]>     $themes
 		 * @param array                      $entry
 		 * @param array                      $form
-		 * @param array|null                 $feed
+		 * @param array                      $feed
 		 */
 		$subscriber = apply_filters( 'wk_gf_subscriber_pre_subscribe', $subscriber, $themes, $entry, $form, $feed );
 
@@ -129,7 +121,7 @@ class Submission {
 		 * @param array<string,string[]>     $themes
 		 * @param array                      $entry
 		 * @param array                      $form
-		 * @param array|null                 $feed
+		 * @param array                      $feed
 		 */
 		$subscriber = apply_filters( "wk_gf_subscriber_pre_subscribe_{$form_id}", $subscriber, $themes, $entry, $form, $feed );
 
@@ -156,15 +148,9 @@ class Submission {
 						'title' => rgar( $form, 'title' ),
 					),
 					'entry_id'   => rgar( $entry, 'id' ),
-					'feed_id'    => is_array( $feed ) ? rgar( $feed, 'id' ) : null,
-					'checked'    => array_map(
-						static fn ( $field ): array => array(
-							'field_id'   => $field->id,
-							'themes'     => SubscribeField::theme_ids_of( $field ),
-							'categories' => SubscribeField::category_ids_of( $field ),
-						),
-						array_values( $checked )
-					),
+					'feed_id'    => rgar( $feed, 'id' ),
+					'field_id'   => $field->id,
+					'chosen'     => $chosen,
 					'themes'     => $themes,
 					'subscriber' => $subscriber,
 					'result'     => is_wp_error( $result ) ? array(
@@ -186,25 +172,6 @@ class Submission {
 
 		// The valid themes were subscribed; an invalid one still marks the submission as failed.
 		return $error ?? true;
-	}
-
-	/**
-	 * The same theme from several fields: the whole theme (no categories) wins, otherwise the categories add up.
-	 *
-	 * @param string[]|null $current Null when the theme isn't chosen yet.
-	 * @param string[]      $chosen
-	 * @return string[]
-	 */
-	private function merge_categories( ?array $current, array $chosen ): array {
-		if ( null === $current ) {
-			return $chosen;
-		}
-
-		if ( ! $current || ! $chosen ) {
-			return array();
-		}
-
-		return array_values( array_unique( array_merge( $current, $chosen ) ) );
 	}
 
 	/**
@@ -256,10 +223,34 @@ class Submission {
 	}
 
 	/**
+	 * The feed's subscribe checkbox. A form with one subscribe field always uses that one, whatever the feed
+	 * stored, so a feed saved before the field was added still sends. With several, the feed's choice must
+	 * still be on the form; null otherwise.
+	 *
+	 * @param array<string,mixed> $form
+	 * @param array<string,mixed> $feed
+	 */
+	private function feed_subscribe_field( array $form, array $feed ): ?\GF_Field {
+		$fields = self::subscribe_fields( $form );
+		if ( 1 === count( $fields ) ) {
+			return $fields[0];
+		}
+
+		$field_id = (string) rgars( $feed, 'meta/subscribe_field' );
+		foreach ( $fields as $field ) {
+			if ( '' !== $field_id && (string) $field->id === $field_id ) {
+				return $field;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * @param array<string,mixed> $form
 	 * @return list<\GF_Field> All Wereldkundig subscribe fields on the form, in form order.
 	 */
-	private function subscribe_fields( array $form ): array {
+	public static function subscribe_fields( array $form ): array {
 		return array_values(
 			array_filter(
 				(array) rgar( $form, 'fields', array() ),
@@ -278,15 +269,15 @@ class Submission {
 	}
 
 	/**
-	 * Logs the error and adds it to the entry, as feed error (with a feed) or entry note (without), with the code
-	 * so it can be looked up, and the email once the subscriber was sent.
+	 * Logs the error and adds it to the entry as feed error, with the code so it can be looked up, and the email
+	 * once the subscriber was sent.
 	 *
-	 * @param array<string,mixed>|null $feed
-	 * @param array<int|string,mixed>  $entry
-	 * @param array<string,mixed>      $form
+	 * @param array<string,mixed>     $feed
+	 * @param array<int|string,mixed> $entry
+	 * @param array<string,mixed>     $form
 	 * @return \WP_Error The same error, to return from handle().
 	 */
-	private function fail( $feed, array $entry, array $form, \WP_Error $error, string $email = '' ): \WP_Error {
+	private function fail( array $feed, array $entry, array $form, \WP_Error $error, string $email = '' ): \WP_Error {
 		$message = '' !== $email
 			? sprintf(
 				/* translators: 1: email address, 2: error message, 3: error code. */
@@ -305,10 +296,8 @@ class Submission {
 		$this->addon->log_error( __METHOD__ . '(): ' . $message );
 
 		// Gravity Forms shows notes through wp_kses_post(); the API message must not add markup.
-		if ( is_array( $feed ) && ! empty( $entry['id'] ) ) {
+		if ( ! empty( $entry['id'] ) ) {
 			$this->addon->add_feed_error( esc_html( $message ), $feed, $entry, $form );
-		} elseif ( ! empty( $entry['id'] ) ) {
-			$this->addon->add_note( $entry['id'], esc_html( $message ), 'error' );
 		}
 
 		return $error;

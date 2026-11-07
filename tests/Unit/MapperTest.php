@@ -17,10 +17,20 @@ function wk_test_field(int $id, string $type, string $label = '', array $propert
     return $field;
 }
 
+/**
+ * The add-on, with a feed that maps no fields.
+ */
+function wk_mapper_addon(): Mockery\MockInterface {
+    $addon = Mockery::mock(Addon::class);
+    $addon->shouldReceive('get_field_map_fields')->andReturn([]);
+
+    return $addon;
+}
+
 it('auto-maps the first Gravity Forms email and name fields', function () {
     $GLOBALS['wk_test_filter_values']['wk_gf_auto_map_fields'] = true;
 
-    $addon = Mockery::mock(Addon::class);
+    $addon = wk_mapper_addon();
     $form  = [
         'fields' => [
             wk_test_field(1, 'email', 'Email'),
@@ -34,7 +44,7 @@ it('auto-maps the first Gravity Forms email and name fields', function () {
         '2.6' => 'Gogh',
     ];
 
-    expect((new Mapper($addon))->map($form, $entry))->toBe([
+    expect((new Mapper($addon))->map($form, $entry, ['meta' => []]))->toBe([
         'email'       => 'reader@example.com',
         'first_name'  => 'Vincent',
         'middle_name' => 'van',
@@ -110,13 +120,13 @@ it('auto-maps a tussenvoegsel text field', function () {
 
     $form  = ['fields' => [wk_test_field(1, 'text', 'Tussenvoegsel')]];
 
-    expect((new Mapper(Mockery::mock(Addon::class)))->map($form, ['1' => 'de'])['middle_name'])->toBe('de');
+    expect((new Mapper(wk_mapper_addon()))->map($form, ['1' => 'de'], ['meta' => []])['middle_name'])->toBe('de');
 });
 
 it('does not auto-map by default', function () {
     $form = ['fields' => [wk_test_field(1, 'email', 'Email')]];
 
-    expect((new Mapper(Mockery::mock(Addon::class)))->map($form, ['1' => 'reader@example.com']))->toBe([
+    expect((new Mapper(wk_mapper_addon()))->map($form, ['1' => 'reader@example.com'], ['meta' => []]))->toBe([
         'email'       => '',
         'first_name'  => '',
         'middle_name' => '',

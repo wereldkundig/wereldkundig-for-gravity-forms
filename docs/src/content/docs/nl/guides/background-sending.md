@@ -10,7 +10,7 @@ Formulieren met een Wereldkundig-feed versturen de abonnee op de achtergrond, zo
 3. Aan het eind van het verzoek stuurt Gravity Forms een verzoek naar zijn eigen site (een loopback-verzoek). Dat verstuurt de abonnee en voegt de notitie bij de inzending toe.
 4. Een WP-Cron-controle, elke 5 minuten, pakt alles op wat het loopback-verzoek heeft gemist.
 
-Een formulier **zonder** Wereldkundig-feed schrijft nog steeds in tijdens het versturen, want de wachtrij van Gravity Forms verwerkt alleen feeds.
+Een formulier **zonder** Wereldkundig-feed verstuurt niets; zie [Feeds en veldkoppeling](/nl/guides/feeds-and-mapping/).
 
 ## Loopback-verzoeken
 
@@ -26,7 +26,7 @@ add_filter('gform_max_async_feed_attempts', function () {
 });
 ```
 
-Fouten die een nieuwe poging niet oplost, worden nooit opnieuw geprobeerd: een ongeldig thema of e-mailadres, ontbrekende gegevens of een `http://`-URL, abonneegegevens die niet naar JSON kunnen worden omgezet, en elk `4xx`-antwoord behalve `408` en `429`. Time-outs, `5xx`-antwoorden en thema's die niet konden worden geladen, worden wel opnieuw geprobeerd. Zie [Notities en foutmeldingen](/nl/reference/entry-notes-and-errors/).
+Fouten die een nieuwe poging niet oplost, worden nooit opnieuw geprobeerd: een ongeldig thema of e-mailadres, een inschrijfvinkje dat niet meer op het formulier staat, ontbrekende gegevens of een `http://`-URL, abonneegegevens die niet naar JSON kunnen worden omgezet, en elk `4xx`-antwoord behalve `408` en `429`. Time-outs, `5xx`-antwoorden en thema's die niet konden worden geladen, worden wel opnieuw geprobeerd. Zie [Notities en foutmeldingen](/nl/reference/entry-notes-and-errors/).
 
 ## Toch versturen tijdens het versturen van het formulier
 

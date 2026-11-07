@@ -5,14 +5,15 @@ description: What happens on submit, the notes an entry gets, and every error co
 
 ## What happens on submit
 
-For a form with or without a feed:
+A form without a Wereldkundig feed sends nothing. For every feed of the form whose condition matches:
 
 1. Spam entries are skipped.
-2. No subscribe field on the form, or none checked: skipped. Nothing is noted, only logged when [logging](/troubleshooting/#logging) is on.
-3. The themes of every checked field are checked against the platform's themes, and only categories of that theme are kept.
-4. The subscriber fields are [mapped](/guides/feeds-and-mapping/), then the [`wk_gf_subscribe_themes` and `wk_gf_subscriber_pre_subscribe`](/reference/hooks/) filters run. They can change or skip the subscribe.
-5. One request to the platform, with all themes and categories.
-6. The entry gets a note with the result.
+2. The form has no subscribe field, or several and the feed's **Subscribe checkbox** isn't one of them: the error `wk_subscribe_field_missing`. A form with one subscribe field always uses that one.
+3. That checkbox isn't checked: skipped. Nothing is noted, only logged when [logging](/troubleshooting/#logging) is on.
+4. The feed's themes are checked against the platform's themes, and only categories of that theme are kept.
+5. The subscriber fields are [mapped](/guides/feeds-and-mapping/), then the [`wk_gf_subscribe_themes` and `wk_gf_subscriber_pre_subscribe`](/reference/hooks/) filters run. They can change or skip the subscribe.
+6. One request to the platform, with all themes and categories of the feed.
+7. The entry gets a note with the result.
 
 ## Entry notes
 
@@ -28,15 +29,16 @@ On failure:
 
 Errors found before the request is sent read **{message} (code: {code})**.
 
-With a feed, a failure is a feed error: it shows as an entry note, in the Gravity Forms log, and as the feed status of the entry. Without a feed it is an entry note.
+A failure is a feed error: it shows as an entry note, in the Gravity Forms log, and as the feed status of the entry.
 
 ## Errors before the request
 
 | Code | Message | Cause |
 |---|---|---|
+| `wk_subscribe_field_missing` | The subscribe checkbox chosen in the feed is not on the form; choose one in the feed settings. Subscriber not sent. | The form has no subscribe field: add one. Or it has several, and the feed's **Subscribe checkbox** was removed from the form or never chosen: choose one in the feed. |
 | `wk_themes_unavailable` | Could not load the Wereldkundig themes; check the API connection. Subscriber not sent. | No themes at all: the platform isn't connected or can't be reached. |
-| `wk_theme_invalid` | Invalid Wereldkundig theme: theme-9. | A checked field has a theme the platform doesn't have (anymore), or no theme at all. The valid themes are still subscribed, but the result counts as failed. |
-| `wk_email_invalid` | No valid email address to subscribe. | No feed maps the email address (and [auto-detected fields](/guides/feeds-and-mapping/#auto-detected-fields) are off), or the email field is empty or not a valid address. |
+| `wk_theme_invalid` | Invalid Wereldkundig theme: theme-9. | The feed has a theme the platform doesn't have (anymore), or no theme at all (**none selected**). The valid themes are still subscribed, but the result counts as failed. |
+| `wk_email_invalid` | No valid email address to subscribe. | The feed doesn't map the email address (and [auto-detected fields](/guides/feeds-and-mapping/#auto-detected-fields) are off), or the email field is empty or not a valid address. |
 
 ## Errors from the platform
 

@@ -1,6 +1,6 @@
 ---
 title: Opgeslagen gegevens
-description: De opties, veldinstellingen en kenmerken die de add-on in WordPress opslaat.
+description: De opties, feedinstellingen en kenmerken die de add-on in WordPress opslaat.
 ---
 
 ## Opties
@@ -15,12 +15,16 @@ Elke site heeft zijn eigen.
 
 ## Het inschrijfveld
 
-Het veldtype is `wk_subscribe`. De instellingen worden in het formulier opgeslagen:
+Het veldtype is `wk_subscribe`. De enige eigen instelling, `wk_default_checked`, wordt in het formulier opgeslagen.
 
-- `wk_theme_ids`: de ID's van de aangevinkte thema's;
-- `wk_category_ids`: de categoriesleutels die in die thema's zijn aangevinkt.
+## Feeds
 
-Bij het opslaan van het formulier blijven alleen geldige ID's over.
+Een Wereldkundig-feed slaat deze op in zijn `meta`, naast de eigen `feedName`, `mapped_fields_*` en `feed_condition_*` van Gravity Forms:
+
+- `subscribe_field`: het veld-ID van het inschrijfvinkje, het enige van het formulier als het er één heeft;
+- `wk_themes`: thema-ID => de categoriesleutels die in dat thema zijn aangevinkt, waarbij een lege lijst het hele thema betekent. Bijvoorbeeld `{"theme-1": [], "theme-2": ["category-36-37"]}`.
+
+Alleen geldige thema- en categorie-ID's worden opgeslagen.
 
 ## Kenmerken
 

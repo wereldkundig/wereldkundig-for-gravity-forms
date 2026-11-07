@@ -12,10 +12,10 @@ Subscribe Gravity Forms submitters to the themes of your Wereldkundig platform.
 
 == Description ==
 
-A visitor ticks a **Wereldkundig subscribe me** checkbox on a Gravity Forms form. On submit, the add-on sends their email address (and name, and any other fields you map) to your Wereldkundig platform, which subscribes them to the themes, or only some of their categories, chosen for that checkbox.
+A visitor ticks a **Wereldkundig subscribe me** checkbox on a Gravity Forms form. On submit, the add-on sends their email address (and name, and any other fields you map) to your Wereldkundig platform, which subscribes them to the themes, or only some of their categories, chosen in the form's Wereldkundig feed for that checkbox.
 
-* A **Wereldkundig subscribe me** field for the form editor, with the themes and categories it subscribes to.
-* A Wereldkundig feed per form to map the email address, names and other subscriber fields, with conditional logic.
+* A **Wereldkundig subscribe me** consent checkbox for the form editor.
+* A Wereldkundig feed per checkbox that chooses the themes and categories, maps the email address, names and other subscriber fields, and adds conditional logic. Without a feed, nothing is sent.
 * Subscribers are sent in the background right after the submit; the result is added to the entry as a note.
 * The themes and subscriber fields are fetched from the platform when you save the settings and refreshed every hour.
 * The Basic Auth code is never shown in full, and can be kept out of the database with constants in `wp-config.php`.
@@ -31,7 +31,7 @@ The add-on requires [Gravity Forms](https://www.gravityforms.com/) 2.5 or later 
 2. Upload the plugin through **Plugins > Add New Plugin**, or put the `gravityformswereldkundig` folder in `wp-content/plugins/`.
 3. Activate the plugin. On multisite, network-activate it.
 4. Go to **Forms > Settings > Wereldkundig**, enter the platform URL and Basic Auth code, and save.
-5. Add a **Wereldkundig subscribe me** field to a form, check its themes, and add a Wereldkundig feed under **Form Settings > Wereldkundig**.
+5. Add a **Wereldkundig subscribe me** field to a form, then add a Wereldkundig feed under **Form Settings > Wereldkundig** that chooses its themes and the email field. With more than one subscribe field on the form, the feed also chooses the checkbox.
 
 == Frequently Asked Questions ==
 
@@ -43,9 +43,9 @@ From Wereldkundig, for your own platform.
 
 Yes. Define `WK_API_URL` and `WK_API_AUTH` in `wp-config.php`; each constant wins over its field on the settings page.
 
-= Why does the Themes setting say there are no themes? =
+= Why does the feed say it could not load the themes? =
 
-The add-on hasn't fetched them yet. Check the connection under **Forms > Settings > Wereldkundig** and save the settings to fetch the themes again.
+The add-on hasn't fetched them yet, or the platform can't be reached. Check the connection under **Forms > Settings > Wereldkundig** and save the settings to fetch the themes again.
 
 = How do I know a subscriber was sent? =
 

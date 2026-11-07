@@ -67,7 +67,6 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public function init() {
 		parent::init();
-		add_action( 'gform_after_submission', array( $this, 'maybe_subscribe_without_feed' ), 10, 2 );
 		add_filter( 'gform_field_map_choices', array( $this, 'hide_inactive_name_inputs' ), 10, 2 );
 		FieldsRefresh::register( $this );
 	}
@@ -127,8 +126,26 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public function feed_list_columns() {
 		return array(
-			'feedName' => esc_html__( 'Name', 'gravityformswereldkundig' ),
+			'feedName'  => esc_html__( 'Name', 'gravityformswereldkundig' ),
+			'wk_themes' => esc_html__( 'Themes', 'gravityformswereldkundig' ),
 		);
+	}
+
+	/**
+	 * The feed's theme names in the feed list, from the cache only; unknown theme IDs as they are.
+	 *
+	 * @param array<string,mixed> $feed
+	 * @return string
+	 */
+	public function get_column_value_wk_themes( $feed ) {
+		$client = new Client();
+		$names  = array();
+		foreach ( array_keys( self::feed_themes( $feed ) ) as $theme_id ) {
+			$theme   = $client->find_theme( $theme_id, false );
+			$names[] = $theme['name'] ?? $theme_id;
+		}
+
+		return esc_html( implode( ', ', $names ) );
 	}
 
 	/**
@@ -136,6 +153,7 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public function feed_settings_fields() {
 		$field_map = $this->fields_for_feed_mapping();
+		$themes    = $this->register_setting_field( 'wk_themes', ThemesSettingField::class ) && ( new Client() )->themes_setup();
 
 		return array(
 			array(
@@ -154,6 +172,19 @@ class Addon extends \GFFeedAddOn {
 						'default_value' => $this->get_default_feed_name(),
 						'class'         => 'medium',
 					),
+					...$this->subscribe_field_settings(),
+					$themes ? array(
+						'name'     => 'wk_themes',
+						'label'    => esc_html__( 'Themes', 'gravityformswereldkundig' ),
+						'type'     => 'wk_themes',
+						'required' => true,
+						'tooltip'  => '<h6>' . esc_html__( 'Themes', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'Subscribers are added to every checked Wereldkundig theme. Check categories of a theme to subscribe to only those; without checked categories the whole theme is subscribed.', 'gravityformswereldkundig' ),
+					) : array(
+						'name'  => 'wk_themes_unavailable',
+						'label' => esc_html__( 'Themes', 'gravityformswereldkundig' ),
+						'type'  => 'html',
+						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the themes from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. The checked themes are kept.', 'gravityformswereldkundig' ) . '</div>',
+					),
 					$field_map ? array(
 						'name'        => 'mapped_fields',
 						'label'       => esc_html__( 'Map Fields', 'gravityformswereldkundig' ),
@@ -171,7 +202,7 @@ class Addon extends \GFFeedAddOn {
 						'name'    => 'feed_condition',
 						'label'   => esc_html__( 'Conditional Logic', 'gravityformswereldkundig' ),
 						'type'    => 'feed_condition',
-						'tooltip' => '<h6>' . esc_html__( 'Conditional Logic', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'When enabled, the subscriber is only sent when the condition is met. The subscribe checkbox must still be checked.', 'gravityformswereldkundig' ),
+						'tooltip' => '<h6>' . esc_html__( 'Conditional Logic', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'When enabled, the subscriber is only sent when the condition is met. The subscribe checkbox chosen above must still be checked.', 'gravityformswereldkundig' ),
 					),
 				),
 			),
@@ -200,7 +231,7 @@ class Addon extends \GFFeedAddOn {
 			) . '</strong>';
 		}
 
-		$masked = $this->register_api_auth_field();
+		$masked = $this->register_setting_field( 'wk_api_auth', ApiAuthSettingField::class );
 
 		return array(
 			array(
@@ -256,11 +287,14 @@ class Addon extends \GFFeedAddOn {
 	}
 
 	/**
-	 * Registers the masked Basic Auth field type. Gravity Forms only loads its settings field classes on demand.
+	 * Registers one of our settings field types (the masked Basic Auth code, the feed's themes).
+	 * Gravity Forms only loads its settings field classes on demand.
 	 *
-	 * @return bool Whether the wk_api_auth type is available; false falls back to a plain text field.
+	 * @param string       $type
+	 * @param class-string $class_name
+	 * @return bool Whether the type is available; false (older Gravity Forms) falls back to a core field or a notice.
 	 */
-	private function register_api_auth_field() {
+	private function register_setting_field( string $type, string $class_name ) {
 		$fields = 'Gravity_Forms\Gravity_Forms\Settings\Fields';
 		if ( ! class_exists( $fields ) && class_exists( 'GFCommon' ) ) {
 			require_once \GFCommon::get_base_path() . '/includes/settings/class-fields.php';
@@ -270,11 +304,157 @@ class Addon extends \GFFeedAddOn {
 			return false;
 		}
 
-		if ( ! $fields::exists( 'wk_api_auth' ) ) {
-			$fields::register( 'wk_api_auth', ApiAuthSettingField::class );
+		if ( ! $fields::exists( $type ) ) {
+			$fields::register( $type, $class_name );
 		}
 
 		return true;
+	}
+
+	/**
+	 * The Subscribe checkbox settings, by the number of subscribe fields on the form whose feed is being edited:
+	 * - none: a notice to add one;
+	 * - one: no choice to make, the feed stores that field (see Submission::feed_subscribe_field());
+	 * - several: a required select.
+	 *
+	 * @return list<array<string,mixed>>
+	 */
+	private function subscribe_field_settings(): array {
+		$form   = $this->get_current_form();
+		$fields = Submission::subscribe_fields( is_array( $form ) ? $form : array() );
+		$label  = esc_html__( 'Subscribe checkbox', 'gravityformswereldkundig' );
+
+		if ( ! $fields ) {
+			return array(
+				array(
+					'name'  => 'subscribe_field_unavailable',
+					'label' => $label,
+					'type'  => 'html',
+					'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'This form has no Wereldkundig subscribe me field. Add one in the form editor: the feed then uses it, no need to edit the feed again.', 'gravityformswereldkundig' ) . '</div>',
+				),
+			);
+		}
+
+		if ( 1 === count( $fields ) ) {
+			$only = (string) $fields[0]->id;
+
+			return array(
+				array(
+					'name'  => 'subscribe_field_only',
+					'label' => $label,
+					'type'  => 'html',
+					'html'  => '<p>' . sprintf(
+						/* translators: %s: the field label and ID, like "Nieuwsbrief (field 5)". */
+						esc_html__( '%s, the only subscribe checkbox of this form.', 'gravityformswereldkundig' ),
+						'<code>' . esc_html( self::subscribe_field_label( $fields[0] ) ) . '</code>'
+					) . '</p>',
+				),
+				// Stored, so the feed keeps this checkbox when another subscribe field is added later.
+				array(
+					'name'          => 'subscribe_field',
+					'type'          => 'hidden',
+					'default_value' => $only,
+					'save_callback' => function () use ( $only ) {
+						return $only;
+					},
+				),
+			);
+		}
+
+		$choices = array(
+			array(
+				'label' => esc_html__( 'Select a checkbox', 'gravityformswereldkundig' ),
+				'value' => '',
+			),
+		);
+		foreach ( $fields as $field ) {
+			$choices[] = array(
+				'label' => esc_html( self::subscribe_field_label( $field ) ),
+				'value' => (string) $field->id,
+			);
+		}
+
+		return array(
+			array(
+				'name'     => 'subscribe_field',
+				'label'    => $label,
+				'type'     => 'select',
+				'required' => true,
+				'choices'  => $choices,
+				'tooltip'  => '<h6>' . $label . '</h6>' . esc_html__( 'The Wereldkundig subscribe me field of this form that gives consent. The feed only sends the subscriber when this checkbox is checked. For other themes behind another checkbox, add a feed for that checkbox.', 'gravityformswereldkundig' ),
+			),
+		);
+	}
+
+	/**
+	 * A subscribe field by its admin label, or its label, and its ID.
+	 */
+	private static function subscribe_field_label( \GF_Field $field ): string {
+		$label = (string) rgar( $field, 'adminLabel' );
+		$label = '' !== $label ? $label : (string) rgar( $field, 'label' );
+
+		return sprintf(
+			/* translators: 1: field label, 2: field ID. */
+			__( '%1$s (field %2$s)', 'gravityformswereldkundig' ),
+			$label,
+			(string) $field->id
+		);
+	}
+
+	/**
+	 * The feed's themes: theme ID => category option keys, none meaning the whole theme.
+	 *
+	 * @param array<string,mixed>|null $feed
+	 * @return array<string,string[]>
+	 */
+	public static function feed_themes( $feed ): array {
+		return self::clean_themes( rgars( (array) $feed, 'meta/wk_themes' ) );
+	}
+
+	/**
+	 * The posted themes setting, [theme ID => [theme => 1, categories => [...]]], as theme ID => category option keys.
+	 * Only checked themes; categories of an unchecked theme are dropped.
+	 *
+	 * @param mixed $value
+	 * @return array<string,string[]>
+	 */
+	public static function themes_from_posted( $value ): array {
+		$themes = array();
+		foreach ( is_array( $value ) ? $value : array() as $theme_id => $posted ) {
+			if ( is_array( $posted ) && ! empty( $posted['theme'] ) ) {
+				$themes[ $theme_id ] = is_array( $posted['categories'] ?? null ) ? $posted['categories'] : array();
+			}
+		}
+
+		return self::clean_themes( $themes );
+	}
+
+	/**
+	 * Only valid theme IDs, each with only valid category option keys: category-{id}, category-{parent}-{id} or select-all-{id}.
+	 *
+	 * @param mixed $themes Theme ID => category option keys.
+	 * @return array<string,string[]>
+	 */
+	public static function clean_themes( $themes ): array {
+		$clean = array();
+		foreach ( is_array( $themes ) ? $themes : array() as $theme_id => $categories ) {
+			$theme_id = trim( (string) $theme_id );
+			if ( ! preg_match( '/^[a-z0-9_-]+$/i', $theme_id ) ) {
+				continue;
+			}
+
+			$ids = array();
+			foreach ( is_array( $categories ) ? $categories : array() as $id ) {
+				$id = is_scalar( $id ) ? trim( (string) $id ) : '';
+				if ( preg_match( '/^(category-\d+(-\d+)?|select-all-\d+)$/', $id ) ) {
+					$ids[ $id ] = $id;
+				}
+			}
+
+			$clean[ $theme_id ] = array_values( $ids );
+		}
+
+		return $clean;
 	}
 
 	/**
@@ -425,7 +605,8 @@ class Addon extends \GFFeedAddOn {
 	}
 
 	/**
-	 * Without subscriber fields the mapping isn't rendered, so it isn't posted either; keep the saved mapping instead of wiping it.
+	 * Without subscriber fields or themes from the platform the mapping or themes aren't rendered, so they aren't
+	 * posted either; keep the saved ones instead of wiping them.
 	 *
 	 * @param int                 $feed_id
 	 * @param int                 $form_id
@@ -433,10 +614,13 @@ class Addon extends \GFFeedAddOn {
 	 * @return int
 	 */
 	public function save_feed_settings( $feed_id, $form_id, $settings ) {
-		if ( $feed_id && ! $this->fields_for_feed_mapping() ) {
+		$keep_mapping = ! $this->fields_for_feed_mapping();
+		$keep_themes  = ! ( new Client() )->themes_setup();
+		if ( $feed_id && ( $keep_mapping || $keep_themes ) ) {
 			$feed = $this->get_feed( $feed_id );
 			foreach ( (array) ( $feed['meta'] ?? array() ) as $key => $value ) {
-				if ( 0 === strpos( (string) $key, 'mapped_fields_' ) && ! array_key_exists( $key, $settings ) ) {
+				$keep = ( $keep_mapping && 0 === strpos( (string) $key, 'mapped_fields_' ) ) || ( $keep_themes && 'wk_themes' === $key );
+				if ( $keep && ! array_key_exists( $key, $settings ) ) {
 					$settings[ $key ] = $value;
 				}
 			}
@@ -546,7 +730,7 @@ class Addon extends \GFFeedAddOn {
 	public function is_feed_error_retryable( $retry, $error, $feed, $entry, $form ) {
 		if ( $error instanceof \WP_Error ) {
 			$status = (int) rgar( (array) $error->get_error_data(), 'status' );
-			$final  = in_array( $error->get_error_code(), array( 'wk_theme_invalid', 'wk_email_invalid', 'wk_api_credentials_missing', 'wk_api_insecure_url', 'wk_api_json_encode' ), true )
+			$final  = in_array( $error->get_error_code(), array( 'wk_theme_invalid', 'wk_subscribe_field_missing', 'wk_email_invalid', 'wk_api_credentials_missing', 'wk_api_insecure_url', 'wk_api_json_encode' ), true )
 				|| ( $status >= 400 && $status < 500 && ! in_array( $status, array( 408, 429 ), true ) );
 			if ( $final ) {
 				$retry = false;
@@ -557,19 +741,5 @@ class Addon extends \GFFeedAddOn {
 		return method_exists( \GFFeedAddOn::class, 'is_feed_error_retryable' ) // @phpstan-ignore function.alreadyNarrowedType (Missing before Gravity Forms 2.9.25.)
 			? parent::is_feed_error_retryable( $retry, $error, $feed, $entry, $form )
 			: (bool) $retry;
-	}
-
-	/**
-	 * Subscribe when the checkbox is checked but no feed exists yet.
-	 *
-	 * @param array<int|string,mixed> $entry
-	 * @param array<string,mixed>     $form
-	 */
-	public function maybe_subscribe_without_feed( $entry, $form ): void {
-		if ( $this->has_feed( (int) rgar( $form, 'id' ) ) ) {
-			return;
-		}
-
-		( new Submission( $this ) )->handle( $entry, $form, null );
 	}
 }

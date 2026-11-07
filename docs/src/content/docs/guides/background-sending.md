@@ -10,7 +10,7 @@ Forms with a Wereldkundig feed send the subscriber in the background, so the vis
 3. At the end of the request, Gravity Forms sends a request to its own site (a loopback request), which sends the subscriber and adds the entry note.
 4. A WP-Cron check, every 5 minutes, picks up anything the loopback request missed.
 
-A form **without** a Wereldkundig feed still subscribes during the submit, because Gravity Forms' queue only handles feeds.
+A form **without** a Wereldkundig feed sends nothing; see [Feeds and field mapping](/guides/feeds-and-mapping/).
 
 ## Loopback requests
 
@@ -26,7 +26,7 @@ add_filter('gform_max_async_feed_attempts', function () {
 });
 ```
 
-Errors that a retry can't fix are never retried: an invalid theme or email address, missing credentials or an `http://` URL, subscriber data that can't be converted to JSON, and any `4xx` response except `408` and `429`. Timeouts, `5xx` responses and themes that couldn't be loaded are retried. See [Entry notes and errors](/reference/entry-notes-and-errors/).
+Errors that a retry can't fix are never retried: an invalid theme or email address, a subscribe checkbox that is no longer on the form, missing credentials or an `http://` URL, subscriber data that can't be converted to JSON, and any `4xx` response except `408` and `429`. Timeouts, `5xx` responses and themes that couldn't be loaded are retried. See [Entry notes and errors](/reference/entry-notes-and-errors/).
 
 ## Send during the submit instead
 

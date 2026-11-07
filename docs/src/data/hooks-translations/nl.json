@@ -27,12 +27,12 @@
 	},
 	"wk_gf_auto_map_fields": {
 		"source": {
-			"description": "Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field, or the form has no feed. Default `false`.",
-			"long_description": "Return true to fill them from the first matching form field. While it is false, a form without a feed has no email address, so nothing is sent.",
+			"description": "Whether to auto-find Email / First name / Middle name / Last name when the feed has no mapping for that field. Default `false`.",
+			"long_description": "Return true to fill them from the first matching form field. While it is false, a feed without an email mapping has no email address, so nothing is sent.",
 			"params": {}
 		},
-		"description": "Of e-mailadres, voornaam, tussenvoegsel en achternaam automatisch worden gezocht als de feed geen koppeling voor dat veld heeft, of het formulier geen feed heeft. Standaard `false`.",
-		"long_description": "Geef true terug om ze te vullen met het eerste passende formulierveld. Zolang het false is, heeft een formulier zonder feed geen e-mailadres, en wordt er niets verstuurd.",
+		"description": "Of e-mailadres, voornaam, tussenvoegsel en achternaam automatisch worden gezocht als de feed geen koppeling voor dat veld heeft. Standaard `false`.",
+		"long_description": "Geef true terug om ze te vullen met het eerste passende formulierveld. Zolang het false is, heeft een feed zonder koppeling voor het e-mailadres geen e-mailadres, en wordt er niets verstuurd.",
 		"params": {}
 	},
 	"wk_gf_refresh_fields_initial_delay": {

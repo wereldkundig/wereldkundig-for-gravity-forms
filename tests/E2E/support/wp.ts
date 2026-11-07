@@ -74,43 +74,52 @@ export function ensureAdmin(): { login: string; password: string; loginUrl: stri
 }
 
 export const SUBSCRIBE_FIELD_ID = 2;
+export const OTHER_SUBSCRIBE_FIELD_ID = 3;
 
-/** A throwaway form with an email field and a subscribe field without themes. */
-export function createForm(): number {
+/** A throwaway form with an email field and two subscribe checkboxes, or only the first, without a feed. */
+export function createForm(subscribeFields: 1 | 2 = 2): number {
     return wp(`
+        $fields = [
+            ['type' => 'email', 'id' => 1, 'label' => 'E-mail'],
+            ['type' => 'wk_subscribe', 'id' => ${SUBSCRIBE_FIELD_ID}, 'label' => 'Nieuwsbrief'],
+            ['type' => 'wk_subscribe', 'id' => ${OTHER_SUBSCRIBE_FIELD_ID}, 'label' => 'Evenementen'],
+        ];
+
         return GFAPI::add_form([
             'title'  => 'WK E2E ' . gmdate('Y-m-d H:i:s'),
-            'fields' => [
-                ['type' => 'email', 'id' => 1, 'label' => 'E-mail'],
-                ['type' => 'wk_subscribe', 'id' => ${SUBSCRIBE_FIELD_ID}, 'label' => 'Wereldkundig subscribe me', 'wk_theme_ids' => [], 'wk_category_ids' => []],
-            ],
+            'fields' => array_slice($fields, 0, 1 + (int) $args['subscribe_fields']),
         ]);
-    `);
+    `, { subscribe_fields: subscribeFields });
 }
 
+/** Deletes the form, and its feeds with it. */
 export function deleteForm(formId: number): void {
     wp(`return GFAPI::delete_form((int) $args['form_id']);`, { form_id: formId });
 }
 
-export type SavedField = { wk_theme_ids: string[]; wk_category_ids: string[] };
+export type SavedFeed = { id: number; subscribe_field: string; wk_themes: Record<string, string[]> };
 
-/** The subscribe field as stored, read fresh from the database. */
-export function savedField(formId: number): SavedField {
+/** The form's only Wereldkundig feed as stored, read fresh from the database; null without one. */
+export function savedFeed(formId: number): SavedFeed | null {
     return wp(`
-        foreach (GFAPI::get_form((int) $args['form_id'])['fields'] ?? [] as $field) {
-            if ((int) $field->id === (int) $args['field_id']) {
-                return ['wk_theme_ids' => array_values((array) $field->wk_theme_ids), 'wk_category_ids' => array_values((array) $field->wk_category_ids)];
-            }
+        $feeds = GFAPI::get_feeds(null, (int) $args['form_id'], 'wereldkundig');
+        if (is_wp_error($feeds) || ! $feeds) {
+            return null;
         }
 
-        return new WP_Error('wk_e2e_field_missing', 'Subscribe field not found.');
-    `, { form_id: formId, field_id: SUBSCRIBE_FIELD_ID });
+        // An empty PHP array is a JSON list; an object keeps the theme map a map.
+        return [
+            'id'              => (int) $feeds[0]['id'],
+            'subscribe_field' => (string) rgars($feeds[0], 'meta/subscribe_field'),
+            'wk_themes'       => (object) (array) rgars($feeds[0], 'meta/wk_themes'),
+        ];
+    `, { form_id: formId });
 }
 
 export type ThemeWithCategories = { theme: string; category: string; selectAll: string };
 
 /**
- * The first cached theme with an "Alles in …" parent and a child category, as the form editor shows them.
+ * The first cached theme with an "Alles in …" parent and a child category, as the feed settings show them.
  * Null when the cache has none; saving the Wereldkundig settings fills it.
  */
 export function themeWithChildCategory(): ThemeWithCategories | null {

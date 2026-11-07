@@ -1,6 +1,6 @@
 ---
 title: Themes and the hourly refresh
-description: Where the themes in the form editor come from, when they are fetched, and how to refresh them.
+description: Where the themes in a feed come from, when they are fetched, and how to refresh them.
 ---
 
 The themes, their categories and the subscriber fields come from the platform in one request. Your site keeps them in a cache, so the form editor never waits for the platform.
@@ -11,9 +11,10 @@ The themes, their categories and the subscriber fields come from the platform in
 |---|---|---|
 | Saving **Forms > Settings > Wereldkundig** | no, always fetches | yes |
 | The background refresh, every hour | no, always fetches | yes |
-| The form editor: the **Themes** setting | yes | **no** |
+| The form editor | yes | **no** |
 | The settings page: connection status | yes | **no** |
-| A feed's **Map Fields** | yes | yes |
+| A feed's **Themes** and **Map Fields** | yes | yes |
+| The feed list: the **Themes** column | yes | **no** |
 | A submission: checking the themes | yes | yes |
 
 The form editor never contacts the platform. Gravity Forms rebuilds the editor after every form save, so a slow or unreachable platform would otherwise slow down saving every form.
@@ -53,4 +54,4 @@ wp cron event run wk_gf_refresh_fields --url=example.nl/site
 
 ## A theme was removed on the platform
 
-A subscribe field that still has a removed theme checked fails with **Invalid Wereldkundig theme** on submit. Its other themes are still subscribed. Open the form, check the field's themes and save the form.
+A feed that still has a removed theme checked fails with **Invalid Wereldkundig theme** on submit. Its other themes are still subscribed. The feed list shows the removed theme by its ID, such as `theme-9`. Open the feed, check its themes and save the feed.

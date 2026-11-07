@@ -1,6 +1,6 @@
 ---
 title: Stored data
-description: The options, field settings and identifiers the add-on stores in WordPress.
+description: The options, feed settings and identifiers the add-on stores in WordPress.
 ---
 
 ## Options
@@ -15,12 +15,16 @@ Every site has its own.
 
 ## The subscribe field
 
-The field type is `wk_subscribe`. Its settings are saved in the form:
+The field type is `wk_subscribe`. Its only own setting, `wk_default_checked`, is saved in the form.
 
-- `wk_theme_ids`: the IDs of the checked themes;
-- `wk_category_ids`: the category keys checked in those themes.
+## Feeds
 
-Both are cleaned up to valid IDs when the form is saved.
+A Wereldkundig feed saves these in its `meta`, next to Gravity Forms' own `feedName`, `mapped_fields_*` and `feed_condition_*`:
+
+- `subscribe_field`: the field ID of the subscribe checkbox, the only one of the form when it has one;
+- `wk_themes`: theme ID => the category keys checked in that theme, an empty list meaning the whole theme. For example `{"theme-1": [], "theme-2": ["category-36-37"]}`.
+
+Only valid theme and category IDs are saved.
 
 ## Identifiers
 

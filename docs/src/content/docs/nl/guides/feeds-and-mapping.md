@@ -1,26 +1,44 @@
 ---
 title: Feeds en veldkoppeling
-description: Waarom een formulier een Wereldkundig-feed nodig heeft, hoe velden worden gekoppeld, en hoe je velden in plaats daarvan automatisch laat vinden.
+description: Waarom een formulier een Wereldkundig-feed nodig heeft, hoe die het vinkje en de thema's kiest, en hoe velden worden gekoppeld of automatisch gevonden.
 ---
 
-Een formulier heeft een feed nodig om abonnees te versturen: de veldkoppeling van de feed vertelt de add-on welk formulierveld het e-mailadres bevat. Een feed voegt ook voorwaardelijke logica en versturen op de achtergrond toe. Zonder feed werkt het inschrijfvinkje alleen als je [automatisch gevonden velden](#automatisch-gevonden-velden) aanzet.
-
-| | Zonder feed | Met feed |
-|---|---|---|
-| Wanneer het wordt verstuurd | tijdens het versturen van het formulier | op de achtergrond, direct na het versturen |
-| Veldkoppeling | geen: alleen met automatisch gevonden velden aan | per abonneeveld |
-| Voorwaardelijke logica | die van het veld | die van het veld **en** de voorwaarde van de feed |
-| Fouten | notitie bij de inzending | feedfout: een notitie bij de inzending en het Gravity Forms-log |
+Een formulier heeft een feed nodig om abonnees te versturen. De feed kiest welk inschrijfvinkje de toestemming geeft, voor welke thema's en categorieën wordt ingeschreven, en welk formulierveld het e-mailadres bevat. Een feed voegt ook voorwaardelijke logica toe, en verstuurt op de achtergrond, direct na het versturen. Zonder feed wordt er niets verstuurd, ook niet als het vinkje aan staat.
 
 ## Een feed toevoegen
 
 Open het formulier en ga naar **Formulierinstellingen > Wereldkundig**, en voeg een feed toe. Dat kan zodra het [platform is gekoppeld](/nl/getting-started/connect/). Een feed heeft:
 
 - **Name**: voor je eigen overzicht.
+- **Subscribe checkbox**: het veld **Wereldkundig subscribe me** van dit formulier dat de toestemming geeft. Alleen te kiezen als het formulier er meer dan één heeft; anders gebruikt de feed het enige.
+- **Themes**: de thema's en categorieën waarvoor wordt ingeschreven. Vink er minstens één aan.
 - **Map Fields**: welk formulierveld elk abonneeveld vult.
-- **Conditional Logic**: staat dit aan, dan wordt de abonnee alleen verstuurd als de voorwaarde klopt. Het inschrijfvinkje moet nog steeds aangevinkt zijn.
+- **Conditional Logic**: staat dit aan, dan wordt de abonnee alleen verstuurd als de voorwaarde klopt. Het hierboven gekozen inschrijfvinkje moet nog steeds aangevinkt zijn.
 
-Feeds kun je dupliceren.
+De lijst met feeds toont de naam en de thema's van elke feed. Feeds kun je dupliceren.
+
+## Inschrijfvinkje
+
+De feed verstuurt de abonnee alleen als zijn inschrijfvinkje is aangevinkt. Welk vinkje dat is, hangt af van het aantal velden **Wereldkundig subscribe me** op het formulier:
+
+- **Eén**: er valt niets te kiezen. De feed toont het veld met zijn label (of beheerderslabel) en veld-ID, gevolgd door "the only subscribe checkbox of this form", en gebruikt het altijd. Ook een feed die is opgeslagen voordat het veld werd toegevoegd, of waarvan het gekozen veld door een ander is vervangen.
+- **Meerdere**, bijvoorbeeld één per nieuwsbrief: **Subscribe checkbox** is een verplichte lijst met die velden. Geef elk vinkje een eigen feed, met eigen thema's. Elke feed waarvan het vinkje aan staat, verstuurt een eigen verzoek. Wordt het gekozen veld later van het formulier verwijderd, dan krijgt de inzending de fout `wk_subscribe_field_missing`; kies dan een ander vinkje in de feed.
+- **Geen**: de feed toont in plaats daarvan een melding. Je kunt de feed toch opslaan; zodra je het veld in de formuliereditor toevoegt, gebruikt de feed het, zonder dat je de feed opnieuw hoeft te bewerken. Tot die tijd krijgen inzendingen de fout `wk_subscribe_field_missing`.
+
+Had het formulier één inschrijfveld en voeg je een tweede toe, dan houden bestaande feeds het vinkje waarmee ze zijn opgeslagen.
+
+## Thema's en categorieën
+
+**Themes** toont een vinkje voor elk thema op het platform, met de categorieën van dat thema eronder.
+
+- Een aangevinkt thema **zonder** aangevinkte categorieën wordt in zijn geheel ingeschreven.
+- Vink categorieën aan om **alleen** voor die categorieën van het thema in te schrijven.
+- Een hoofdcategorie staat er als **Alles in …** (alles daarin), met de subcategorieën ingesprongen eronder.
+- Categorieën van een thema dat niet is aangevinkt, zijn uitgeschakeld en worden niet opgeslagen.
+
+Sla je een feed op zonder aangevinkt thema, dan verschijnt **Check at least one theme.**
+
+De thema's komen uit de cache op je site, gevuld vanaf het platform. Een thema dat net op het platform is toegevoegd, verschijnt na de [volgende verversing](/nl/guides/themes-and-refresh/), of meteen als je de Wereldkundig-instellingen opslaat. Kunnen er geen thema's worden geladen, dan toont de feed **Could not load the themes from Wereldkundig.**, en blijven bij het opslaan van de feed de thema's bewaard die hij al had.
 
 ## Velden koppelen
 
@@ -41,7 +59,7 @@ Standaard worden velden niet automatisch gevonden. Zet het aan met het filter [`
 add_filter('wk_gf_auto_map_fields', '__return_true');
 ```
 
-Dan worden lege koppelingen, en formulieren zonder feed, bij het versturen aangevuld:
+Dan worden lege koppelingen bij het versturen aangevuld:
 
 - **E-mailadres**: het eerste veld van het type E-mailadres.
 - **Voornaam, tussenvoegsel en achternaam**: het eerste Naam-veld. Een eenvoudig Naam-veld vult alleen de voornaam.

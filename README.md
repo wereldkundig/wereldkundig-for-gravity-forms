@@ -1,6 +1,6 @@
 # Gravity Forms Wereldkundig Add-On
 
-Subscribes Gravity Forms submitters to Wereldkundig themes. A visitor ticks a **Wereldkundig subscribe me** checkbox on a form; on submit the add-on sends their email (and name, and any other mapped fields) to the Wereldkundig platform, which adds them to the themes (and optionally only some of their categories) chosen for that checkbox.
+Subscribes Gravity Forms submitters to Wereldkundig themes. A visitor ticks a **Wereldkundig subscribe me** checkbox on a form; on submit the add-on sends their email (and name, and any other mapped fields) to the Wereldkundig platform, which adds them to the themes (and optionally only some of their categories) chosen in the form's Wereldkundig feed for that checkbox.
 
 - Requires WordPress 6.9+, PHP 8.2+, Gravity Forms 2.5+ (developed on 2.10).
 - Works on single sites and multisite (network-activated); every site has its own settings, cache, feeds and cron event.
@@ -22,17 +22,18 @@ Subscribes Gravity Forms submitters to Wereldkundig themes. A visitor ticks a **
 ## How it works in short
 
 ```
-Form editor                 Submit                                  Platform
-───────────                 ──────                                  ────────
-Subscribe field ──┐         entry saved
- (themes and      │           │
-  categories)     │           ├─ form has a Wereldkundig feed?
-Themes dropdown ◄─┤           │    yes → queued, sent in the background ─┐
- from the cache   │           │    no  → sent right away ────────────────┤
+Form admin                  Submit                                  Platform
+──────────                  ──────                                  ────────
+Subscribe field             entry saved
+ (consent checkbox)           │
+                              ├─ per Wereldkundig feed: its checkbox checked?
+Feed settings ◄───┐           │    yes → queued, sent in the background ─┐
+ (checkbox, themes│           │    no  → skipped                         │
+  and categories) │           │  no feed → nothing is sent               │
                   │           ▼                                          ▼
 Settings save ────┴──► GET /v1/subscribe/fields          POST /v1/subscribe
 Hourly WP-Cron ──────► (themes + subscriber fields,       (email, names, mapped
-                        cached in an option)               fields, checked themes)
+                        cached in an option)               fields, feed's themes)
 ```
 
 ## Code structure
@@ -41,10 +42,11 @@ Hourly WP-Cron ──────► (themes + subscriber fields,       (email, 
 gravityformswereldkundig.php    bootstrap: autoloader, Component, deactivation hook
 app/
   Component.php                 on gform_loaded: registers the add-on and the field
-  Addon.php                     GFFeedAddOn: settings, feeds, status notice, no-feed path
+  Addon.php                     GFFeedAddOn: settings, feed settings (checkbox, themes, mapping), status notice
   ApiAuthSettingField.php       masked Basic Auth settings field
+  ThemesSettingField.php        the feed's theme and category checkboxes (type wk_themes)
   FieldsRefresh.php             hourly WP-Cron refresh of the cache
-  SubscribeField.php            the wk_subscribe field and its editor settings
+  SubscribeField.php            the wk_subscribe consent checkbox and its editor settings
   Submission.php                what happens on submit
   Mapper.php                    form entry → subscriber fields
   Api/Client.php                API calls, cache, credentials, mock
@@ -62,11 +64,12 @@ The user-facing behaviour is described in the docs; these are the parts behind i
 
 ### Submit
 
-`app/Submission.php` handles both the feed and the no-feed path (`gform_after_submission`, `Addon::maybe_subscribe_without_feed()`), in the order of [the docs](docs/src/content/docs/reference/entry-notes-and-errors.md#what-happens-on-submit).
+`app/Submission.php` handles one feed (`Addon::process_feed()`), in the order of [the docs](docs/src/content/docs/reference/entry-notes-and-errors.md#what-happens-on-submit). There is no path without a feed: a form without one sends nothing. Each feed only looks at its own checkbox (`meta.subscribe_field`), so several checkboxes on a form are several feeds and several requests.
 
 - Return values for Gravity Forms: `true` success, a `WP_Error` failure, `null` skipped. Gravity Forms saves them as the feed status of the entry, the error with its code and message.
 - Theme IDs are public, but checking them against the cached themes stops tampered or stale IDs. Themes added by the `wk_gf_subscribe_themes` filters are not checked.
-- The theme filters only run when at least one checked field has a valid theme.
+- The theme filters only run when the feed has at least one valid theme.
+- Themes used to be a field setting (`wk_theme_ids`, `wk_category_ids` on the field). Those values are ignored now and were not migrated to feeds.
 
 ### Sending in the background
 
@@ -95,7 +98,8 @@ Feeds are processed asynchronously, like Brevo (`$_async_feed_processing = true`
 
 - The `GET /v1/subscribe/fields` response is cached in the `wk_gf_api_fields` option (not autoloaded) with the time it was fetched, keyed by the platform URL and Basic Auth code, so changing either invalidates it.
 - Within one request the result is kept in memory, a failed fetch included, so the API is called at most once per request. A failed fetch never overwrites the cache.
-- Gravity Forms re-renders the whole form editor after every form save, which runs the subscribe field's editor hooks (`SubscribeField::editor_settings()` and `SubscribeField::editor_js()`) on every form, with or without a subscribe field. So the editor reads the cache only (`Client::themes_setup(false, false)`) and never calls the API.
+- Gravity Forms re-renders the whole form editor after every form save, which runs the subscribe field's editor hooks (`SubscribeField::editor_settings()` and `SubscribeField::editor_js()`) on every form, with or without a subscribe field. So the editor doesn't read the themes at all: it only links to the form's feeds.
+- The feed settings (themes and mapping) read the cache and fetch when nothing valid is cached, once per request. The feed list's **Themes** column reads the cache only (`Client::find_theme( $id, false )`).
 - The refresh (`app/FieldsRefresh.php`, event `wk_gf_refresh_fields`) is scheduled while the API is configured: when saving the settings, and on any admin page load via `Addon::init_admin()` → `FieldsRefresh::sync()`, which also covers sites set up before the refresh existed, or only with constants. Without credentials, after uninstalling or deactivating, it is removed.
 - Brevo keeps its lists in a 5 minute transient instead; whichever request needs them after that waits for the fetch.
 - See [todo.md](todo.md) for remembering a failed fetch across requests.
@@ -107,19 +111,22 @@ Feeds are processed asynchronously, like Brevo (`$_async_feed_processing = true`
 - The Basic Auth code is never put in the page (`app/ApiAuthSettingField.php`, field type `wk_api_auth`, like Mailchimp for WP does with its API key). The mask is the first few characters and 16 asterisks: at most 4 characters and at most a third of the code. Nothing from the end (the end of a base64 Basic Auth code is the end of the password) and not its length. Saving the unchanged mask keeps the saved code (base64 never contains `*`). On a Gravity Forms version without the settings field classes it falls back to a password field.
 - Gravity Forms 2.7.17+ encrypts add-on settings when `GF_ENCRYPTION_KEY` is defined; `Client::credentials()` decrypts them. Without that key the code is stored as plain text in `gravityformsaddon_wereldkundig_settings`, like other add-ons (Brevo, Laposta) do.
 
-### Saved field settings
+### Saved feed settings
 
-`wk_theme_ids` and `wk_category_ids` are cleaned to valid IDs when the form is saved (`SubscribeField::sanitize_settings()`). The editor saves the selection in the browser (`wkSetFieldThemes()`), which is why the browser tests exist.
+- `subscribe_field` is a plain Gravity Forms select of the form's `wk_subscribe` fields (`Addon::subscribe_field_choices()`), required.
+- `wk_themes` is our own settings field type (`app/ThemesSettingField.php`, registered like `wk_api_auth` by `Addon::register_setting_field()`). It posts nested inputs, `_gform_setting_wk_themes[theme-1][theme]` and `…[theme-1][categories][]`. `Addon::themes_from_posted()` turns them into theme ID => category keys, and `Addon::clean_themes()` keeps only valid IDs. Categories of an unchecked theme are disabled in the browser, so they aren't posted. At least one theme is required.
+- After a failed validation Gravity Forms renders the posted value instead of the saved one; the field's markup reads both shapes.
+- When the platform's themes or subscriber fields can't be loaded, the feed shows a notice instead of the field, so nothing is posted for it. `Addon::save_feed_settings()` then keeps the saved `wk_themes` and `mapped_fields_*`.
 
 ## Debugging
 
 - **Gravity Forms logging** and **entry notes**: see [Troubleshooting](docs/src/content/docs/troubleshooting.md).
-- **Ray** (spatie-ray plugin): when `ray()` exists, every API call (request, shortened auth header, status, raw body, result) and every subscribe from a submission (form, entry, feed, checked fields, themes, subscriber, result) is sent to Ray, green on success and red on failure.
+- **Ray** (spatie-ray plugin): when `ray()` exists, every API call (request, shortened auth header, status, raw body, result) and every subscribe from a submission (form, entry, feed, subscribe field, the feed's themes, the themes sent, subscriber, result) is sent to Ray, green on success and red on failure.
 
 ## Local development
 
 - **Herd SSL**: Herd signs `*.test` with its own CA, which PHP doesn't trust, so calls to `https://wereldkundig-platform.test` fail with cURL error 60. The mu-plugin `wp-content/mu-plugins/wk-local-ssl.php` turns off SSL verification for `localhost` and `*.test` only, and only when `WP_ENVIRONMENT_TYPE` is `local`.
-- WP-CLI is handy for checking things on a site, e.g. `wp --url=wereldkundig-platform.test/lansingerland cron event run wk_gf_refresh_fields`.
+- WP-CLI is handy for checking things on a site, e.g. `wp --url=wereldkundig-platform.test/nissewaard cron event run wk_gf_refresh_fields`.
 
 ## Tests
 
@@ -150,7 +157,7 @@ The live tests read `.env.local.tests` (copy `.env.local.tests.example`, never c
 
 ### Browser tests
 
-Playwright drives the form editor of a local site: it checks a theme and a category of the subscribe field, clicks **Save Form** and checks what was stored (`tests/E2E/`). The unit tests can't cover this, because `wkSetFieldThemes()` saves the selection in the browser.
+Playwright drives the feed settings of a local site: it chooses a subscribe checkbox, checks a theme and a category, clicks **Save Settings** and checks what was stored in the feed (`tests/E2E/feed-themes.spec.ts`). It also checks that a feed without a checkbox or theme isn't saved, and that a form with one subscribe checkbox gets no select but stores that checkbox (`tests/E2E/feed-subscribe-field.spec.ts`). The unit tests can't cover this, because the nested inputs, Gravity Forms' handling of the posted value and the disabled categories only exist in the browser.
 
 ```bash
 npm ci
@@ -162,7 +169,7 @@ npm run test:e2e -- --ui      # step through
 
 They read `.env.local.tests` too:
 
-- `WK_E2E_URL`: the local site, e.g. `https://wereldkundig-platform.test/lansingerland/`. It must have `WP_ENVIRONMENT_TYPE` `local` and a cached theme with categories (save the Wereldkundig settings first).
+- `WK_E2E_URL`: the local site, e.g. `https://wereldkundig-platform.test/nissewaard/`. It must have `WP_ENVIRONMENT_TYPE` `local` and a cached theme with categories (save the Wereldkundig settings first).
 - `WK_E2E_WP_PATH`: the WordPress root for WP-CLI, relative to this plugin (default `../../..`).
 
 Each run creates a local super admin `wk-e2e` with a new password (logged in at the network's `wp-login.php`, since a subsite's own login redirects to itself locally), creates a throwaway form `WK E2E …` and deletes that form afterwards.
@@ -207,8 +214,9 @@ composer docs:hooks   # needs PHP 8.3+
 
 ### CI and deploy
 
-- `.github/workflows/docs.yml` runs on changes to `app/` or `docs/`: it fails when the committed hooks JSON doesn't match the code, and builds the site.
-- Sevalla builds and deploys every push to `main`, set up as in [First setup](#first-setup).
+- `.github/workflows/docs.yml` runs on pushes to `main` and pull requests that change `app/` or `docs/`: it fails when the committed hooks JSON doesn't match the code, and builds the site.
+- Sevalla builds and deploys every push to `main`, set up as in [First setup](#first-setup). It checks neither of the above: it deploys a stale hooks reference without an error, and a broken build only shows up there, after it's on `main`.
+- The pre-push hook also checks the hooks reference, but it doesn't build the site, and it doesn't run with `git push --no-verify`, without Husky installed, or for edits made on GitHub. The workflow catches both, whoever pushes.
 - `docs/` and `.github/` are `export-ignore` in `.gitattributes`. Leave them out of any other deploy of the plugin as well.
 
 ## Releasing

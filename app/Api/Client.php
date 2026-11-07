@@ -236,15 +236,16 @@ class Client {
 
 	/**
 	 * @param mixed $theme_id
+	 * @param bool  $fetch    False to only read the cache, never call the API (e.g. in the feed list).
 	 * @return array{id:string,name:string,categories:array<string,string>}|null The cached theme, or null when the platform doesn't have it.
 	 */
-	public function find_theme( $theme_id ): ?array {
+	public function find_theme( $theme_id, $fetch = true ): ?array {
 		$theme_id = (string) $theme_id;
 		if ( '' === $theme_id ) {
 			return null;
 		}
 
-		foreach ( $this->themes_setup() as $theme ) {
+		foreach ( $this->themes_setup( false, $fetch ) as $theme ) {
 			if ( $theme['id'] === $theme_id ) {
 				return $theme;
 			}

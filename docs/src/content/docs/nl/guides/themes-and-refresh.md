@@ -1,6 +1,6 @@
 ---
 title: Thema's en de verversing elk uur
-description: Waar de thema's in de formuliereditor vandaan komen, wanneer ze worden opgehaald, en hoe je ze ververst.
+description: Waar de thema's in een feed vandaan komen, wanneer ze worden opgehaald, en hoe je ze ververst.
 ---
 
 De thema's, hun categorieën en de abonneevelden komen in één verzoek van het platform. Je site bewaart ze in een cache, zodat de formuliereditor nooit op het platform wacht.
@@ -11,9 +11,10 @@ De thema's, hun categorieën en de abonneevelden komen in één verzoek van het 
 |---|---|---|
 | Opslaan van **Formulieren > Instellingen > Wereldkundig** | nee, haalt altijd op | ja |
 | De verversing op de achtergrond, elk uur | nee, haalt altijd op | ja |
-| De formuliereditor: de instelling **Themes** | ja | **nee** |
+| De formuliereditor | ja | **nee** |
 | De instellingenpagina: verbindingsstatus | ja | **nee** |
-| **Map Fields** van een feed | ja | ja |
+| **Themes** en **Map Fields** van een feed | ja | ja |
+| De lijst met feeds: de kolom **Themes** | ja | **nee** |
 | Een inzending: de thema's controleren | ja | ja |
 
 De formuliereditor benadert het platform nooit. Gravity Forms bouwt de editor opnieuw op na elke keer dat je een formulier opslaat, dus een traag of onbereikbaar platform zou anders het opslaan van elk formulier vertragen.
@@ -53,4 +54,4 @@ wp cron event run wk_gf_refresh_fields --url=example.nl/site
 
 ## Een thema is verwijderd op het platform
 
-Een inschrijfveld waarin een verwijderd thema nog is aangevinkt, mislukt bij het versturen met **Invalid Wereldkundig theme**. De andere thema's van het veld worden wel ingeschreven. Open het formulier, controleer de thema's van het veld en sla het formulier op.
+Een feed waarin een verwijderd thema nog is aangevinkt, mislukt bij het versturen met **Invalid Wereldkundig theme**. De andere thema's van de feed worden wel ingeschreven. De lijst met feeds toont het verwijderde thema met zijn ID, zoals `theme-9`. Open de feed, controleer de thema's en sla de feed op.

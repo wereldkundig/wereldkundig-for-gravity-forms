@@ -259,6 +259,7 @@ it('does not retry feed errors that a retry cannot fix', function (WP_Error $err
 })->with([
     'invalid theme'      => [new WP_Error('wk_theme_invalid', ''), false],
     'invalid email'      => [new WP_Error('wk_email_invalid', ''), false],
+    'no checkbox'        => [new WP_Error('wk_subscribe_field_missing', ''), false],
     'member exists'      => [new WP_Error('member-exists', '', ['status' => 409]), false],
     'rate limited'       => [new WP_Error('wk_api_http', '', ['status' => 429]), true],
     'server error'       => [new WP_Error('wk_api_http', '', ['status' => 502]), true],
@@ -293,3 +294,128 @@ it('shows the stored API error on the feed settings', function () {
     expect($fields[0])->toBe(['name' => 'api_error_notice', 'type' => 'html', 'html' => [$addon, 'api_error_notice']])
         ->and($addon->api_error_notice())->toBe('');
 });
+
+it('offers the form\'s subscribe checkboxes in the feed settings', function () {
+    Functions\when('get_option')->justReturn(false);
+    Functions\when('esc_html')->returnArg();
+
+    $addon = Mockery::mock(Addon::class)->makePartial();
+    $addon->shouldReceive('get_default_feed_name')->andReturn('Feed');
+    $addon->shouldReceive('fields_for_feed_mapping')->andReturn([]);
+    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [
+        wk_addon_field(5, 'wk_subscribe', ['label' => 'Nieuwsbrief']),
+        wk_addon_field(6, 'email', ['label' => 'E-mail']),
+        wk_addon_field(7, 'wk_subscribe', ['label' => 'Evenementen', 'adminLabel' => 'Events']),
+    ]]);
+
+    $fields = array_column($addon->feed_settings_fields()[0]['fields'], null, 'name');
+
+    expect($fields['subscribe_field']['type'])->toBe('select')
+        ->and($fields['subscribe_field']['required'])->toBeTrue()
+        ->and($fields['subscribe_field']['choices'])->toBe([
+            ['label' => 'Select a checkbox', 'value' => ''],
+            ['label' => 'Nieuwsbrief (field 5)', 'value' => '5'],
+            ['label' => 'Events (field 7)', 'value' => '7'],
+        ]);
+});
+
+it('uses the only subscribe checkbox of the form without a select', function () {
+    Functions\when('get_option')->justReturn(false);
+    Functions\when('esc_html')->returnArg();
+
+    $addon = Mockery::mock(Addon::class)->makePartial();
+    $addon->shouldReceive('get_default_feed_name')->andReturn('Feed');
+    $addon->shouldReceive('fields_for_feed_mapping')->andReturn([]);
+    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [wk_addon_field(5, 'wk_subscribe', ['label' => 'Nieuwsbrief'])]]);
+
+    $fields = array_column($addon->feed_settings_fields()[0]['fields'], null, 'name');
+
+    expect($fields['subscribe_field']['type'])->toBe('hidden')
+        ->and($fields['subscribe_field']['default_value'])->toBe('5')
+        // Stored on save, also over a field ID from before, so the feed keeps it when another checkbox is added.
+        ->and(($fields['subscribe_field']['save_callback'])(null, '9'))->toBe('5')
+        ->and($fields['subscribe_field_only']['html'])->toContain('<code>Nieuwsbrief (field 5)</code>, the only subscribe checkbox');
+});
+
+it('says so in the feed settings when the form has no subscribe checkbox or no themes are available', function () {
+    Functions\when('get_option')->justReturn(false);
+    Functions\when('esc_html')->returnArg();
+
+    $addon = Mockery::mock(Addon::class)->makePartial();
+    $addon->shouldReceive('get_default_feed_name')->andReturn('Feed');
+    $addon->shouldReceive('fields_for_feed_mapping')->andReturn([]);
+    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [wk_addon_field(6, 'email')]]);
+
+    $fields = array_column($addon->feed_settings_fields()[0]['fields'], null, 'name');
+
+    expect($fields)->not->toHaveKey('subscribe_field')
+        ->not->toHaveKey('wk_themes')
+        ->and($fields['subscribe_field_unavailable']['html'])->toContain('no Wereldkundig subscribe me field')
+        ->and($fields['wk_themes_unavailable']['html'])->toContain('Could not load the themes');
+});
+
+it('keeps the saved themes when a feed is saved without themes from the platform', function () {
+    Functions\when('get_option')->justReturn(false);
+    Functions\when('update_option')->justReturn(true);
+    Functions\when('delete_option')->justReturn(true);
+    // No credentials and no mock: no themes.
+    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+
+    $addon = Mockery::mock(Addon::class)->makePartial();
+    $addon->shouldReceive('fields_for_feed_mapping')->andReturn([['name' => 'email', 'label' => 'E-mail', 'required' => false]]);
+    $addon->shouldReceive('get_feed')->with(3)->andReturn(['meta' => [
+        'wk_themes'           => ['theme-1' => ['category-3']],
+        'mapped_fields_email' => '1',
+    ]]);
+
+    expect($addon->save_feed_settings(3, 5, ['feedName' => 'New name', 'mapped_fields_email' => '2']))->toBe([
+        'feedName'            => 'New name',
+        'mapped_fields_email' => '2',
+        'wk_themes'           => ['theme-1' => ['category-3']],
+    ]);
+});
+
+it('reads the posted themes, only checked themes and valid IDs', function () {
+    expect(Addon::themes_from_posted([
+        'theme-1'     => ['theme' => '1'],
+        'theme-2'     => ['theme' => '1', 'categories' => ['category-3', 'category-3', 'select-all-4', 'category-5-6', 'theme-1', '"><b>']],
+        // Unchecked: its categories don't count.
+        'theme-3'     => ['categories' => ['category-7']],
+        '"><script>'  => ['theme' => '1'],
+    ]))->toBe([
+        'theme-1' => [],
+        'theme-2' => ['category-3', 'select-all-4', 'category-5-6'],
+    ])
+        ->and(Addon::themes_from_posted(''))->toBe([])
+        ->and(Addon::themes_from_posted(null))->toBe([]);
+});
+
+it('reads the saved themes of a feed', function () {
+    expect(Addon::feed_themes(['meta' => ['wk_themes' => ['theme-1' => [], 'theme-2' => ['category-3', 'x'], '<b>' => []]]]))->toBe(['theme-1' => [], 'theme-2' => ['category-3']])
+        ->and(Addon::feed_themes(['meta' => []]))->toBe([])
+        ->and(Addon::feed_themes(['meta' => ['wk_themes' => 'theme-1']]))->toBe([]);
+});
+
+it('shows the feed\'s theme names in the feed list, from the cache only', function () {
+    Functions\when('get_option')->alias(static function ($name) {
+        return Wereldkundig\GravityForms\Api\Client::FIELDS_OPTION === $name
+            ? ['key' => md5('https://platform.example.nl/wp-json/wereldkundig|abc'), 'response' => ['options' => ['categories' => [['id' => 'theme-1', 'name' => 'Nieuwsbrief']]]]]
+            : ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
+    });
+    Functions\when('esc_html')->returnArg();
+    Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
+    Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
+    Functions\expect('wp_remote_request')->never();
+    $GLOBALS['wk_test_filter_values']['wk_api_use_mock'] = false;
+
+    expect((new Addon())->get_column_value_wk_themes(['meta' => ['wk_themes' => ['theme-1' => [], 'theme-9' => []]]]))->toBe('Nieuwsbrief, theme-9');
+});
+
+function wk_addon_field(int $id, string $type, array $properties = []): GF_Field {
+    $field = new GF_Field();
+    foreach (array_merge(['id' => $id, 'type' => $type, 'label' => ''], $properties) as $key => $value) {
+        $field->{$key} = $value;
+    }
+
+    return $field;
+}

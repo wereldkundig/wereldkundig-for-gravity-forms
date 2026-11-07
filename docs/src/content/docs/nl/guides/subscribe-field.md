@@ -1,34 +1,20 @@
 ---
 title: Het inschrijfveld
-description: Het vinkje Wereldkundig subscribe me, de thema's en categorieën ervan, en de instellingen die tellen voor toestemming.
+description: Het vinkje Wereldkundig subscribe me, hoe het bij een feed hoort, en de instellingen die tellen voor toestemming.
 ---
 
-Het veld **Wereldkundig subscribe me**, in de groep **Standaardvelden**, voegt één vinkje toe aan een formulier. Vinkt een bezoeker het aan en verstuurt die het formulier, dan wordt die ingeschreven voor de thema's die voor dat veld zijn gekozen.
+Het veld **Wereldkundig subscribe me**, in de groep **Standaardvelden**, voegt één vinkje toe aan een formulier. Vinkt een bezoeker het aan en verstuurt die het formulier, dan wordt die ingeschreven voor de thema's van de [feed](/nl/guides/feeds-and-mapping/) die dit vinkje heeft gekozen.
 
 - Het veldlabel is het label van het vinkje; er staat geen apart label boven.
 - Het ondersteunt de gebruikelijke veldinstellingen: beschrijving, CSS-klasse, verplicht, zichtbaarheid, beheerderslabel, plaatsing van het label en voorwaardelijke logica.
 - De HTML is gelijk aan die van het eigen selectievakjesveld van Gravity Forms, dus je WordPress-thema geeft het dezelfde opmaak.
 - Inzendingen en exports tonen **Yes** als het vinkje aan stond, en anders niets.
 
-## Thema's en categorieën
+## Thema's
 
-De instelling **Themes** toont een vinkje voor elk thema op het platform, met de categorieën van dat thema eronder.
+Het veld zelf heeft geen thema's. Die kies je in een [Wereldkundig-feed](/nl/guides/feeds-and-mapping/#themas-en-categorieën) van het formulier. Heeft het formulier meer dan één inschrijfveld, dan kiest de feed ook het vinkje waar hij bij hoort, en tonen de veldinstellingen een melding met een link naar de feeds van het formulier. Met één inschrijfveld gebruikt de feed dat veld.
 
-- Een aangevinkt thema **zonder** aangevinkte categorieën wordt in zijn geheel ingeschreven.
-- Vink categorieën aan om **alleen** voor die categorieën van het thema in te schrijven.
-- Een hoofdcategorie staat er als **Alles in …** (alles daarin), met de subcategorieën ingesprongen eronder.
-- Categorieën van een thema dat niet is aangevinkt, zijn uitgeschakeld en worden niet opgeslagen.
-
-Eén veld kan voor meerdere thema's tegelijk inschrijven. Een formulier kan ook meerdere inschrijfvelden hebben, bijvoorbeeld één vinkje per nieuwsbrief. Alle aangevinkte velden worden samen verstuurd, in één verzoek. Kiezen meerdere velden hetzelfde thema, dan wint een veld dat het hele thema kiest; anders tellen hun categorieën op.
-
-De thema's komen uit de cache op je site, niet rechtstreeks van het platform. Een thema dat net op het platform is toegevoegd, verschijnt na de [volgende verversing](/nl/guides/themes-and-refresh/), of meteen als je de Wereldkundig-instellingen opslaat.
-
-Staan er geen thema's in de cache, dan toont de instelling een rode melding:
-
-- **Configure Wereldkundig API settings**: er zijn nog geen gegevens ingevuld, zie [Koppelen aan het platform](/nl/getting-started/connect/).
-- **No Wereldkundig themes available**: de gegevens zijn ingevuld, maar er zijn geen thema's opgehaald. Sla de Wereldkundig-instellingen op en bekijk de verbindingsstatus.
-
-Gebruikers die de Wereldkundig-instellingen mogen openen, krijgen de melding als link naar de instellingenpagina.
+Een formulier kan meerdere inschrijfvelden hebben, bijvoorbeeld één vinkje per nieuwsbrief. Voeg dan voor elk vinkje een feed toe, met eigen thema's. Zonder feed verstuurt een aangevinkt vakje niets.
 
 ## Standaard aangevinkt
 

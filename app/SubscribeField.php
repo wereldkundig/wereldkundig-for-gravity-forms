@@ -2,18 +2,10 @@
 
 namespace Wereldkundig\GravityForms;
 
-use Wereldkundig\GravityForms\Api\Client;
-
 // GF_Field declares its methods and properties without types, so overrides are only typed in PHPDoc.
 class SubscribeField extends \GF_Field {
 	/** @var string */
 	public $type = 'wk_subscribe';
-
-	/** @var string[] Theme IDs checked in the form editor, e.g. ["theme-1", "theme-2"]. */
-	public $wk_theme_ids = array();
-
-	/** @var string[] Category option keys checked in the form editor, e.g. ["category-36-37"]. A theme without any is subscribed whole. */
-	public $wk_category_ids = array();
 
 	/** @var bool Render the checkbox checked on a fresh form. Off by default: a pre-checked box is no valid GDPR consent. */
 	public $wk_default_checked = false;
@@ -29,7 +21,7 @@ class SubscribeField extends \GF_Field {
 	 * @return string
 	 */
 	public function get_form_editor_field_description() {
-		return esc_attr__( 'Adds a subscribe checkbox for one or more Wereldkundig themes, optionally only some of their categories.', 'gravityformswereldkundig' );
+		return esc_attr__( 'Adds a subscribe checkbox. The Wereldkundig feed of the form chooses the themes it subscribes to.', 'gravityformswereldkundig' );
 	}
 
 	/**
@@ -64,7 +56,7 @@ class SubscribeField extends \GF_Field {
 			'css_class_setting',
 			'rules_setting',
 			'visibility_setting',
-			'wk_theme_ids_setting',
+			'wk_feed_notice_setting',
 			'wk_default_checked_setting',
 		);
 	}
@@ -77,55 +69,12 @@ class SubscribeField extends \GF_Field {
 	}
 
 	/**
-	 * The editor posts these as JSON; keep only theme and category IDs.
-	 *
 	 * @return void
 	 */
 	public function sanitize_settings() {
 		parent::sanitize_settings();
 
-		$this->wk_theme_ids       = self::theme_ids_of( $this );
-		$this->wk_category_ids    = self::category_ids_of( $this );
 		$this->wk_default_checked = ! empty( $this->wk_default_checked );
-	}
-
-	/**
-	 * The field's theme IDs.
-	 *
-	 * @param \GF_Field|array<string,mixed> $field
-	 * @return string[]
-	 */
-	public static function theme_ids_of( $field ): array {
-		$ids = rgar( $field, 'wk_theme_ids' );
-
-		return self::clean_ids( is_array( $ids ) ? $ids : array(), '/^[a-z0-9_-]+$/i' );
-	}
-
-	/**
-	 * @param \GF_Field|array<string,mixed> $field
-	 * @return string[] Category option keys as the platform sends them: category-{id}, category-{parent}-{id} or select-all-{id}.
-	 */
-	public static function category_ids_of( $field ): array {
-		$ids = rgar( $field, 'wk_category_ids' );
-
-		return self::clean_ids( is_array( $ids ) ? $ids : array(), '/^(category-\d+(-\d+)?|select-all-\d+)$/' );
-	}
-
-	/**
-	 * @param array<mixed> $ids
-	 * @param string       $pattern
-	 * @return string[]
-	 */
-	private static function clean_ids( array $ids, string $pattern ): array {
-		$clean = array();
-		foreach ( $ids as $id ) {
-			$id = is_scalar( $id ) ? trim( (string) $id ) : '';
-			if ( '' !== $id && preg_match( $pattern, $id ) ) {
-				$clean[ $id ] = $id;
-			}
-		}
-
-		return array_values( $clean );
 	}
 
 	/**
@@ -265,53 +214,20 @@ class SubscribeField extends \GF_Field {
 			return;
 		}
 
-		$themes = self::theme_choices();
+		$feeds = admin_url( 'admin.php?page=gf_edit_forms&view=settings&subview=wereldkundig&id=' . absint( $form_id ) );
 		?>
-		<li class="wk_theme_ids_setting field_setting">
-			<label class="section_label">
-				<?php esc_html_e( 'Themes', 'gravityformswereldkundig' ); ?>
-				<?php gform_tooltip( 'wk_theme_ids' ); ?>
-			</label>
-			<?php if ( $themes ) : ?>
-				<div class="wk-themes">
-					<?php foreach ( $themes as $theme ) : ?>
-						<?php $theme_html_id = 'wk_theme_' . sanitize_html_class( $theme['id'] ); ?>
-						<div class="wk-theme" style="margin-bottom: 6px;">
-							<input type="checkbox" class="wk-theme-checkbox" id="<?php echo esc_attr( $theme_html_id ); ?>" value="<?php echo esc_attr( $theme['id'] ); ?>" onclick="wkSetFieldThemes();" />
-							<label for="<?php echo esc_attr( $theme_html_id ); ?>" class="inline"><?php echo esc_html( $theme['name'] ); ?></label>
-							<?php if ( $theme['categories'] ) : ?>
-								<div class="wk-theme-categories" style="margin: 4px 0 0 24px;">
-									<?php foreach ( $theme['categories'] as $category_id => $category_name ) : ?>
-										<?php $category_html_id = $theme_html_id . '_' . sanitize_html_class( $category_id ); ?>
-										<?php // Indent the child categories, keyed category-{parent}-{id}, below their "Alles in ..." parent. ?>
-										<div style="margin-left: <?php echo preg_match( '/^category-\d+-\d+$/', $category_id ) ? '20' : '0'; ?>px;">
-											<input type="checkbox" class="wk-category-checkbox" id="<?php echo esc_attr( $category_html_id ); ?>" value="<?php echo esc_attr( $category_id ); ?>" data-theme="<?php echo esc_attr( $theme['id'] ); ?>" onclick="wkSetFieldThemes();" />
-											<label for="<?php echo esc_attr( $category_html_id ); ?>" class="inline"><?php echo esc_html( $category_name ); ?></label>
-										</div>
-									<?php endforeach; ?>
-								</div>
-							<?php endif; ?>
-						</div>
-					<?php endforeach; ?>
-					<p class="description" style="margin-top: 4px;"><?php esc_html_e( 'A checked theme without checked categories is subscribed whole.', 'gravityformswereldkundig' ); ?></p>
-				</div>
-			<?php else : ?>
-				<?php // WordPress red (#d63638) border on its lightest tint (#fcf0f1), with dark red (#3f0001) text. ?>
-				<div class="wk-theme-notice" role="alert" style="margin-top: 8px; padding: 8px 12px; border-left: 4px solid #d63638; background: #fcf0f1; color: #3f0001;">
-					<?php
-					$message = Client::is_configured()
-						? __( 'No Wereldkundig themes available', 'gravityformswereldkundig' )
-						: __( 'Configure Wereldkundig API settings', 'gravityformswereldkundig' );
-
-					// Saving the settings page also fetches the themes. Only link it for users who may open it.
-					if ( Addon::can_manage_settings() ) {
-						printf( '<a href="%s" style="color: #3f0001;">%s</a>', esc_url( Addon::settings_url() ), esc_html( $message ) );
-					} else {
-						echo esc_html( $message );
-					}
-					?>
-				</div>
-			<?php endif; ?>
+		<li class="wk_feed_notice_setting field_setting">
+			<label class="section_label"><?php esc_html_e( 'Themes', 'gravityformswereldkundig' ); ?></label>
+			<?php // A WordPress info notice: blue (#72aee6) border on its lightest tint (#f0f6fc), with the default text color (#1d2327). ?>
+			<div class="wk-feed-notice" role="note" style="padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
+				<?php
+				printf(
+					/* translators: %s: "Wereldkundig feed", linked to the form's Wereldkundig feeds. */
+					esc_html__( 'Choose the themes in a %s of this form, which also chooses this checkbox. Without a feed, nothing is sent.', 'gravityformswereldkundig' ),
+					sprintf( '<a href="%s">%s</a>', esc_url( $feeds ), esc_html__( 'Wereldkundig feed', 'gravityformswereldkundig' ) )
+				);
+				?>
+			</div>
 		</li>
 		<li class="wk_default_checked_setting field_setting">
 			<input type="checkbox" id="field_wk_default_checked" onclick="SetFieldProperty('wk_default_checked', this.checked);" />
@@ -328,43 +244,19 @@ class SubscribeField extends \GF_Field {
 	}
 
 	public static function editor_js(): void {
-		$themes  = self::theme_choices();
-		$default = $themes ? array( $themes[0]['id'] ) : array();
 		?>
 		<script type="text/javascript">
 			function SetDefaultValues_wk_subscribe(field) {
 				field.label = <?php echo wp_json_encode( __( 'Wereldkundig subscribe me', 'gravityformswereldkundig' ) ); ?>;
-				field.wk_theme_ids = <?php echo wp_json_encode( $default ); ?>;
-				field.wk_category_ids = [];
-			}
-
-			// Categories only count for a checked theme, so the others are disabled and left out.
-			function wkSetFieldThemes() {
-				var themes = jQuery('.wk-theme-checkbox:checked').map(function () { return this.value; }).get();
-				var categories = [];
-				jQuery('.wk-category-checkbox').each(function () {
-					this.disabled = themes.indexOf(this.getAttribute('data-theme')) === -1;
-					if (this.checked && ! this.disabled) {
-						categories.push(this.value);
-					}
-				});
-				SetFieldProperty('wk_theme_ids', themes);
-				SetFieldProperty('wk_category_ids', categories);
 			}
 
 			jQuery(document).on('gform_load_field_settings', function (evt, field) {
 				if (field.type !== 'wk_subscribe') {
 					return;
 				}
-				var themes = jQuery.isArray(field.wk_theme_ids) ? field.wk_theme_ids : [];
-				var categories = jQuery.isArray(field.wk_category_ids) ? field.wk_category_ids : [];
-				jQuery('.wk-theme-checkbox').each(function () {
-					this.checked = themes.indexOf(this.value) !== -1;
-				});
-				jQuery('.wk-category-checkbox').each(function () {
-					this.checked = categories.indexOf(this.value) !== -1;
-					this.disabled = themes.indexOf(this.getAttribute('data-theme')) === -1;
-				});
+				// The feed only asks which checkbox when the form has several; with one, it uses that one.
+				var subscribeFields = window.form ? form.fields.filter(function (formField) { return formField.type === 'wk_subscribe'; }).length : 0;
+				jQuery('.wk_feed_notice_setting').toggle(subscribeFields > 1);
 				jQuery('#field_wk_default_checked').prop('checked', !! field.wk_default_checked);
 				jQuery('.wk-default-checked-warning').toggle(!! field.wk_default_checked);
 			});
@@ -389,7 +281,6 @@ class SubscribeField extends \GF_Field {
 	 * @return array<string,string>
 	 */
 	public static function tooltips( $tooltips ): array {
-		$tooltips['wk_theme_ids']       = '<h6>' . esc_html__( 'Themes', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'Subscribers are added to every checked Wereldkundig theme when the checkbox is checked. Check categories of a theme to subscribe to only those; without checked categories the whole theme is subscribed.', 'gravityformswereldkundig' );
 		$tooltips['wk_default_checked'] = '<h6>' . esc_html__( 'Checked by default', 'gravityformswereldkundig' ) . '</h6>' . esc_html__( 'Shows the checkbox already checked when the form loads. Visitors can still uncheck it; that choice is kept when the form is shown again after a validation error.', 'gravityformswereldkundig' );
 
 		return $tooltips;
@@ -401,15 +292,5 @@ class SubscribeField extends \GF_Field {
 		}
 
 		return ! rgblank( $value ) && '0' !== (string) $value;
-	}
-
-	/**
-	 * Cache only: the editor is re-rendered after every form save, which must not wait on the API.
-	 * Saving the Wereldkundig settings, or the hourly background refresh, is what fetches the themes.
-	 *
-	 * @return array<int,array{id:string,name:string,categories:array<string,string>}>
-	 */
-	private static function theme_choices(): array {
-		return ( new Client() )->themes_setup( false, false );
 	}
 }
