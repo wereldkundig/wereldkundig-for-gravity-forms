@@ -50,9 +50,7 @@ A Dutch admin sees two languages at once, and the docs follow what is on screen:
 
   Already used: Formulieren > Instellingen > Wereldkundig, Formulierinstellingen > Wereldkundig, Formulieren > Systeemstatus, Formulieren > Instellingen > Loggen, Formulieren > Instellingen > De-installeren, Standaardvelden, Instellingen opslaan, Formulier opslaan, Inzendingen, Notities, Zichtbaar / Verborgen / Administratief, Voorwaardelijke logica (as a concept), field types E-mailadres, Naam, Verborgen, Tekstregel. The WordPress screen **Plugins** is also Plugins in Dutch.
 
-- **The add-on's own labels and texts: English**, because the add-on has no Dutch translation yet. Quote them exactly: **Wereldkundig subscribe me**, **Themes**, **Checked by default**, **Platform URL**, **Basic Auth code**, the feed settings **Name**, **Map Fields** and **Conditional Logic**, the editor notices, connection status messages, entry notes ("… was sent to Wereldkundig …"), error messages and **Yes** in entries. Explain them in Dutch around the quote.
-
-When the add-on gets a Dutch translation (`languages/wereldkundig-for-gravity-forms-nl_NL.po`), switch these to the Dutch strings and remove the note about English labels from `nl/getting-started/installation.md`.
+- **The add-on's own labels and texts: Dutch, from its translation** in `languages/wereldkundig-for-gravity-forms-nl_NL.po`, because that is what a Dutch admin sees. Quote the `msgstr` exactly: **Inschrijven bij Wereldkundig**, **Thema's**, **Standaard aangevinkt**, **Platform-URL**, **Basic Auth-code**, the feed settings **Naam**, **Inschrijfvinkje**, **Velden koppelen** and **Voorwaardelijke logica**, the editor notices, connection status messages, entry notes ("… is naar Wereldkundig verstuurd …"), error messages and **Ja** in entries. A new or changed string in the add-on needs its Dutch translation first: add it to the PO file and run `composer i18n`.
 
 ## Links and anchors
 

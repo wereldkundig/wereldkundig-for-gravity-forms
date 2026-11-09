@@ -6,7 +6,7 @@ Looks up how a Dutch WordPress admin shows a Gravity Forms label, from the insta
     python3 gf_label.py "Form Settings" "System Status"
 
 Prints "English → Dutch" per label, or "(not found)". Only for Gravity Forms' own labels: the add-on's labels
-(Themes, Map Fields, Checked by default, ...) have no Dutch translation and stay English in the docs.
+(Themes, Map Fields, Checked by default, ...) are in its own translation, languages/wereldkundig-for-gravity-forms-nl_NL.po.
 """
 
 import re

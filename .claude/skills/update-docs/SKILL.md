@@ -69,7 +69,7 @@ Read `references/dutch.md` before writing Dutch: it has the terminology, the ton
 
 - Same path under `nl/`, translated `title` and `description`.
 - Links get the `/nl/` prefix (Starlight doesn't rewrite Markdown links), and anchors follow the **Dutch** headings: `/nl/guides/feeds-and-mapping/#automatisch-gevonden-velden`. Hook anchors (`#wk_gf_api_timeout`) are the same in both languages.
-- Gravity Forms and WordPress screen labels in Dutch, looked up with `scripts/gf_label.py`; the add-on's own labels, messages, entry notes and error messages stay English, because that is what a Dutch admin sees.
+- Gravity Forms and WordPress screen labels in Dutch, looked up with `scripts/gf_label.py`; the add-on's own labels, messages, entry notes and error messages as in its Dutch translation, `languages/wereldkundig-for-gravity-forms-nl_NL.po`, because that is what a Dutch admin sees.
 - Code blocks, hook names, option names, error codes and payload keys are not translated.
 - An `.mdx` page that imports a component needs one more `../` under `nl/`.
 

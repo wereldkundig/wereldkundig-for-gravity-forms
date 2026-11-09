@@ -3,12 +3,12 @@ title: Het inschrijfveld
 description: Het vinkje Wereldkundig subscribe me, hoe het bij een feed hoort, en de instellingen die tellen voor toestemming.
 ---
 
-Het veld **Wereldkundig subscribe me**, in de groep **Standaardvelden**, voegt één vinkje toe aan een formulier. Vinkt een bezoeker het aan en verstuurt die het formulier, dan wordt die ingeschreven voor de thema's van de [feed](/nl/guides/feeds-and-mapping/) die dit vinkje heeft gekozen.
+Het veld **Inschrijven bij Wereldkundig**, in de groep **Standaardvelden**, voegt één vinkje toe aan een formulier. Vinkt een bezoeker het aan en verstuurt die het formulier, dan wordt die ingeschreven voor de thema's van de [feed](/nl/guides/feeds-and-mapping/) die dit vinkje heeft gekozen.
 
 - Het veldlabel is het label van het vinkje; er staat geen apart label boven.
 - Het ondersteunt de gebruikelijke veldinstellingen: beschrijving, CSS-klasse, verplicht, zichtbaarheid, beheerderslabel, plaatsing van het label en voorwaardelijke logica.
 - De HTML is gelijk aan die van het eigen selectievakjesveld van Gravity Forms, dus je WordPress-thema geeft het dezelfde opmaak.
-- Inzendingen en exports tonen **Yes** als het vinkje aan stond, en anders niets.
+- Inzendingen en exports tonen **Ja** als het vinkje aan stond, en anders niets.
 
 ## Thema's
 
@@ -18,7 +18,7 @@ Een formulier kan meerdere inschrijfvelden hebben, bijvoorbeeld één vinkje per
 
 ## Standaard aangevinkt
 
-**Checked by default** toont het vinkje al aangevinkt als het formulier laadt. Standaard staat dit uit.
+**Standaard aangevinkt** toont het vinkje al aangevinkt als het formulier laadt. Standaard staat dit uit.
 
 :::caution
 Een vooraf aangevinkt vakje is onder de AVG geen geldige toestemming (Hof van Justitie van de EU, *Planet49*). Zet dit alleen aan als bezoekers verwachten dat ze worden ingeschreven door het formulier te versturen. De formuliereditor toont dezelfde waarschuwing.

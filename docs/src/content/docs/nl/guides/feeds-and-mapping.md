@@ -9,40 +9,40 @@ Een formulier heeft een feed nodig om abonnees te versturen. De feed kiest welk 
 
 Open het formulier en ga naar **Formulierinstellingen > Wereldkundig**, en voeg een feed toe. Dat kan zodra het [platform is gekoppeld](/nl/getting-started/connect/). Een feed heeft:
 
-- **Name**: voor je eigen overzicht.
-- **Subscribe checkbox**: het veld **Wereldkundig subscribe me** van dit formulier dat de toestemming geeft. Alleen te kiezen als het formulier er meer dan één heeft; anders gebruikt de feed het enige.
-- **Themes**: de thema's en categorieën waarvoor wordt ingeschreven. Vink er minstens één aan.
-- **Map Fields**: welk formulierveld elk abonneeveld vult.
-- **Conditional Logic**: staat dit aan, dan wordt de abonnee alleen verstuurd als de voorwaarde klopt. Het hierboven gekozen inschrijfvinkje moet nog steeds aangevinkt zijn.
+- **Naam**: voor je eigen overzicht.
+- **Inschrijfvinkje**: het veld **Inschrijven bij Wereldkundig** van dit formulier dat de toestemming geeft. Alleen te kiezen als het formulier er meer dan één heeft; anders gebruikt de feed het enige.
+- **Thema's**: de thema's en categorieën waarvoor wordt ingeschreven. Vink er minstens één aan.
+- **Velden koppelen**: welk formulierveld elk abonneeveld vult.
+- **Voorwaardelijke logica**: staat dit aan, dan wordt de abonnee alleen verstuurd als de voorwaarde klopt. Het hierboven gekozen inschrijfvinkje moet nog steeds aangevinkt zijn.
 
 De lijst met feeds toont de naam en de thema's van elke feed. Feeds kun je dupliceren.
 
 ## Inschrijfvinkje
 
-De feed verstuurt de abonnee alleen als zijn inschrijfvinkje is aangevinkt. Welk vinkje dat is, hangt af van het aantal velden **Wereldkundig subscribe me** op het formulier:
+De feed verstuurt de abonnee alleen als zijn inschrijfvinkje is aangevinkt. Welk vinkje dat is, hangt af van het aantal velden **Inschrijven bij Wereldkundig** op het formulier:
 
-- **Eén**: er valt niets te kiezen. De feed toont het veld met zijn label (of beheerderslabel) en veld-ID, gevolgd door "the only subscribe checkbox of this form", en gebruikt het altijd. Ook een feed die is opgeslagen voordat het veld werd toegevoegd, of waarvan het gekozen veld door een ander is vervangen.
-- **Meerdere**, bijvoorbeeld één per nieuwsbrief: **Subscribe checkbox** is een verplichte lijst met die velden. Geef elk vinkje een eigen feed, met eigen thema's. Elke feed waarvan het vinkje aan staat, verstuurt een eigen verzoek. Wordt het gekozen veld later van het formulier verwijderd, dan krijgt de inzending de fout `wk_subscribe_field_missing`; kies dan een ander vinkje in de feed.
+- **Eén**: er valt niets te kiezen. De feed toont het veld met zijn label (of beheerderslabel) en veld-ID, gevolgd door "het enige inschrijfvinkje van dit formulier", en gebruikt het altijd. Ook een feed die is opgeslagen voordat het veld werd toegevoegd, of waarvan het gekozen veld door een ander is vervangen.
+- **Meerdere**, bijvoorbeeld één per nieuwsbrief: **Inschrijfvinkje** is een verplichte lijst met die velden. Geef elk vinkje een eigen feed, met eigen thema's. Elke feed waarvan het vinkje aan staat, verstuurt een eigen verzoek. Wordt het gekozen veld later van het formulier verwijderd, dan krijgt de inzending de fout `wk_subscribe_field_missing`; kies dan een ander vinkje in de feed.
 - **Geen**: de feed toont in plaats daarvan een melding. Je kunt de feed toch opslaan; zodra je het veld in de formuliereditor toevoegt, gebruikt de feed het, zonder dat je de feed opnieuw hoeft te bewerken. Tot die tijd krijgen inzendingen de fout `wk_subscribe_field_missing`.
 
 Had het formulier één inschrijfveld en voeg je een tweede toe, dan houden bestaande feeds het vinkje waarmee ze zijn opgeslagen.
 
 ## Thema's en categorieën
 
-**Themes** toont een vinkje voor elk thema op het platform, met de categorieën van dat thema eronder.
+**Thema's** toont een vinkje voor elk thema op het platform, met de categorieën van dat thema eronder.
 
 - Een aangevinkt thema **zonder** aangevinkte categorieën wordt in zijn geheel ingeschreven.
 - Vink categorieën aan om **alleen** voor die categorieën van het thema in te schrijven.
 - Een hoofdcategorie staat er als **Alles in …** (alles daarin), met de subcategorieën ingesprongen eronder.
 - Categorieën van een thema dat niet is aangevinkt, zijn uitgeschakeld en worden niet opgeslagen.
 
-Sla je een feed op zonder aangevinkt thema, dan verschijnt **Check at least one theme.**
+Sla je een feed op zonder aangevinkt thema, dan verschijnt **Vink minimaal één thema aan.**
 
-De thema's komen uit de cache op je site, gevuld vanaf het platform. Een thema dat net op het platform is toegevoegd, verschijnt na de [volgende verversing](/nl/guides/themes-and-refresh/), of meteen als je de Wereldkundig-instellingen opslaat. Kunnen er geen thema's worden geladen, dan toont de feed **Could not load the themes from Wereldkundig.**, en blijven bij het opslaan van de feed de thema's bewaard die hij al had.
+De thema's komen uit de cache op je site, gevuld vanaf het platform. Een thema dat net op het platform is toegevoegd, verschijnt na de [volgende verversing](/nl/guides/themes-and-refresh/), of meteen als je de Wereldkundig-instellingen opslaat. Kunnen er geen thema's worden geladen, dan toont de feed **De thema's van Wereldkundig konden niet worden geladen.**, en blijven bij het opslaan van de feed de thema's bewaard die hij al had.
 
 ## Velden koppelen
 
-**Map Fields** toont elk abonneeveld dat het platform aanbiedt, zoals e-mailadres, voornaam, tussenvoegsel en achternaam. Geen ervan is verplicht, maar koppel in elk geval het e-mailadres: zonder e-mailadres wordt de abonnee niet verstuurd en krijgt de inzending de fout `wk_email_invalid`.
+**Velden koppelen** toont elk abonneeveld dat het platform aanbiedt, zoals e-mailadres, voornaam, tussenvoegsel en achternaam. Geen ervan is verplicht, maar koppel in elk geval het e-mailadres: zonder e-mailadres wordt de abonnee niet verstuurd en krijgt de inzending de fout `wk_email_invalid`.
 
 - Voor het e-mailadres kun je alleen formuliervelden van het type E-mailadres, Verborgen en Tekstregel kiezen.
 - Uitgeschakelde onderdelen van een Naam-veld, zoals de aanhef of het achtervoegsel, worden niet aangeboden.

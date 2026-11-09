@@ -6,9 +6,9 @@ description: Wat je controleert als niemand wordt ingeschreven, en waar je ziet 
 ## Er wordt niemand ingeschreven
 
 1. Staat het inschrijfveld op **Zichtbaar**? Velden op Verborgen en Administratief worden niet verstuurd, zie [Zichtbaarheid](/nl/guides/subscribe-field/#zichtbaarheid).
-2. Toont **Formulieren > Instellingen > Wereldkundig** de melding **Successfully connected**? Zo niet, sla de instellingen op en lees de foutmelding. Zie [Koppelen aan het platform](/nl/getting-started/connect/#verbindingsstatus).
-3. Heeft het formulier een feed onder **Formulierinstellingen > Wereldkundig**? Zonder feed wordt er niets verstuurd. Heeft het formulier meer dan één inschrijfveld, noemt **Subscribe checkbox** van de feed dan het vinkje dat de bezoeker aanvinkte?
-4. Zijn de thema's van de feed nog aangevinkt? Thema's die van het platform zijn verwijderd, mislukken met **Invalid Wereldkundig theme**.
+2. Toont **Formulieren > Instellingen > Wereldkundig** de melding **Verbinding met Wereldkundig gelukt**? Zo niet, sla de instellingen op en lees de foutmelding. Zie [Koppelen aan het platform](/nl/getting-started/connect/#verbindingsstatus).
+3. Heeft het formulier een feed onder **Formulierinstellingen > Wereldkundig**? Zonder feed wordt er niets verstuurd. Heeft het formulier meer dan één inschrijfveld, noemt **Inschrijfvinkje** van de feed dan het vinkje dat de bezoeker aanvinkte?
+4. Zijn de thema's van de feed nog aangevinkt? Thema's die van het platform zijn verwijderd, mislukken met **Ongeldig Wereldkundig-thema**.
 5. Klopt de voorwaarde van de feed, en werken loopback-verzoeken onder **Formulieren > Systeemstatus**? Anders wachten feeds in de wachtrij op WP-Cron. Zie [Versturen op de achtergrond](/nl/guides/background-sending/#loopback-verzoeken).
 6. Lees de notities bij de inzending en het Gravity Forms-log.
 
@@ -26,7 +26,7 @@ Ga naar **Formulieren > Instellingen > Loggen** en zet **Wereldkundig** aan. Ove
 De feed gebruikt de thema's uit de cache. Sla de Wereldkundig-instellingen op om ze nu op te halen, of wacht op de [verversing van elk uur](/nl/guides/themes-and-refresh/).
 
 **De notitie zegt `wk_email_invalid`.**
-De abonnee heeft geen e-mailadres. Koppel het veld E-mailadres onder **Map Fields** in de feed van het formulier, of zet [automatisch gevonden velden](/nl/guides/feeds-and-mapping/#automatisch-gevonden-velden) aan.
+De abonnee heeft geen e-mailadres. Koppel het veld E-mailadres onder **Velden koppelen** in de feed van het formulier, of zet [automatisch gevonden velden](/nl/guides/feeds-and-mapping/#automatisch-gevonden-velden) aan.
 
 **De notitie zegt `member-exists`.**
 Het e-mailadres is al lid van de platformsite, en het platform heeft niets opgeslagen. Voeg de thema's voor deze persoon op het platform zelf toe.

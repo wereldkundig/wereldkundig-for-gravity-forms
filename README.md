@@ -4,7 +4,7 @@ Subscribes Gravity Forms submitters to Wereldkundig themes. A visitor ticks a **
 
 - Requires WordPress 6.9+, PHP 8.2+, Gravity Forms 2.5+ (developed on 2.10).
 - Works on single sites and multisite (network-activated); every site has its own settings, cache, feeds and cron event.
-- Text domain `wereldkundig-for-gravity-forms`; all user-facing strings are English and translatable.
+- Text domain `wereldkundig-for-gravity-forms`; all user-facing strings are English and translatable, with a Dutch translation in `languages/` (see [Translations](#translations)).
 
 **How to set up and use the add-on, and the hooks reference, are in the docs site: [`docs/src/content/docs/`](docs/src/content/docs/).** This README is for working on the add-on: how it's built, the internals the public docs leave out, and how to test it. Keep internals here; everything under `docs/` is published.
 
@@ -16,6 +16,7 @@ Subscribes Gravity Forms submitters to Wereldkundig themes. A visitor ticks a **
 - [Debugging](#debugging)
 - [Local development](#local-development)
 - [Tests](#tests)
+- [Translations](#translations)
 - [Documentation](#documentation)
 - [Releasing](#releasing)
 
@@ -143,7 +144,7 @@ composer test:live    # real calls to a test platform
 composer test:phpstan # static analysis (level 8) of app/
 ```
 
-Before every `git push`, husky (`.husky/pre-push`) runs `composer test` and `composer docs:hooks`, and stops the push when either fails or when `docs:hooks` changed the hooks reference in `docs/src/data/hooks/` (commit it, then push again). Skip it once with `git push --no-verify`.
+Before every `git push`, husky (`.husky/pre-push`) runs `composer test` and `composer docs:hooks`, and stops the push when either fails or when `docs:hooks` changed the hooks reference in `docs/src/data/hooks/` (commit it, then push again). When WP-CLI is installed and the WordPress site around the plugin has [Plugin Check](https://wordpress.org/plugins/plugin-check/), it then runs `wp plugin check` with the exclusions in `.pcpignore`, and stops on any error or warning; the runtime checks are left out, because their test install crashes on multisite. Skip it all once with `git push --no-verify`.
 
 PHPCS (`phpcs.xml.dist`) checks the WordPress coding standards (WordPress-Extra, PHP 8.2+ compatibility) with three changes: PSR-4 file names (`Api/Client.php`, not `class-client.php`), camelCase methods and classes allowed next to snake_case, and Yoda conditions not required.
 
@@ -174,11 +175,23 @@ They read `.env.local.tests` too:
 
 Each run creates a local super admin `wk-e2e` with a new password (logged in at the network's `wp-login.php`, since a subsite's own login redirects to itself locally), creates a throwaway form `WK E2E …` and deletes that form afterwards.
 
+## Translations
+
+The POT, the PO files and the compiled `.mo` and `.l10n.php` files are in `languages/`, and are committed, because the release ships them. After changing a translatable string or a PO file, run:
+
+```bash
+composer i18n
+```
+
+It regenerates `languages/wereldkundig-for-gravity-forms.pot` from the files that ship (WP-CLI `make-pot`, leaving out `docs/`, `tests/` and the other development folders), merges it into every PO file (`update-po`), then compiles them (`make-mo`, `make-php`). Translate new strings in the PO file, for Dutch `wereldkundig-for-gravity-forms-nl_NL.po`, and run `composer i18n` again. Dutch follows the Gravity Forms translation (informal *je*, *Velden koppelen*, *Voorwaardelijke logica*) and the terms of the Dutch docs (*inschrijven*, *inschrijfvinkje*, *abonnee*).
+
+`Addon::load_text_domain()` loads the translations through Gravity Forms: first from `wp-content/languages`, then from the plugin's `languages/` folder. It replaces Gravity Forms' default, which would use the add-on slug `wereldkundig` as text domain.
+
 ## Documentation
 
 The public docs are a [Starlight](https://starlight.astro.build) site in `docs/`, with its own `package.json`. The pages are Markdown in `docs/src/content/docs/`; the sidebar is in `docs/astro.config.mjs`.
 
-The site is English at `/` and Dutch at `/nl/`. Every page has a Dutch twin in `docs/src/content/docs/nl/` with the same path, which the language picker switches between, so add or change a page in both languages. A missing Dutch page falls back to English with a notice. In the Dutch pages, links need the `/nl/` prefix and anchors follow the Dutch headings. Gravity Forms and WordPress labels use their Dutch names, while the add-on's own labels stay English, because the add-on has no Dutch translation yet. Sidebar labels have a `translations` entry in `astro.config.mjs`. The strings of the component overrides are in `docs/src/content/i18n/{en,nl}.json`. `starlight-links-validator` fails the build on a broken link or anchor in either language. The Dutch hook descriptions are in `docs/src/data/hooks-translations/nl.json`, each with the English `source` it was translated from. After a docblock change and `composer docs:hooks`, update that hook's `source` and its Dutch text, or the docs build fails and names the hook. The look follows [docs.wereldkundig.nl](https://docs.wereldkundig.nl), dark only: colours and type in `docs/src/styles/wereldkundig.css`, the logo, header link, lead line and footer in the component overrides in `docs/src/components/`. It meets WCAG 2.2 AA (checked with axe-core at phone to desktop widths): keep text at 4.5:1 contrast or more against its background, and form field borders at 3:1; the reasons for each fix are in the comments of `wereldkundig.css` and `Search.astro`.
+The site is English at `/` and Dutch at `/nl/`. Every page has a Dutch twin in `docs/src/content/docs/nl/` with the same path, which the language picker switches between, so add or change a page in both languages. A missing Dutch page falls back to English with a notice. In the Dutch pages, links need the `/nl/` prefix and anchors follow the Dutch headings. Gravity Forms and WordPress labels use their Dutch names, and the add-on's own labels its Dutch translation in `languages/`. Sidebar labels have a `translations` entry in `astro.config.mjs`. The strings of the component overrides are in `docs/src/content/i18n/{en,nl}.json`. `starlight-links-validator` fails the build on a broken link or anchor in either language. The Dutch hook descriptions are in `docs/src/data/hooks-translations/nl.json`, each with the English `source` it was translated from. After a docblock change and `composer docs:hooks`, update that hook's `source` and its Dutch text, or the docs build fails and names the hook. The look follows [docs.wereldkundig.nl](https://docs.wereldkundig.nl), dark only: colours and type in `docs/src/styles/wereldkundig.css`, the logo, header link, lead line and footer in the component overrides in `docs/src/components/`. It meets WCAG 2.2 AA (checked with axe-core at phone to desktop widths): keep text at 4.5:1 contrast or more against its background, and form field borders at 3:1; the reasons for each fix are in the comments of `wereldkundig.css` and `Search.astro`.
 
 The Claude Code skill `.claude/skills/update-docs` holds these rules as instructions: the page map, the Dutch terminology and screen-label rules, and two helpers. `hook_translations.py` reports and records the Dutch hook descriptions, and `gf_label.py` looks up Dutch Gravity Forms labels. Claude loads it when asked to update the documentation.
 

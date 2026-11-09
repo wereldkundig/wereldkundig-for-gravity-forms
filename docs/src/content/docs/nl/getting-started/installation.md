@@ -20,10 +20,6 @@ De add-on werkt op losse sites en op multisite-netwerken. In een netwerk heeft e
 
 De add-on laadt alleen als Gravity Forms actief is.
 
-:::note
-De schermen van WordPress en Gravity Forms staan in deze documentatie met hun Nederlandse namen, zoals **Formulieren > Instellingen**. De add-on zelf is nog niet vertaald: zijn eigen labels en meldingen, zoals **Wereldkundig subscribe me** en **Map Fields**, zie je in het Engels.
-:::
-
 ## Deactiveren en verwijderen
 
 - **Deactiveren** stopt de verversing op de achtergrond van de thema's op de huidige site. Na het deactiveren voor het netwerk houden de andere sites hun geplande verversing, die dan niets meer doet.

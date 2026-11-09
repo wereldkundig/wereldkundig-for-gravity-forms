@@ -20,7 +20,8 @@
         "php-stubs/gravity-forms-stubs": "^3.1",
         "wp-coding-standards/wpcs": "^3.1",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "wp-cli/i18n-command": "^2.7"
     },
     "license": "MIT",
     "config": {
@@ -49,12 +50,23 @@
         "test:phpstan": "phpstan --memory-limit=2g",
         "test:phpcs": "phpcs",
         "fix:phpcs": "phpcbf || [ $? -eq 1 ]",
-        "docs:hooks": "sh docs/tools/hooks.sh"
+        "docs:hooks": "sh docs/tools/hooks.sh",
+        "i18n": [
+            "@i18n:make-pot",
+            "@i18n:update-po",
+            "@i18n:make-mo",
+            "@i18n:make-php"
+        ],
+        "i18n:make-pot": "wp i18n make-pot . languages/wereldkundig-for-gravity-forms.pot --slug=wereldkundig-for-gravity-forms --exclude=docs,test-results,build,.claude,.github,.husky,.wordpress-org",
+        "i18n:update-po": "wp i18n update-po languages/wereldkundig-for-gravity-forms.pot languages/",
+        "i18n:make-mo": "wp i18n make-mo languages/",
+        "i18n:make-php": "wp i18n make-php languages/"
     },
     "scripts-descriptions": {
         "test": "Validates composer.json, then runs PHPCS, the unit tests and PHPStan. Runs before every git push.",
         "docs:hooks": "Regenerates the hooks reference of the docs site (needs PHP 8.3+).",
-        "fix:phpcs": "Fixes what PHPCS can fix automatically."
+        "fix:phpcs": "Fixes what PHPCS can fix automatically.",
+        "i18n": "Regenerates the POT from the files that ship, merges it into every PO file in languages/, then compiles the MO and .l10n.php files. Run after changing a translatable string or a PO file."
     },
     "autoload-dev": {
         "psr-4": {

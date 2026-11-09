@@ -6,7 +6,7 @@ description: Hoe de add-on omgaat met toestemming, de Basic Auth-code en de gege
 ## Toestemming
 
 - Er wordt niets verstuurd als de bezoeker het inschrijfvinkje niet heeft aangevinkt.
-- **Checked by default** staat uit, en wie het aanzet, krijgt een AVG-waarschuwing. Zie [Standaard aangevinkt](/nl/guides/subscribe-field/#standaard-aangevinkt).
+- **Standaard aangevinkt** staat uit, en wie het aanzet, krijgt een AVG-waarschuwing. Zie [Standaard aangevinkt](/nl/guides/subscribe-field/#standaard-aangevinkt).
 
 ## Wat er wordt verstuurd
 

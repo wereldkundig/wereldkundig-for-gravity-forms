@@ -63,6 +63,16 @@ class Addon extends \GFFeedAddOn {
 	}
 
 	/**
+	 * Loads the translations of the plugin's text domain from wp-content/languages, then from the plugin's
+	 * languages/ folder. Gravity Forms would load the add-on slug (wereldkundig) as text domain instead.
+	 *
+	 * @return void
+	 */
+	public function load_text_domain() {
+		\GFCommon::load_gf_text_domain( 'wereldkundig-for-gravity-forms', plugin_basename( dirname( $this->_full_path ) ) );
+	}
+
+	/**
 	 * @return void
 	 */
 	public function init() {
