@@ -30,6 +30,8 @@ package-lock.json
 .env.local.tests
 .env.local.tests.example
 .phpcs.cache
+.distignore
+build/
 
 # macOS metadata.
 .DS_Store

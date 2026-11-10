@@ -1,11 +1,12 @@
 <?php
 /**
- * Plugin Name: Gravity Forms Wereldkundig Add-on
- * Description: Subscribe Gravity Forms submitters to Wereldkundig themes.
+ * Plugin Name: Wereldkundig Add-On for Gravity Forms
+ * Description: Add people to your Wereldkundig themes when they fill in your Gravity Forms.
  * Version: 1.0.0
  * Requires at least: 6.9
  * Requires PHP: 8.2
- * License: MIT
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wereldkundig-for-gravity-forms
  * Domain Path: /languages
  */

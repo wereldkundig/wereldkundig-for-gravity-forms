@@ -1,4 +1,5 @@
 /vendor/
+/build/
 .env.local.tests
 .DS_Store
 /node_modules/

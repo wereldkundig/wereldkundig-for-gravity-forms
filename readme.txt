@@ -1,14 +1,14 @@
 === Wereldkundig Add-On for Gravity Forms ===
 Contributors: wereldkundig, jmslbam
-Tags: gravity forms, newsletter, subscribe, subscription, wereldkundig
+Tags: gravity forms, newsletter, subscribe, signup form, wereldkundig
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
 Stable tag: 1.0.0
-License: MIT
-License URI: https://opensource.org/licenses/MIT
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Subscribe Gravity Forms submitters to the themes of your Wereldkundig platform.
+Add people to your Wereldkundig themes when they fill in your Gravity Forms.
 
 == Description ==
 

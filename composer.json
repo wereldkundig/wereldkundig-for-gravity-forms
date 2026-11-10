@@ -1,6 +1,6 @@
 {
-    "name": "wereldkundig/gravityforms-add-on",
-    "description": "Wereldkundig Gravity Forms add-on.",
+    "name": "wereldkundig/wereldkundig-for-gravity-forms",
+    "description": "Wereldkundig for Gravity Forms",
     "type": "wordpress-plugin",
     "authors": [
         {
@@ -21,7 +21,8 @@
         "wp-coding-standards/wpcs": "^3.1",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-        "wp-cli/i18n-command": "^2.7"
+        "wp-cli/i18n-command": "^2.7",
+        "wp-cli/dist-archive-command": "*"
     },
     "license": "MIT",
     "config": {
@@ -39,6 +40,15 @@
         }
     },
     "scripts": {
+        "build": [
+            "rm -rf ./build/stage-1",
+            "rsync --recursive --verbose --exclude-from=.distignore --exclude=/vendor/ ./ ./build/stage-1/",
+            "composer install --no-dev --prefer-dist --optimize-autoloader --working-dir=./build/stage-1/",
+            "rsync --recursive --delete --delete-excluded --verbose --exclude-from=.distignore ./build/stage-1/ ./build/wereldkundig-for-gravity-forms/",
+            "vendor/bin/wp i18n make-pot ./build/wereldkundig-for-gravity-forms/ --slug=wereldkundig-for-gravity-forms",
+            "vendor/bin/wp i18n make-mo ./build/wereldkundig-for-gravity-forms/languages/",
+            "vendor/bin/wp dist-archive ./build/wereldkundig-for-gravity-forms/ --plugin-dirname=wereldkundig-for-gravity-forms --force"
+        ],
         "test": [
             "@composer validate --strict",
             "@test:phpcs",
@@ -63,6 +73,7 @@
         "i18n:make-php": "wp i18n make-php languages/"
     },
     "scripts-descriptions": {
+        "build": "Stages a release copy (via .distignore), installs production Composer deps, regenerates languages, and writes a zip with wp dist-archive.",
         "test": "Validates composer.json, then runs PHPCS, the unit tests and PHPStan. Runs before every git push.",
         "docs:hooks": "Regenerates the hooks reference of the docs site (needs PHP 8.3+).",
         "fix:phpcs": "Fixes what PHPCS can fix automatically.",
