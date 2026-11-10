@@ -1,4 +1,4 @@
-=== Wereldkundig Add-On for Gravity Forms ===
+=== Wereldkundig for Gravity Forms ===
 Contributors: wereldkundig, jmslbam
 Tags: gravity forms, newsletter, subscribe, signup form, wereldkundig
 Requires at least: 6.9

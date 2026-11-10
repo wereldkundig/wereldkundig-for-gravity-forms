@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Wereldkundig Add-On for Gravity Forms
+ * Plugin Name: Wereldkundig for Gravity Forms
  * Description: Add people to your Wereldkundig themes when they fill in your Gravity Forms.
  * Version: 1.0.0
  * Requires at least: 6.9
