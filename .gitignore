@@ -9,6 +9,6 @@
 /phpstan.neon
 /phpcs.xml
 /.phpcs.cache
-languages/wereldkundig-for-gravity-forms-nl_NL.po
-languages/wereldkundig-for-gravity-forms-nl_NL.mo
-languages/wereldkundig-for-gravity-forms-nl_NL.l10n.php
+languages/*.po
+languages/*.mo
+languages/*.l10n.php
