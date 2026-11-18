@@ -91,6 +91,52 @@ class Addon extends \GFFeedAddOn {
 	}
 
 	/**
+	 * Theme checkbox styles on the Wereldkundig feed settings.
+	 *
+	 * @return array<int,array<string,mixed>>
+	 */
+	public function styles() {
+		$styles = array(
+			array(
+				'handle'  => 'wk-gf-themes-setting-field',
+				'src'     => $this->get_base_url() . '/assets/css/themes-setting-field.css',
+				'version' => $this->_version,
+				'enqueue' => array(
+					array(
+						'admin_page' => array( 'form_settings' ),
+						'tab'        => $this->_slug,
+					),
+				),
+			),
+		);
+
+		return array_merge( parent::styles(), $styles );
+	}
+
+	/**
+	 * Theme checkbox behaviour on the Wereldkundig feed settings.
+	 *
+	 * @return array<int,array<string,mixed>>
+	 */
+	public function scripts() {
+		$scripts = array(
+			array(
+				'handle'  => 'wk-gf-themes-setting-field',
+				'src'     => $this->get_base_url() . '/assets/js/themes-setting-field.js',
+				'version' => $this->_version,
+				'enqueue' => array(
+					array(
+						'admin_page' => array( 'form_settings' ),
+						'tab'        => $this->_slug,
+					),
+				),
+			),
+		);
+
+		return array_merge( parent::scripts(), $scripts );
+	}
+
+	/**
 	 * @return string
 	 */
 	public function get_menu_icon() {

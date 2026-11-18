@@ -12,26 +12,7 @@ use Wereldkundig\GravityForms\Api\Client;
  * Only loaded on the feed settings, after Gravity Forms has loaded its settings field classes.
  */
 class ThemesSettingField extends Base {
-	public $type = 'wk_themes';
-
-	/**
-	 * A bordered list with a row per theme, its categories in an indented column; a checked theme is highlighted.
-	 */
-	private const STYLES = '
-		.wk-themes { border: 1px solid #d5d7e9; border-radius: 4px; background: #fff; overflow: hidden; }
-		.wk-theme { padding: 10px 14px; border-top: 1px solid #ecedf8; transition: background-color .15s; }
-		.wk-theme:first-child { border-top: 0; }
-		.wk-theme:has(.wk-theme-checkbox:checked) { background: #f6f9fc; }
-		.wk-theme__header, .wk-category { display: flex; align-items: center; gap: 10px; }
-		.wk-themes label { margin: 0; cursor: pointer; line-height: 1.4; }
-		.wk-theme__header label { font-weight: 500; color: #242748; }
-		.wk-theme-categories { display: grid; gap: 6px; margin: 8px 0 2px 9px; padding-left: 20px; border-left: 2px solid #ecedf8; }
-		.wk-theme:has(.wk-theme-checkbox:checked) .wk-theme-categories { border-left-color: #3e7da6; }
-		.wk-category label { color: #3a3d5c; }
-		.wk-category--child { margin-left: 26px; }
-		.wk-category-checkbox:disabled, .wk-category-checkbox:disabled + label { opacity: .5; cursor: not-allowed; }
-		.wk-themes-help { margin-top: 8px; }
-	';
+	public $type = 'wk_gf_themes';
 
 	/**
 	 * @return string
@@ -44,14 +25,14 @@ class ThemesSettingField extends Base {
 		$first = is_array( $value ) ? reset( $value ) : null;
 		$saved = is_array( $first ) && array_key_exists( 'theme', $first ) ? Addon::themes_from_posted( $value ) : Addon::clean_themes( $value );
 
-		$html = $this->get_description() . '<div class="wk-themes">';
+		$html = $this->get_description() . '<div class="wk-gf-themes">';
 		foreach ( $themes as $theme ) {
-			$theme_html_id = 'wk_theme_' . sanitize_html_class( $theme['id'] );
+			$theme_html_id = 'wk_gf_theme_' . sanitize_html_class( $theme['id'] );
 			$checked       = array_key_exists( $theme['id'], $saved );
 
-			$html .= '<div class="wk-theme">';
+			$html .= '<div class="wk-gf-theme">';
 			$html .= sprintf(
-				'<div class="wk-theme__header"><input type="checkbox" class="wk-theme-checkbox" id="%1$s" name="%2$s[%3$s][theme]" value="1" %4$s onclick="wkToggleThemeCategories(this);" /><label for="%1$s">%5$s</label></div>',
+				'<div class="wk-gf-theme__header"><input type="checkbox" class="wk-gf-theme-checkbox" id="%1$s" name="%2$s[%3$s][theme]" value="1" %4$s /><label for="%1$s">%5$s</label></div>',
 				esc_attr( $theme_html_id ),
 				esc_attr( $prefix ),
 				esc_attr( $theme['id'] ),
@@ -60,13 +41,13 @@ class ThemesSettingField extends Base {
 			);
 
 			if ( $theme['categories'] ) {
-				$html .= '<div class="wk-theme-categories">';
+				$html .= '<div class="wk-gf-theme-categories">';
 				foreach ( $theme['categories'] as $category_id => $category_name ) {
 					$category_html_id = $theme_html_id . '_' . sanitize_html_class( $category_id );
 					// Indent the child categories, keyed category-{parent}-{id}, below their "Alles in ..." parent.
 					$html .= sprintf(
-						'<div class="wk-category%1$s"><input type="checkbox" class="wk-category-checkbox" id="%2$s" name="%3$s[%4$s][categories][]" value="%5$s" data-theme="%4$s" %6$s %7$s /><label for="%2$s">%8$s</label></div>',
-						preg_match( '/^category-\d+-\d+$/', $category_id ) ? ' wk-category--child' : '',
+						'<div class="wk-gf-category%1$s"><input type="checkbox" class="wk-gf-category-checkbox" id="%2$s" name="%3$s[%4$s][categories][]" value="%5$s" data-theme="%4$s" %6$s %7$s /><label for="%2$s">%8$s</label></div>',
+						preg_match( '/^category-\d+-\d+$/', $category_id ) ? ' wk-gf-category--child' : '',
 						esc_attr( $category_html_id ),
 						esc_attr( $prefix ),
 						esc_attr( $theme['id'] ),
@@ -82,11 +63,7 @@ class ThemesSettingField extends Base {
 			$html .= '</div>';
 		}
 
-		$html .= '</div><p class="description wk-themes-help">' . esc_html__( 'A checked theme without checked categories is subscribed whole.', 'wereldkundig-for-gravity-forms' ) . '</p>';
-		$html .= '<style>' . self::STYLES . '</style>';
-
-		// Categories only count for a checked theme; disabled ones aren't posted.
-		$html .= '<script type="text/javascript">function wkToggleThemeCategories(theme) { var box = theme.closest(".wk-theme"); box && box.querySelectorAll(".wk-category-checkbox").forEach(function (category) { category.disabled = ! theme.checked; }); }</script>';
+		$html .= '</div><p class="description wk-gf-themes-help">' . esc_html__( 'A checked theme without checked categories is subscribed whole.', 'wereldkundig-for-gravity-forms' ) . '</p>';
 
 		return $html . $this->get_error_icon();
 	}

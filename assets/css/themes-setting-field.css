@@ -1,0 +1,68 @@
+.wk-gf-themes {
+	border: 1px solid #d5d7e9;
+	border-radius: 4px;
+	background: #fff;
+	overflow: hidden;
+}
+
+.wk-gf-theme {
+	padding: 10px 14px;
+	border-top: 1px solid #ecedf8;
+	transition: background-color 0.15s;
+}
+
+.wk-gf-theme:first-child {
+	border-top: 0;
+}
+
+.wk-gf-theme:has(.wk-gf-theme-checkbox:checked) {
+	background: #f6f9fc;
+}
+
+.wk-gf-theme__header,
+.wk-gf-category {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.wk-gf-themes label {
+	margin: 0;
+	cursor: pointer;
+	line-height: 1.4;
+}
+
+.wk-gf-theme__header label {
+	font-weight: 500;
+	color: #242748;
+}
+
+.wk-gf-theme-categories {
+	display: grid;
+	gap: 6px;
+	margin: 8px 0 2px 9px;
+	padding-left: 20px;
+	border-left: 2px solid #ecedf8;
+}
+
+.wk-gf-theme:has(.wk-gf-theme-checkbox:checked) .wk-gf-theme-categories {
+	border-left-color: #3e7da6;
+}
+
+.wk-gf-category label {
+	color: #3a3d5c;
+}
+
+.wk-gf-category--child {
+	margin-left: 26px;
+}
+
+.wk-gf-category-checkbox:disabled,
+.wk-gf-category-checkbox:disabled + label {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.wk-gf-themes-help {
+	margin-top: 8px;
+}
