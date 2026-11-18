@@ -187,7 +187,7 @@ msgid "Wereldkundig API request failed."
 msgstr ""
 
 #: app/Api/Client.php:396
-msgid "Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_API_URL and WK_API_AUTH in wp-config.php."
+msgid "Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_GF_API_URL and WK_GF_API_AUTH in wp-config.php."
 msgstr ""
 
 #: app/Api/Client.php:406

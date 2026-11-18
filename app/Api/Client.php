@@ -393,7 +393,7 @@ class Client {
 		if ( ! self::is_configured() ) {
 			return new \WP_Error(
 				'wk_gf_api_credentials_missing',
-				__( 'Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_API_URL and WK_API_AUTH in wp-config.php.', 'wereldkundig-for-gravity-forms' ),
+				__( 'Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_GF_API_URL and WK_GF_API_AUTH in wp-config.php.', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => 500 )
 			);
 		}
@@ -492,8 +492,8 @@ class Client {
 			: trim( (string) ( $settings[ $setting ] ?? '' ) );
 
 		return array(
-			'url'  => $value( 'WK_API_URL', 'api_url' ),
-			'auth' => trim( (string) preg_replace( '/^Basic\s+/i', '', $value( 'WK_API_AUTH', 'api_auth' ) ) ),
+			'url'  => $value( 'WK_GF_API_URL', 'api_url' ),
+			'auth' => trim( (string) preg_replace( '/^Basic\s+/i', '', $value( 'WK_GF_API_AUTH', 'api_auth' ) ) ),
 		);
 	}
 
@@ -578,7 +578,7 @@ class Client {
 		}
 
 		/**
-		 * The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_API_URL.
+		 * The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_GF_API_URL.
 		 *
 		 * The settings page doesn't validate a filtered URL, but every request still refuses plain http
 		 * except for `localhost`, `*.localhost` and `*.test`.

@@ -30,7 +30,7 @@ Which page covers what:
 | Topic | Page (same path under `nl/`) |
 |---|---|
 | Requirements, (de)activation, uninstall | `getting-started/installation.md` |
-| Platform URL, Basic Auth code, connection status, `WK_API_*` constants | `getting-started/connect.md` |
+| Platform URL, Basic Auth code, connection status, `WK_GF_API_*` constants | `getting-started/connect.md` |
 | First form walkthrough | `getting-started/first-form.md` |
 | The subscribe field, themes/categories, checked by default, visibility | `guides/subscribe-field.md` |
 | Feeds, field mapping, auto-detected fields | `guides/feeds-and-mapping.md` |

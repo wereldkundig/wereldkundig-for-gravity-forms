@@ -1,11 +1,11 @@
 {
 	"wk_gf_api_base_url": {
 		"source": {
-			"description": "The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_API_URL.",
+			"description": "The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_GF_API_URL.",
 			"long_description": "The settings page doesn't validate a filtered URL, but every request still refuses plain http except for `localhost`, `*.localhost` and `*.test`.",
 			"params": {}
 		},
-		"description": "De basis-URL van de API, bijvoorbeeld https://subdomein.domein.nl, uit de instellingen of WK_API_URL.",
+		"description": "De basis-URL van de API, bijvoorbeeld https://subdomein.domein.nl, uit de instellingen of WK_GF_API_URL.",
 		"long_description": "De instellingenpagina controleert een gefilterde URL niet, maar elk verzoek weigert nog steeds gewoon http, behalve voor `localhost`, `*.localhost` en `*.test`.",
 		"params": {}
 	},

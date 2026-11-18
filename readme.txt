@@ -41,7 +41,7 @@ From Wereldkundig, for your own platform.
 
 = Can I keep the Basic Auth code out of the database? =
 
-Yes. Define `WK_API_URL` and `WK_API_AUTH` in `wp-config.php`; each constant wins over its field on the settings page.
+Yes. Define `WK_GF_API_URL` and `WK_GF_API_AUTH` in `wp-config.php`; each constant wins over its field on the settings page.
 
 = Why does the feed say it could not load the themes? =
 
@@ -53,7 +53,7 @@ Open the entry. Its notes say whether the subscriber was sent, or why not.
 
 == External services ==
 
-This plugin connects to the Wereldkundig platform you configure under **Forms > Settings > Wereldkundig** (or with the `WK_API_URL` constant). It is needed to fetch your themes and to subscribe the people who fill in your forms. Every request carries the Basic Auth code you entered, and only goes over `https://`.
+This plugin connects to the Wereldkundig platform you configure under **Forms > Settings > Wereldkundig** (or with the `WK_GF_API_URL` constant). It is needed to fetch your themes and to subscribe the people who fill in your forms. Every request carries the Basic Auth code you entered, and only goes over `https://`.
 
 * **Fetching the themes and subscriber fields** (`GET /v1/subscribe/fields`): when you save the settings, and once an hour in the background while the platform is configured. No personal data is sent.
 * **Subscribing** (`POST /v1/subscribe`): when a visitor submits a form with the Wereldkundig subscribe box checked. It sends the email address, the names and other fields mapped in the feed, and the chosen themes and categories. Nothing is sent when the box is not checked.

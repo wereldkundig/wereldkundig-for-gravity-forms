@@ -45,8 +45,8 @@ The settings are stored like those of other Gravity Forms add-ons. Gravity Forms
 ## Credentials in wp-config.php
 
 ```php
-define('WK_API_URL', 'https://subdomein.domein.nl');
-define('WK_API_AUTH', 'base64code');
+define('WK_GF_API_URL', 'https://subdomein.domein.nl');
+define('WK_GF_API_AUTH', 'base64code');
 ```
 
 Each constant wins over its field on the settings page. The settings page then says which constants are defined, and the Basic Auth field becomes read-only and shows the masked constant.

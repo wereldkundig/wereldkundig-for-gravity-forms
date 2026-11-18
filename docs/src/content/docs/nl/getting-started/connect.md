@@ -45,8 +45,8 @@ De instellingen worden opgeslagen zoals die van andere Gravity Forms-add-ons. Gr
 ## Gegevens in wp-config.php
 
 ```php
-define('WK_API_URL', 'https://subdomein.domein.nl');
-define('WK_API_AUTH', 'base64code');
+define('WK_GF_API_URL', 'https://subdomein.domein.nl');
+define('WK_GF_API_AUTH', 'base64code');
 ```
 
 Elke constante gaat voor op het bijbehorende veld op de instellingenpagina. De instellingenpagina laat dan zien welke constanten zijn gedefinieerd, en het veld voor de Basic Auth-code wordt alleen-lezen en toont de gemaskeerde constante.

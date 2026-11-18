@@ -15,13 +15,13 @@ class ApiAuthSettingField extends Text {
 	public $type = 'wk_gf_api_auth';
 
 	/**
-	 * Gravity Forms renders this value, so return the mask, never the code. WK_API_AUTH wins over the setting.
+	 * Gravity Forms renders this value, so return the mask, never the code. WK_GF_API_AUTH wins over the setting.
 	 *
 	 * @return string
 	 */
 	public function get_value() {
 		$saved = parent::get_value();
-		$value = defined( 'WK_API_AUTH' ) && '' !== trim( (string) constant( 'WK_API_AUTH' ) )
+		$value = defined( 'WK_GF_API_AUTH' ) && '' !== trim( (string) constant( 'WK_GF_API_AUTH' ) )
 			? Client::credentials()['auth']
 			: ( is_string( $saved ) ? $saved : '' );
 

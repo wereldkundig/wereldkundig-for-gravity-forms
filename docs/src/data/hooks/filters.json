@@ -6,7 +6,7 @@
             "file": "Api/Client.php",
             "type": "filter",
             "doc": {
-                "description": "The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_API_URL.",
+                "description": "The API base URL, e.g. https://subdomein.domein.nl, from the settings or WK_GF_API_URL.",
                 "long_description": "The settings page doesn't validate a filtered URL, but every request still refuses plain http except for `localhost`, `*.localhost` and `*.test`.",
                 "tags": [
                     {

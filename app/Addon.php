@@ -272,7 +272,7 @@ class Addon extends \GFFeedAddOn {
 		$description = esc_html__( 'Connect to your Wereldkundig platform with the Basic Auth code supplied by Wereldkundig.', 'wereldkundig-for-gravity-forms' );
 
 		$constants = array_filter(
-			array( 'WK_API_URL', 'WK_API_AUTH' ),
+			array( 'WK_GF_API_URL', 'WK_GF_API_AUTH' ),
 			static function ( $constant ) {
 				return defined( $constant ) && '' !== trim( (string) constant( $constant ) );
 			}
@@ -316,7 +316,7 @@ class Addon extends \GFFeedAddOn {
 							'input_type'   => $masked ? null : 'password',
 							'class'        => 'large',
 							'autocomplete' => 'off',
-							'readonly'     => defined( 'WK_API_AUTH' ) && '' !== trim( (string) constant( 'WK_API_AUTH' ) ) ? 'readonly' : null,
+							'readonly'     => defined( 'WK_GF_API_AUTH' ) && '' !== trim( (string) constant( 'WK_GF_API_AUTH' ) ) ? 'readonly' : null,
 							'description'  => esc_html__( 'The base64 encoded credentials, without "Basic ". Only the start is shown once saved; leave it as is to keep the saved code, or paste a new one.', 'wereldkundig-for-gravity-forms' ),
 						)
 					),
