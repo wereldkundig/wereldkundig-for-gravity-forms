@@ -31,8 +31,8 @@ test.describe.serial('Feed themes', () => {
         }
     });
 
-    const themeCheckbox = (page: Page) => page.locator(`.wk-theme-checkbox[name$="[${choice.theme}][theme]"]`);
-    const categoryCheckbox = (page: Page, category: string) => page.locator(`.wk-category-checkbox[data-theme="${choice.theme}"][value="${category}"]`);
+    const themeCheckbox = (page: Page) => page.locator(`.wk-gf-theme-checkbox[name$="[${choice.theme}][theme]"]`);
+    const categoryCheckbox = (page: Page, category: string) => page.locator(`.wk-gf-category-checkbox[data-theme="${choice.theme}"][value="${category}"]`);
     const subscribeField = (page: Page) => page.locator('select[name="_gform_setting_subscribe_field"]');
 
     async function openFeed(page: Page): Promise<void> {
@@ -65,7 +65,7 @@ test.describe.serial('Feed themes', () => {
 
         expect(savedFeed(formId)).toMatchObject({
             subscribe_field: String(OTHER_SUBSCRIBE_FIELD_ID),
-            wk_themes: { [choice.theme]: [choice.category] },
+            wk_gf_themes: { [choice.theme]: [choice.category] },
         });
 
         // After a reload the feed shows the stored selection again.
@@ -86,7 +86,7 @@ test.describe.serial('Feed themes', () => {
 
         expect(savedFeed(formId)).toMatchObject({
             subscribe_field: String(SUBSCRIBE_FIELD_ID),
-            wk_themes: { [choice.theme]: [choice.selectAll] },
+            wk_gf_themes: { [choice.theme]: [choice.selectAll] },
         });
     });
 
@@ -97,6 +97,6 @@ test.describe.serial('Feed themes', () => {
         await saveFeed(page);
 
         // Not saved: the stored feed still has its theme.
-        expect(savedFeed(formId)?.wk_themes).toEqual({ [choice.theme]: [choice.selectAll] });
+        expect(savedFeed(formId)?.wk_gf_themes).toEqual({ [choice.theme]: [choice.selectAll] });
     });
 });

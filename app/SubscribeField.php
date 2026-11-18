@@ -5,10 +5,10 @@ namespace Wereldkundig\GravityForms;
 // GF_Field declares its methods and properties without types, so overrides are only typed in PHPDoc.
 class SubscribeField extends \GF_Field {
 	/** @var string */
-	public $type = 'wk_subscribe';
+	public $type = 'wk_gf_subscribe';
 
 	/** @var bool Render the checkbox checked on a fresh form. Off by default: a pre-checked box is no valid GDPR consent. */
-	public $wk_default_checked = false;
+	public $wk_gf_default_checked = false;
 
 	/**
 	 * @return string
@@ -56,8 +56,8 @@ class SubscribeField extends \GF_Field {
 			'css_class_setting',
 			'rules_setting',
 			'visibility_setting',
-			'wk_feed_notice_setting',
-			'wk_default_checked_setting',
+			'wk_gf_feed_notice_setting',
+			'wk_gf_default_checked_setting',
 		);
 	}
 
@@ -74,7 +74,7 @@ class SubscribeField extends \GF_Field {
 	public function sanitize_settings() {
 		parent::sanitize_settings();
 
-		$this->wk_default_checked = ! empty( $this->wk_default_checked );
+		$this->wk_gf_default_checked = ! empty( $this->wk_gf_default_checked );
 	}
 
 	/**
@@ -163,7 +163,7 @@ class SubscribeField extends \GF_Field {
 	 * @param mixed $value
 	 */
 	private function renders_checked_by_default( $form_id, $value ): bool {
-		if ( empty( $this->wk_default_checked ) || $this->is_entry_detail() || ! rgblank( $value ) ) {
+		if ( empty( $this->wk_gf_default_checked ) || $this->is_entry_detail() || ! rgblank( $value ) ) {
 			return false;
 		}
 
@@ -201,8 +201,35 @@ class SubscribeField extends \GF_Field {
 
 	public static function register_editor(): void {
 		add_action( 'gform_field_standard_settings', array( self::class, 'editor_settings' ), 10, 2 );
-		add_action( 'gform_editor_js', array( self::class, 'editor_js' ) );
+		add_action( 'admin_enqueue_scripts', array( self::class, 'enqueue_editor_script' ), 20 );
 		add_filter( 'gform_tooltips', array( self::class, 'tooltips' ) );
+	}
+
+	/**
+	 * Form editor script for default values and the field settings panel.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_editor_script(): void {
+		if ( ! class_exists( 'GFForms' ) || ! \GFForms::is_gravity_page() || ! rgempty( 'view' ) ) {
+			return;
+		}
+
+		if ( 'gf_edit_forms' !== rgget( 'page' ) ) {
+			return;
+		}
+
+		$handle = 'wk-gf-subscribe-field-editor';
+		$src    = plugins_url( 'assets/js/subscribe-field-editor.js', dirname( __DIR__ ) . '/wereldkundig-for-gravity-forms.php' );
+
+		wp_enqueue_script( $handle, $src, array( 'jquery', 'gform_form_editor' ), VERSION, true );
+		wp_localize_script(
+			$handle,
+			'wkGfSubscribeFieldEditor',
+			array(
+				'defaultLabel' => __( 'Wereldkundig subscribe me', 'wereldkundig-for-gravity-forms' ),
+			)
+		);
 	}
 
 	/**
@@ -216,10 +243,10 @@ class SubscribeField extends \GF_Field {
 
 		$feeds = admin_url( 'admin.php?page=gf_edit_forms&view=settings&subview=wereldkundig&id=' . absint( $form_id ) );
 		?>
-		<li class="wk_feed_notice_setting field_setting">
+		<li class="wk_gf_feed_notice_setting field_setting">
 			<label class="section_label"><?php esc_html_e( 'Themes', 'wereldkundig-for-gravity-forms' ); ?></label>
 			<?php // A WordPress info notice: blue (#72aee6) border on its lightest tint (#f0f6fc), with the default text color (#1d2327). ?>
-			<div class="wk-feed-notice" role="note" style="padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
+			<div class="wk-gf-feed-notice" role="note" style="padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
 				<?php
 				printf(
 					/* translators: %s: "Wereldkundig feed", linked to the form's Wereldkundig feeds. */
@@ -229,50 +256,17 @@ class SubscribeField extends \GF_Field {
 				?>
 			</div>
 		</li>
-		<li class="wk_default_checked_setting field_setting">
-			<input type="checkbox" id="field_wk_default_checked" onclick="SetFieldProperty('wk_default_checked', this.checked);" />
-			<label for="field_wk_default_checked" class="inline">
+		<li class="wk_gf_default_checked_setting field_setting">
+			<input type="checkbox" id="field_wk_gf_default_checked" onclick="SetFieldProperty('wk_gf_default_checked', this.checked);" />
+			<label for="field_wk_gf_default_checked" class="inline">
 				<?php esc_html_e( 'Checked by default', 'wereldkundig-for-gravity-forms' ); ?>
-				<?php gform_tooltip( 'wk_default_checked' ); ?>
+				<?php gform_tooltip( 'wk_gf_default_checked' ); ?>
 			</label>
 			<?php // A WordPress info notice: blue (#72aee6) border on its lightest tint (#f0f6fc), with the default text color (#1d2327). ?>
-			<div class="wk-default-checked-warning" role="note" style="display: none; margin-top: 8px; padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
+			<div class="wk-gf-default-checked-warning" role="note" style="display: none; margin-top: 8px; padding: 8px 12px; border-left: 4px solid #72aee6; background: #f0f6fc; color: #1d2327;">
 				<?php esc_html_e( 'A pre-checked box is not valid consent under the GDPR. Only use this when visitors expect to be subscribed by submitting this form.', 'wereldkundig-for-gravity-forms' ); ?>
 			</div>
 		</li>
-		<?php
-	}
-
-	public static function editor_js(): void {
-		?>
-		<script type="text/javascript">
-			function SetDefaultValues_wk_subscribe(field) {
-				field.label = <?php echo wp_json_encode( __( 'Wereldkundig subscribe me', 'wereldkundig-for-gravity-forms' ) ); ?>;
-			}
-
-			jQuery(document).on('gform_load_field_settings', function (evt, field) {
-				if (field.type !== 'wk_subscribe') {
-					return;
-				}
-				// The feed only asks which checkbox when the form has several; with one, it uses that one.
-				var subscribeFields = window.form ? form.fields.filter(function (formField) { return formField.type === 'wk_subscribe'; }).length : 0;
-				jQuery('.wk_feed_notice_setting').toggle(subscribeFields > 1);
-				jQuery('#field_wk_default_checked').prop('checked', !! field.wk_default_checked);
-				jQuery('.wk-default-checked-warning').toggle(!! field.wk_default_checked);
-			});
-
-			if (window.gform) {
-				gform.addAction('gform_post_set_field_property', function (name, field) {
-					if (name === 'label' && field.type === 'wk_subscribe') {
-						jQuery('#field_' + field.id + ' .gfield_checkbox label').text(field.label);
-					}
-					if (name === 'wk_default_checked' && field.type === 'wk_subscribe') {
-						jQuery('#field_' + field.id + ' .gfield_checkbox input').prop('checked', !! field.wk_default_checked);
-						jQuery('.wk-default-checked-warning').toggle(!! field.wk_default_checked);
-					}
-				});
-			}
-		</script>
 		<?php
 	}
 
@@ -281,7 +275,7 @@ class SubscribeField extends \GF_Field {
 	 * @return array<string,string>
 	 */
 	public static function tooltips( $tooltips ): array {
-		$tooltips['wk_default_checked'] = '<h6>' . esc_html__( 'Checked by default', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Shows the checkbox already checked when the form loads. Visitors can still uncheck it; that choice is kept when the form is shown again after a validation error.', 'wereldkundig-for-gravity-forms' );
+		$tooltips['wk_gf_default_checked'] = '<h6>' . esc_html__( 'Checked by default', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Shows the checkbox already checked when the form loads. Visitors can still uncheck it; that choice is kept when the form is shown again after a validation error.', 'wereldkundig-for-gravity-forms' );
 
 		return $tooltips;
 	}

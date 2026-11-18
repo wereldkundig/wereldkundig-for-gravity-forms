@@ -22,8 +22,8 @@ De lijst met feeds toont de naam en de thema's van elke feed. Feeds kun je dupli
 De feed verstuurt de abonnee alleen als zijn inschrijfvinkje is aangevinkt. Welk vinkje dat is, hangt af van het aantal velden **Inschrijven bij Wereldkundig** op het formulier:
 
 - **Eén**: er valt niets te kiezen. De feed toont het veld met zijn label (of beheerderslabel) en veld-ID, gevolgd door "het enige inschrijfvinkje van dit formulier", en gebruikt het altijd. Ook een feed die is opgeslagen voordat het veld werd toegevoegd, of waarvan het gekozen veld door een ander is vervangen.
-- **Meerdere**, bijvoorbeeld één per nieuwsbrief: **Inschrijfvinkje** is een verplichte lijst met die velden. Geef elk vinkje een eigen feed, met eigen thema's. Elke feed waarvan het vinkje aan staat, verstuurt een eigen verzoek. Wordt het gekozen veld later van het formulier verwijderd, dan krijgt de inzending de fout `wk_subscribe_field_missing`; kies dan een ander vinkje in de feed.
-- **Geen**: de feed toont in plaats daarvan een melding. Je kunt de feed toch opslaan; zodra je het veld in de formuliereditor toevoegt, gebruikt de feed het, zonder dat je de feed opnieuw hoeft te bewerken. Tot die tijd krijgen inzendingen de fout `wk_subscribe_field_missing`.
+- **Meerdere**, bijvoorbeeld één per nieuwsbrief: **Inschrijfvinkje** is een verplichte lijst met die velden. Geef elk vinkje een eigen feed, met eigen thema's. Elke feed waarvan het vinkje aan staat, verstuurt een eigen verzoek. Wordt het gekozen veld later van het formulier verwijderd, dan krijgt de inzending de fout `wk_gf_subscribe_field_missing`; kies dan een ander vinkje in de feed.
+- **Geen**: de feed toont in plaats daarvan een melding. Je kunt de feed toch opslaan; zodra je het veld in de formuliereditor toevoegt, gebruikt de feed het, zonder dat je de feed opnieuw hoeft te bewerken. Tot die tijd krijgen inzendingen de fout `wk_gf_subscribe_field_missing`.
 
 Had het formulier één inschrijfveld en voeg je een tweede toe, dan houden bestaande feeds het vinkje waarmee ze zijn opgeslagen.
 
@@ -42,7 +42,7 @@ De thema's komen uit de cache op je site, gevuld vanaf het platform. Een thema d
 
 ## Velden koppelen
 
-**Velden koppelen** toont elk abonneeveld dat het platform aanbiedt, zoals e-mailadres, voornaam, tussenvoegsel en achternaam. Geen ervan is verplicht, maar koppel in elk geval het e-mailadres: zonder e-mailadres wordt de abonnee niet verstuurd en krijgt de inzending de fout `wk_email_invalid`.
+**Velden koppelen** toont elk abonneeveld dat het platform aanbiedt, zoals e-mailadres, voornaam, tussenvoegsel en achternaam. Geen ervan is verplicht, maar koppel in elk geval het e-mailadres: zonder e-mailadres wordt de abonnee niet verstuurd en krijgt de inzending de fout `wk_gf_email_invalid`.
 
 - Voor het e-mailadres kun je alleen formuliervelden van het type E-mailadres, Verborgen en Tekstregel kiezen.
 - Uitgeschakelde onderdelen van een Naam-veld, zoals de aanhef of het achtervoegsel, worden niet aangeboden.

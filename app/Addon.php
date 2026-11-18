@@ -183,7 +183,7 @@ class Addon extends \GFFeedAddOn {
 	public function feed_list_columns() {
 		return array(
 			'feedName'  => esc_html__( 'Name', 'wereldkundig-for-gravity-forms' ),
-			'wk_themes' => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
+			'wk_gf_themes' => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
 		);
 	}
 
@@ -193,7 +193,7 @@ class Addon extends \GFFeedAddOn {
 	 * @param array<string,mixed> $feed
 	 * @return string
 	 */
-	public function get_column_value_wk_themes( $feed ) {
+	public function get_column_value_wk_gf_themes( $feed ) {
 		$client = new Client();
 		$names  = array();
 		foreach ( array_keys( self::feed_themes( $feed ) ) as $theme_id ) {
@@ -209,7 +209,7 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public function feed_settings_fields() {
 		$field_map = $this->fields_for_feed_mapping();
-		$themes    = $this->register_setting_field( 'wk_themes', ThemesSettingField::class ) && ( new Client() )->themes_setup();
+		$themes    = $this->register_setting_field( 'wk_gf_themes', ThemesSettingField::class ) && ( new Client() )->themes_setup();
 
 		return array(
 			array(
@@ -230,13 +230,13 @@ class Addon extends \GFFeedAddOn {
 					),
 					...$this->subscribe_field_settings(),
 					$themes ? array(
-						'name'     => 'wk_themes',
+						'name'     => 'wk_gf_themes',
 						'label'    => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
-						'type'     => 'wk_themes',
+						'type'     => 'wk_gf_themes',
 						'required' => true,
 						'tooltip'  => '<h6>' . esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Subscribers are added to every checked Wereldkundig theme. Check categories of a theme to subscribe to only those; without checked categories the whole theme is subscribed.', 'wereldkundig-for-gravity-forms' ),
 					) : array(
-						'name'  => 'wk_themes_unavailable',
+						'name'  => 'wk_gf_themes_unavailable',
 						'label' => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
 						'type'  => 'html',
 						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the themes from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. The checked themes are kept.', 'wereldkundig-for-gravity-forms' ) . '</div>',
@@ -287,7 +287,7 @@ class Addon extends \GFFeedAddOn {
 			) . '</strong>';
 		}
 
-		$masked = $this->register_setting_field( 'wk_api_auth', ApiAuthSettingField::class );
+		$masked = $this->register_setting_field( 'wk_gf_api_auth', ApiAuthSettingField::class );
 
 		return array(
 			array(
@@ -312,7 +312,7 @@ class Addon extends \GFFeedAddOn {
 							'name'         => 'api_auth',
 							'label'        => esc_html__( 'Basic Auth code', 'wereldkundig-for-gravity-forms' ),
 							// Without the masked type (older Gravity Forms), at least hide the code on screen.
-							'type'         => $masked ? 'wk_api_auth' : 'text',
+							'type'         => $masked ? 'wk_gf_api_auth' : 'text',
 							'input_type'   => $masked ? null : 'password',
 							'class'        => 'large',
 							'autocomplete' => 'off',
@@ -464,7 +464,7 @@ class Addon extends \GFFeedAddOn {
 	 * @return array<string,string[]>
 	 */
 	public static function feed_themes( $feed ): array {
-		return self::clean_themes( rgars( (array) $feed, 'meta/wk_themes' ) );
+		return self::clean_themes( rgars( (array) $feed, 'meta/wk_gf_themes' ) );
 	}
 
 	/**
@@ -611,7 +611,7 @@ class Addon extends \GFFeedAddOn {
 
 		// WordPress green (#00a32a) border on its lightest tint (#edfaef), with dark green (#003008) text.
 		return sprintf(
-			'<div class="wk-api-status-notice" style="padding: 8px 12px; border-left: 4px solid #00a32a; background: #edfaef; color: #003008;"><strong>%s</strong><br />%s: %s<br />%s</div>',
+			'<div class="wk-gf-api-status-notice" style="padding: 8px 12px; border-left: 4px solid #00a32a; background: #edfaef; color: #003008;"><strong>%s</strong><br />%s: %s<br />%s</div>',
 			esc_html__( 'Successfully connected to Wereldkundig.', 'wereldkundig-for-gravity-forms' ),
 			esc_html__( 'Platform', 'wereldkundig-for-gravity-forms' ),
 			esc_html( Client::credentials()['url'] ),
@@ -638,7 +638,7 @@ class Addon extends \GFFeedAddOn {
 		}
 
 		return sprintf(
-			'<div class="wk-api-error-notice" role="alert" style="padding: 8px 12px; border-left: 4px solid #d63638; background: #fcf0f1; color: #3f0001;"><strong>%s</strong><br />%s<br />%s</div>',
+			'<div class="wk-gf-api-error-notice" role="alert" style="padding: 8px 12px; border-left: 4px solid #d63638; background: #fcf0f1; color: #3f0001;"><strong>%s</strong><br />%s<br />%s</div>',
 			'cron' === ( $error['source'] ?? '' )
 					? esc_html__( 'The background refresh of the Wereldkundig themes failed.', 'wereldkundig-for-gravity-forms' )
 					: esc_html__( 'Settings saved, but the Wereldkundig API call failed.', 'wereldkundig-for-gravity-forms' ),
@@ -675,7 +675,7 @@ class Addon extends \GFFeedAddOn {
 		if ( $feed_id && ( $keep_mapping || $keep_themes ) ) {
 			$feed = $this->get_feed( $feed_id );
 			foreach ( (array) ( $feed['meta'] ?? array() ) as $key => $value ) {
-				$keep = ( $keep_mapping && 0 === strpos( (string) $key, 'mapped_fields_' ) ) || ( $keep_themes && 'wk_themes' === $key );
+				$keep = ( $keep_mapping && 0 === strpos( (string) $key, 'mapped_fields_' ) ) || ( $keep_themes && 'wk_gf_themes' === $key );
 				if ( $keep && ! array_key_exists( $key, $settings ) ) {
 					$settings[ $key ] = $value;
 				}
@@ -786,7 +786,7 @@ class Addon extends \GFFeedAddOn {
 	public function is_feed_error_retryable( $retry, $error, $feed, $entry, $form ) {
 		if ( $error instanceof \WP_Error ) {
 			$status = (int) rgar( (array) $error->get_error_data(), 'status' );
-			$final  = in_array( $error->get_error_code(), array( 'wk_theme_invalid', 'wk_subscribe_field_missing', 'wk_email_invalid', 'wk_api_credentials_missing', 'wk_api_insecure_url', 'wk_api_json_encode' ), true )
+			$final  = in_array( $error->get_error_code(), array( 'wk_gf_theme_invalid', 'wk_gf_subscribe_field_missing', 'wk_gf_email_invalid', 'wk_gf_api_credentials_missing', 'wk_gf_api_insecure_url', 'wk_gf_api_json_encode' ), true )
 				|| ( $status >= 400 && $status < 500 && ! in_array( $status, array( 408, 429 ), true ) );
 			if ( $final ) {
 				$retry = false;

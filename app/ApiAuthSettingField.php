@@ -12,7 +12,7 @@ use Wereldkundig\GravityForms\Api\Client;
  * Only loaded on the add-on settings page, after Gravity Forms has loaded its settings field classes.
  */
 class ApiAuthSettingField extends Text {
-	public $type = 'wk_api_auth';
+	public $type = 'wk_gf_api_auth';
 
 	/**
 	 * Gravity Forms renders this value, so return the mask, never the code. WK_API_AUTH wins over the setting.

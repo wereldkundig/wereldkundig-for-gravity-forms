@@ -22,8 +22,8 @@ The feed list shows the name and the themes of each feed. Feeds can be duplicate
 The feed only sends the subscriber when its subscribe checkbox is checked. Which checkbox that is depends on the number of **Wereldkundig subscribe me** fields on the form:
 
 - **One**: there is nothing to choose. The feed shows the field by label (or admin label) and field ID, followed by "the only subscribe checkbox of this form", and always uses it. That includes a feed saved before the field was added, and a feed whose chosen field was replaced by another one.
-- **Several**, for example one per newsletter: **Subscribe checkbox** is a required list of those fields. Give each checkbox its own feed, with its own themes. Every feed whose checkbox is checked sends its own request. When the chosen field is later removed from the form, the entry gets the error `wk_subscribe_field_missing`; choose another checkbox in the feed.
-- **None**: the feed shows a notice instead. You can still save the feed; once you add the field in the form editor, the feed uses it without being edited again. Until then, entries get the error `wk_subscribe_field_missing`.
+- **Several**, for example one per newsletter: **Subscribe checkbox** is a required list of those fields. Give each checkbox its own feed, with its own themes. Every feed whose checkbox is checked sends its own request. When the chosen field is later removed from the form, the entry gets the error `wk_gf_subscribe_field_missing`; choose another checkbox in the feed.
+- **None**: the feed shows a notice instead. You can still save the feed; once you add the field in the form editor, the feed uses it without being edited again. Until then, entries get the error `wk_gf_subscribe_field_missing`.
 
 When the form had one subscribe field and you add a second, existing feeds keep the checkbox they were saved with.
 
@@ -42,7 +42,7 @@ The themes come from the cache on your site, filled from the platform. A theme t
 
 ## Map fields
 
-**Map Fields** lists every subscriber field the platform offers, such as email, first name, middle name and last name. None of them are required, but map at least the email address: without it, the subscriber isn't sent and the entry gets the error `wk_email_invalid`.
+**Map Fields** lists every subscriber field the platform offers, such as email, first name, middle name and last name. None of them are required, but map at least the email address: without it, the subscriber isn't sent and the entry gets the error `wk_gf_email_invalid`.
 
 - The email field only offers Email, Hidden and Text form fields.
 - Disabled parts of a Name field, such as the prefix or suffix, aren't offered.

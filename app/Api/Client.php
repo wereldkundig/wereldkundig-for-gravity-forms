@@ -130,7 +130,7 @@ class Client {
 		}
 
 		if ( ! is_array( $response['fields'] ?? null ) && ! is_array( $response['options'] ?? null ) ) {
-			return new \WP_Error( 'wk_api_fields_invalid', __( 'Invalid subscribe fields response.', 'wereldkundig-for-gravity-forms' ) );
+			return new \WP_Error( 'wk_gf_api_fields_invalid', __( 'Invalid subscribe fields response.', 'wereldkundig-for-gravity-forms' ) );
 		}
 
 		if ( function_exists( 'update_option' ) ) {
@@ -294,7 +294,7 @@ class Client {
 
 		if ( empty( $response['success'] ) ) {
 			return new \WP_Error(
-				'wk_api_subscribe_failed',
+				'wk_gf_api_subscribe_failed',
 				! empty( $response['message'] ) ? (string) $response['message'] : __( 'Wereldkundig API request failed.', 'wereldkundig-for-gravity-forms' )
 			);
 		}
@@ -392,7 +392,7 @@ class Client {
 		$credentials = self::credentials();
 		if ( ! self::is_configured() ) {
 			return new \WP_Error(
-				'wk_api_credentials_missing',
+				'wk_gf_api_credentials_missing',
 				__( 'Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_API_URL and WK_API_AUTH in wp-config.php.', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => 500 )
 			);
@@ -402,7 +402,7 @@ class Client {
 		// The Basic Auth code must not travel over plain http; constants and the URL filter skip the settings validation.
 		if ( ! self::is_secure_url( $url ) ) {
 			return new \WP_Error(
-				'wk_api_insecure_url',
+				'wk_gf_api_insecure_url',
 				__( 'The Wereldkundig API URL must use https:// (plain http is only allowed for localhost and *.test).', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => 500 )
 			);
@@ -430,7 +430,7 @@ class Client {
 		if ( 'GET' !== $method ) {
 			$json = wp_json_encode( $body );
 			if ( false === $json ) {
-				return new \WP_Error( 'wk_api_json_encode', __( 'Could not encode the API request.', 'wereldkundig-for-gravity-forms' ) );
+				return new \WP_Error( 'wk_gf_api_json_encode', __( 'Could not encode the API request.', 'wereldkundig-for-gravity-forms' ) );
 			}
 
 			$args['body'] = $json;
@@ -458,14 +458,14 @@ class Client {
 			$error   = (string) ( $decoded['code'] ?? $decoded['type'] ?? '' );
 
 			return new \WP_Error(
-				'' !== $error ? $error : 'wk_api_http',
+				'' !== $error ? $error : 'wk_gf_api_http',
 				'' !== $message ? $message : __( 'API request failed.', 'wereldkundig-for-gravity-forms' ),
 				array( 'status' => $code )
 			);
 		}
 
 		if ( ! is_array( $decoded ) ) {
-			return new \WP_Error( 'wk_api_json', __( 'Invalid API response.', 'wereldkundig-for-gravity-forms' ) );
+			return new \WP_Error( 'wk_gf_api_json', __( 'Invalid API response.', 'wereldkundig-for-gravity-forms' ) );
 		}
 
 		return $decoded;

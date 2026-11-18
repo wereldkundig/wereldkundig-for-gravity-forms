@@ -8,23 +8,23 @@
 use Brain\Monkey\Functions;
 use Wereldkundig\GravityForms\Api\Client;
 
-function wk_live_env(string $key): string {
+function wk_gf_live_env(string $key): string {
     return trim((string) getenv($key));
 }
 
 /**
  * Route the client through real HTTP: wp_remote_request() becomes a curl call.
  */
-function wk_live_api(?string $auth = null): void {
-    if ('' === wk_live_env('WK_TEST_API_URL')) {
+function wk_gf_live_api(?string $auth = null): void {
+    if ('' === wk_gf_live_env('WK_TEST_API_URL')) {
         test()->markTestSkipped('WK_TEST_API_URL is not set in .env.local.tests.');
     }
 
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     Functions\when('get_option')->justReturn([
-        'api_url'      => wk_live_env('WK_TEST_API_URL'),
-        'api_auth'     => $auth ?? wk_live_env('WK_TEST_API_AUTH'),
+        'api_url'      => wk_gf_live_env('WK_TEST_API_URL'),
+        'api_auth'     => $auth ?? wk_gf_live_env('WK_TEST_API_AUTH'),
     ]);
     Functions\when('update_option')->justReturn(true);
     Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
@@ -47,8 +47,8 @@ function wk_live_api(?string $auth = null): void {
         if (isset($args['body'])) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, $args['body']);
         }
-        if ('' !== wk_live_env('WK_TEST_API_CA_FILE')) {
-            curl_setopt($curl, CURLOPT_CAINFO, wk_live_env('WK_TEST_API_CA_FILE'));
+        if ('' !== wk_gf_live_env('WK_TEST_API_CA_FILE')) {
+            curl_setopt($curl, CURLOPT_CAINFO, wk_gf_live_env('WK_TEST_API_CA_FILE'));
         }
 
         $body = curl_exec($curl);
@@ -66,14 +66,14 @@ function wk_live_api(?string $auth = null): void {
     });
 }
 
-function wk_live_require_credentials(): void {
-    if ('' === wk_live_env('WK_TEST_API_AUTH')) {
+function wk_gf_live_require_credentials(): void {
+    if ('' === wk_gf_live_env('WK_TEST_API_AUTH')) {
         test()->markTestSkipped('WK_TEST_API_AUTH is not set in .env.local.tests.');
     }
 }
 
 it('is refused by the platform with wrong credentials', function () {
-    wk_live_api(base64_encode('wk-gf-tests:not-the-password'));
+    wk_gf_live_api(base64_encode('wk-gf-tests:not-the-password'));
 
     $result = (new Client())->request('GET', '/v1/subscribe/fields');
 
@@ -82,8 +82,8 @@ it('is refused by the platform with wrong credentials', function () {
 });
 
 it('reads the themes from the platform', function () {
-    wk_live_require_credentials();
-    wk_live_api();
+    wk_gf_live_require_credentials();
+    wk_gf_live_api();
 
     $themes = (new Client())->themes_setup(true);
 
@@ -96,13 +96,13 @@ it('reads the themes from the platform', function () {
 });
 
 it('subscribes to the first theme on the platform', function () {
-    wk_live_require_credentials();
-    $email = wk_live_env('WK_TEST_API_SUBSCRIBE_EMAIL');
+    wk_gf_live_require_credentials();
+    $email = wk_gf_live_env('WK_TEST_API_SUBSCRIBE_EMAIL');
     if ('' === $email) {
         $this->markTestSkipped('WK_TEST_API_SUBSCRIBE_EMAIL is not set in .env.local.tests.');
     }
 
-    wk_live_api();
+    wk_gf_live_api();
     $client = new Client();
     $themes = $client->themes();
     expect($themes)->not->toBeEmpty();

@@ -25,7 +25,7 @@ Go to **Forms > Settings > Logging** and enable **Wereldkundig**. Skips, failure
 **A new theme doesn't show up in the feed.**
 The feed uses the cached themes. Save the Wereldkundig settings to fetch them now, or wait for the [hourly refresh](/guides/themes-and-refresh/).
 
-**The note says `wk_email_invalid`.**
+**The note says `wk_gf_email_invalid`.**
 The subscriber has no email address. Map the Email field under **Map Fields** in the form's feed, or turn on [auto-detected fields](/guides/feeds-and-mapping/#auto-detected-fields).
 
 **The note says `member-exists`.**

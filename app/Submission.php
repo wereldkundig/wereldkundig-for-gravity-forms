@@ -28,7 +28,7 @@ class Submission {
 
 		$field = $this->feed_subscribe_field( $form, $feed );
 		if ( ! $field ) {
-			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_subscribe_field_missing', __( 'The subscribe checkbox chosen in the feed is not on the form; choose one in the feed settings. Subscriber not sent.', 'wereldkundig-for-gravity-forms' ) ) );
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_gf_subscribe_field_missing', __( 'The subscribe checkbox chosen in the feed is not on the form; choose one in the feed settings. Subscriber not sent.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
 		if ( ! $this->is_checked( $field, $entry ) ) {
@@ -39,7 +39,7 @@ class Submission {
 		// No themes at all means the API isn't configured or reachable, not a bad theme choice.
 		$client = new Client();
 		if ( ! $client->themes() ) {
-			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_themes_unavailable', __( 'Could not load the Wereldkundig themes; check the API connection. Subscriber not sent.', 'wereldkundig-for-gravity-forms' ) ) );
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_gf_themes_unavailable', __( 'Could not load the Wereldkundig themes; check the API connection. Subscriber not sent.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
 		// Prevention: only theme IDs the API knows, and only categories of that theme. IDs are public, not secrets.
@@ -63,7 +63,7 @@ class Submission {
 				$entry,
 				$form,
 				new \WP_Error(
-					'wk_theme_invalid',
+					'wk_gf_theme_invalid',
 					sprintf(
 					/* translators: %s: comma separated theme IDs, empty when the feed has no theme. */
 						__( 'Invalid Wereldkundig theme: %s.', 'wereldkundig-for-gravity-forms' ),
@@ -133,7 +133,7 @@ class Submission {
 
 		$subscriber['email'] = sanitize_email( (string) ( $subscriber['email'] ?? '' ) );
 		if ( '' === $subscriber['email'] ) {
-			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_email_invalid', __( 'No valid email address to subscribe.', 'wereldkundig-for-gravity-forms' ) ) );
+			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_gf_email_invalid', __( 'No valid email address to subscribe.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
 		$result = $client->subscribe( $themes, $subscriber );
@@ -254,7 +254,7 @@ class Submission {
 		return array_values(
 			array_filter(
 				(array) rgar( $form, 'fields', array() ),
-				static fn ( $field ): bool => $field instanceof \GF_Field && isset( $field->type ) && 'wk_subscribe' === $field->type
+				static fn ( $field ): bool => $field instanceof \GF_Field && isset( $field->type ) && 'wk_gf_subscribe' === $field->type
 			)
 		);
 	}

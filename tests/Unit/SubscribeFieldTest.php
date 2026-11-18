@@ -2,7 +2,7 @@
 
 use Wereldkundig\GravityForms\SubscribeField;
 
-function wk_editor_stubs(bool $can_manage = true): void {
+function wk_gf_editor_stubs(bool $can_manage = true): void {
     Brain\Monkey\Functions\when('esc_html_e')->echoArg();
     Brain\Monkey\Functions\when('esc_html')->returnArg();
     Brain\Monkey\Functions\when('esc_url')->returnArg();
@@ -15,7 +15,7 @@ function wk_editor_stubs(bool $can_manage = true): void {
 it('uses the expected Gravity Forms field metadata', function () {
     $field = new SubscribeField();
 
-    expect($field->type)->toBe('wk_subscribe')
+    expect($field->type)->toBe('wk_gf_subscribe')
         ->and($field->get_form_editor_field_title())->toBe('Wereldkundig subscribe me')
         ->and($field->get_field_css_class())->toBe('gfield--type-choice')
         ->and($field->is_conditional_logic_supported())->toBeTrue();
@@ -45,7 +45,7 @@ it('exports consent as Yes only when checked', function () {
 });
 
 it('points to the form\'s Wereldkundig feeds for the themes, without calling the API', function () {
-    wk_editor_stubs();
+    wk_gf_editor_stubs();
     Brain\Monkey\Functions\expect('get_option')->never();
     Brain\Monkey\Functions\expect('wp_remote_request')->never();
 
@@ -54,23 +54,23 @@ it('points to the form\'s Wereldkundig feeds for the themes, without calling the
     $html = ob_get_clean();
 
     expect($html)->toContain('<a href="https://site.test/wp-admin/admin.php?page=gf_edit_forms&view=settings&subview=wereldkundig&id=3">Wereldkundig feed</a>')
-        ->not->toContain('wk-theme-checkbox');
+        ->not->toContain('wk-gf-theme-checkbox');
 });
 
 it('keeps the checked by default setting a boolean when the form is saved', function () {
     $field                     = new SubscribeField();
-    $field->wk_default_checked = '1';
+    $field->wk_gf_default_checked = '1';
 
     $field->sanitize_settings();
 
-    expect($field->wk_default_checked)->toBeTrue();
+    expect($field->wk_gf_default_checked)->toBeTrue();
 });
 
-function wk_default_checked_field(): SubscribeField {
+function wk_gf_default_checked_field(): SubscribeField {
     $field                     = new SubscribeField();
     $field->id                 = 5;
     $field->label              = 'Subscribe me';
-    $field->wk_default_checked = true;
+    $field->wk_gf_default_checked = true;
 
     return $field;
 }
@@ -78,7 +78,7 @@ function wk_default_checked_field(): SubscribeField {
 it('renders the checkbox checked on a fresh form when checked by default', function () {
     Brain\Monkey\Functions\when('rgpost')->justReturn('');
 
-    expect(wk_default_checked_field()->get_field_input(['id' => 7], ''))->toContain('checked="checked"');
+    expect(wk_gf_default_checked_field()->get_field_input(['id' => 7], ''))->toContain('checked="checked"');
 });
 
 it('keeps the checkbox unchecked by default unless the setting is on', function () {
@@ -93,7 +93,7 @@ it('keeps the checkbox unchecked by default unless the setting is on', function 
 it('keeps an unchecked box unchecked after a submit, even when checked by default', function () {
     Brain\Monkey\Functions\when('rgpost')->alias(static fn ($name): string => 'is_submit_7' === $name ? '1' : '');
 
-    expect(wk_default_checked_field()->get_field_input(['id' => 7], ''))->not->toContain('checked="checked"');
+    expect(wk_gf_default_checked_field()->get_field_input(['id' => 7], ''))->not->toContain('checked="checked"');
 });
 
 it('never shows an unchecked entry as checked by default', function () {
@@ -102,7 +102,7 @@ it('never shows an unchecked entry as checked by default', function () {
     $field->shouldReceive('is_entry_detail')->andReturn(true);
     $field->id                 = 5;
     $field->label              = 'Subscribe me';
-    $field->wk_default_checked = true;
+    $field->wk_gf_default_checked = true;
 
     expect($field->get_field_input(['id' => 7], ''))->not->toContain('checked="checked"');
 });

@@ -50,13 +50,13 @@ export function wp<T>(php: string, args: Record<string, unknown> = {}): T {
  */
 export function ensureAdmin(): { login: string; password: string; loginUrl: string } {
     return wp(`
-        $login    = 'wk-e2e';
+        $login    = 'wk-gf-e2e';
         $password = wp_generate_password(24, false);
         $user     = get_user_by('login', $login);
         $user_id  = $user ? $user->ID : wp_insert_user([
             'user_login' => $login,
             'user_pass'  => $password,
-            'user_email' => 'wk-e2e@example.test',
+            'user_email' => 'wk-gf-e2e@example.test',
             'role'       => 'administrator',
         ]);
         if (is_wp_error($user_id)) {
@@ -81,8 +81,8 @@ export function createForm(subscribeFields: 1 | 2 = 2): number {
     return wp(`
         $fields = [
             ['type' => 'email', 'id' => 1, 'label' => 'E-mail'],
-            ['type' => 'wk_subscribe', 'id' => ${SUBSCRIBE_FIELD_ID}, 'label' => 'Nieuwsbrief'],
-            ['type' => 'wk_subscribe', 'id' => ${OTHER_SUBSCRIBE_FIELD_ID}, 'label' => 'Evenementen'],
+            ['type' => 'wk_gf_subscribe', 'id' => ${SUBSCRIBE_FIELD_ID}, 'label' => 'Nieuwsbrief'],
+            ['type' => 'wk_gf_subscribe', 'id' => ${OTHER_SUBSCRIBE_FIELD_ID}, 'label' => 'Evenementen'],
         ];
 
         return GFAPI::add_form([
@@ -97,7 +97,7 @@ export function deleteForm(formId: number): void {
     wp(`return GFAPI::delete_form((int) $args['form_id']);`, { form_id: formId });
 }
 
-export type SavedFeed = { id: number; subscribe_field: string; wk_themes: Record<string, string[]> };
+export type SavedFeed = { id: number; subscribe_field: string; wk_gf_themes: Record<string, string[]> };
 
 /** The form's only Wereldkundig feed as stored, read fresh from the database; null without one. */
 export function savedFeed(formId: number): SavedFeed | null {
@@ -111,7 +111,7 @@ export function savedFeed(formId: number): SavedFeed | null {
         return [
             'id'              => (int) $feeds[0]['id'],
             'subscribe_field' => (string) rgars($feeds[0], 'meta/subscribe_field'),
-            'wk_themes'       => (object) (array) rgars($feeds[0], 'meta/wk_themes'),
+            'wk_gf_themes'       => (object) (array) rgars($feeds[0], 'meta/wk_gf_themes'),
         ];
     `, { form_id: formId });
 }

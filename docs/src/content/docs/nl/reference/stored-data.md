@@ -15,14 +15,14 @@ Elke site heeft zijn eigen.
 
 ## Het inschrijfveld
 
-Het veldtype is `wk_subscribe`. De enige eigen instelling, `wk_default_checked`, wordt in het formulier opgeslagen.
+Het veldtype is `wk_gf_subscribe`. De enige eigen instelling, `wk_gf_default_checked`, wordt in het formulier opgeslagen.
 
 ## Feeds
 
 Een Wereldkundig-feed slaat deze op in zijn `meta`, naast de eigen `feedName`, `mapped_fields_*` en `feed_condition_*` van Gravity Forms:
 
 - `subscribe_field`: het veld-ID van het inschrijfvinkje, het enige van het formulier als het er één heeft;
-- `wk_themes`: thema-ID => de categoriesleutels die in dat thema zijn aangevinkt, waarbij een lege lijst het hele thema betekent. Bijvoorbeeld `{"theme-1": [], "theme-2": ["category-36-37"]}`.
+- `wk_gf_themes`: thema-ID => de categoriesleutels die in dat thema zijn aangevinkt, waarbij een lege lijst het hele thema betekent. Bijvoorbeeld `{"theme-1": [], "theme-2": ["category-36-37"]}`.
 
 Alleen geldige thema- en categorie-ID's worden opgeslagen.
 

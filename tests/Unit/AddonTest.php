@@ -3,7 +3,7 @@
 use Brain\Monkey\Functions;
 use Wereldkundig\GravityForms\Addon;
 
-function wk_addon_choices(): array {
+function wk_gf_addon_choices(): array {
     return [
         ['label' => 'Select a Value', 'value' => ''],
         'fields' => [
@@ -41,7 +41,7 @@ beforeEach(function () {
 it('removes switched-off name parts from the field map choices', function () {
     Functions\when('rgget')->justReturn('wereldkundig');
 
-    $choices = (new Addon())->hide_inactive_name_inputs(wk_addon_choices(), 5);
+    $choices = (new Addon())->hide_inactive_name_inputs(wk_gf_addon_choices(), 5);
 
     expect(array_column($choices['fields']['choices'], 'value'))->toBe(['1', '1.3', '1.6', '2'])
         ->and($choices[0]['value'])->toBe('');
@@ -50,7 +50,7 @@ it('removes switched-off name parts from the field map choices', function () {
 it('leaves the field map choices of other add-ons alone', function () {
     Functions\when('rgget')->justReturn('gravityformsmailchimp');
 
-    expect((new Addon())->hide_inactive_name_inputs(wk_addon_choices(), 5))->toBe(wk_addon_choices());
+    expect((new Addon())->hide_inactive_name_inputs(wk_gf_addon_choices(), 5))->toBe(wk_gf_addon_choices());
 });
 
 it('shows an error instead of the field map when no subscriber fields are available', function () {
@@ -163,7 +163,7 @@ it('stores the API error when saving the settings fetches nothing', function () 
     Functions\when('get_option')->justReturn(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
     Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
     Functions\when('wp_remote_request')->justReturn(new WP_Error('http_request_failed', 'cURL error 28: Operation timed out'));
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     $stored = null;
     Functions\when('update_option')->alias(static function ($name, $value) use (&$stored) {
@@ -186,7 +186,7 @@ it('removes the stored API error once fetching succeeds', function () {
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\when('get_option')->justReturn(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
     Functions\when('update_option')->justReturn(true);
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = true;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = true;
     Functions\expect('delete_option')->once()->with(Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION);
 
     (new Addon())->update_plugin_settings(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
@@ -196,7 +196,7 @@ it('shows the stored API error on the settings page until it is removed', functi
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\when('esc_html')->returnArg();
     Functions\when('wp_date')->alias(static fn ($format, $time): string => gmdate('Y-m-d H:i', $time));
-    $error = ['message' => 'Bad <b>gateway</b>', 'code' => 'wk_api_http', 'time' => 1767225600];
+    $error = ['message' => 'Bad <b>gateway</b>', 'code' => 'wk_gf_api_http', 'time' => 1767225600];
     Functions\when('get_option')->alias(static fn ($name) => Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION === $name ? $error : '');
 
     $html = (new Addon())->api_status_notice();
@@ -216,7 +216,7 @@ it('shows the connection status from the cache, without calling the API', functi
     Functions\when('_n')->alias(static fn ($single, $plural, $n): string => 1 === $n ? $single : $plural);
     Functions\when('wp_date')->alias(static fn ($format, $time): string => gmdate('Y-m-d H:i', $time));
     Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->alias(static function ($name) {
         return match ($name) {
             Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION => false,
@@ -240,7 +240,7 @@ it('shows the connection status from the cache, without calling the API', functi
 it('shows no connection status without a cache for the current credentials', function () {
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->alias(static function ($name) {
         return match ($name) {
             Wereldkundig\GravityForms\Api\Client::FIELDS_ERROR_OPTION => false,
@@ -257,14 +257,14 @@ it('does not retry feed errors that a retry cannot fix', function (WP_Error $err
 
     expect((new Addon())->is_feed_error_retryable(true, $error, [], [], []))->toBe($retry);
 })->with([
-    'invalid theme'      => [new WP_Error('wk_theme_invalid', ''), false],
-    'invalid email'      => [new WP_Error('wk_email_invalid', ''), false],
-    'no checkbox'        => [new WP_Error('wk_subscribe_field_missing', ''), false],
+    'invalid theme'      => [new WP_Error('wk_gf_theme_invalid', ''), false],
+    'invalid email'      => [new WP_Error('wk_gf_email_invalid', ''), false],
+    'no checkbox'        => [new WP_Error('wk_gf_subscribe_field_missing', ''), false],
     'member exists'      => [new WP_Error('member-exists', '', ['status' => 409]), false],
-    'rate limited'       => [new WP_Error('wk_api_http', '', ['status' => 429]), true],
-    'server error'       => [new WP_Error('wk_api_http', '', ['status' => 502]), true],
+    'rate limited'       => [new WP_Error('wk_gf_api_http', '', ['status' => 429]), true],
+    'server error'       => [new WP_Error('wk_gf_api_http', '', ['status' => 502]), true],
     'timeout'            => [new WP_Error('http_request_failed', 'cURL error 28'), true],
-    'themes unavailable' => [new WP_Error('wk_themes_unavailable', ''), true],
+    'themes unavailable' => [new WP_Error('wk_gf_themes_unavailable', ''), true],
 ]);
 
 it('links the configure message to the settings for users who may open them', function () {
@@ -303,9 +303,9 @@ it('offers the form\'s subscribe checkboxes in the feed settings', function () {
     $addon->shouldReceive('get_default_feed_name')->andReturn('Feed');
     $addon->shouldReceive('fields_for_feed_mapping')->andReturn([]);
     $addon->shouldReceive('get_current_form')->andReturn(['fields' => [
-        wk_addon_field(5, 'wk_subscribe', ['label' => 'Nieuwsbrief']),
-        wk_addon_field(6, 'email', ['label' => 'E-mail']),
-        wk_addon_field(7, 'wk_subscribe', ['label' => 'Evenementen', 'adminLabel' => 'Events']),
+        wk_gf_addon_field(5, 'wk_gf_subscribe', ['label' => 'Nieuwsbrief']),
+        wk_gf_addon_field(6, 'email', ['label' => 'E-mail']),
+        wk_gf_addon_field(7, 'wk_gf_subscribe', ['label' => 'Evenementen', 'adminLabel' => 'Events']),
     ]]);
 
     $fields = array_column($addon->feed_settings_fields()[0]['fields'], null, 'name');
@@ -326,7 +326,7 @@ it('uses the only subscribe checkbox of the form without a select', function () 
     $addon = Mockery::mock(Addon::class)->makePartial();
     $addon->shouldReceive('get_default_feed_name')->andReturn('Feed');
     $addon->shouldReceive('fields_for_feed_mapping')->andReturn([]);
-    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [wk_addon_field(5, 'wk_subscribe', ['label' => 'Nieuwsbrief'])]]);
+    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [wk_gf_addon_field(5, 'wk_gf_subscribe', ['label' => 'Nieuwsbrief'])]]);
 
     $fields = array_column($addon->feed_settings_fields()[0]['fields'], null, 'name');
 
@@ -344,14 +344,14 @@ it('says so in the feed settings when the form has no subscribe checkbox or no t
     $addon = Mockery::mock(Addon::class)->makePartial();
     $addon->shouldReceive('get_default_feed_name')->andReturn('Feed');
     $addon->shouldReceive('fields_for_feed_mapping')->andReturn([]);
-    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [wk_addon_field(6, 'email')]]);
+    $addon->shouldReceive('get_current_form')->andReturn(['fields' => [wk_gf_addon_field(6, 'email')]]);
 
     $fields = array_column($addon->feed_settings_fields()[0]['fields'], null, 'name');
 
     expect($fields)->not->toHaveKey('subscribe_field')
-        ->not->toHaveKey('wk_themes')
+        ->not->toHaveKey('wk_gf_themes')
         ->and($fields['subscribe_field_unavailable']['html'])->toContain('no Wereldkundig subscribe me field')
-        ->and($fields['wk_themes_unavailable']['html'])->toContain('Could not load the themes');
+        ->and($fields['wk_gf_themes_unavailable']['html'])->toContain('Could not load the themes');
 });
 
 it('keeps the saved themes when a feed is saved without themes from the platform', function () {
@@ -359,19 +359,19 @@ it('keeps the saved themes when a feed is saved without themes from the platform
     Functions\when('update_option')->justReturn(true);
     Functions\when('delete_option')->justReturn(true);
     // No credentials and no mock: no themes.
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     $addon = Mockery::mock(Addon::class)->makePartial();
     $addon->shouldReceive('fields_for_feed_mapping')->andReturn([['name' => 'email', 'label' => 'E-mail', 'required' => false]]);
     $addon->shouldReceive('get_feed')->with(3)->andReturn(['meta' => [
-        'wk_themes'           => ['theme-1' => ['category-3']],
+        'wk_gf_themes'           => ['theme-1' => ['category-3']],
         'mapped_fields_email' => '1',
     ]]);
 
     expect($addon->save_feed_settings(3, 5, ['feedName' => 'New name', 'mapped_fields_email' => '2']))->toBe([
         'feedName'            => 'New name',
         'mapped_fields_email' => '2',
-        'wk_themes'           => ['theme-1' => ['category-3']],
+        'wk_gf_themes'           => ['theme-1' => ['category-3']],
     ]);
 });
 
@@ -391,9 +391,9 @@ it('reads the posted themes, only checked themes and valid IDs', function () {
 });
 
 it('reads the saved themes of a feed', function () {
-    expect(Addon::feed_themes(['meta' => ['wk_themes' => ['theme-1' => [], 'theme-2' => ['category-3', 'x'], '<b>' => []]]]))->toBe(['theme-1' => [], 'theme-2' => ['category-3']])
+    expect(Addon::feed_themes(['meta' => ['wk_gf_themes' => ['theme-1' => [], 'theme-2' => ['category-3', 'x'], '<b>' => []]]]))->toBe(['theme-1' => [], 'theme-2' => ['category-3']])
         ->and(Addon::feed_themes(['meta' => []]))->toBe([])
-        ->and(Addon::feed_themes(['meta' => ['wk_themes' => 'theme-1']]))->toBe([]);
+        ->and(Addon::feed_themes(['meta' => ['wk_gf_themes' => 'theme-1']]))->toBe([]);
 });
 
 it('shows the feed\'s theme names in the feed list, from the cache only', function () {
@@ -406,12 +406,12 @@ it('shows the feed\'s theme names in the feed list, from the cache only', functi
     Functions\when('trailingslashit')->alias(static fn ($value): string => rtrim((string) $value, '/') . '/');
     Functions\when('plugin_basename')->alias(static fn ($file): string => basename($file));
     Functions\expect('wp_remote_request')->never();
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
 
-    expect((new Addon())->get_column_value_wk_themes(['meta' => ['wk_themes' => ['theme-1' => [], 'theme-9' => []]]]))->toBe('Nieuwsbrief, theme-9');
+    expect((new Addon())->get_column_value_wk_gf_themes(['meta' => ['wk_gf_themes' => ['theme-1' => [], 'theme-9' => []]]]))->toBe('Nieuwsbrief, theme-9');
 });
 
-function wk_addon_field(int $id, string $type, array $properties = []): GF_Field {
+function wk_gf_addon_field(int $id, string $type, array $properties = []): GF_Field {
     $field = new GF_Field();
     foreach (array_merge(['id' => $id, 'type' => $type, 'label' => ''], $properties) as $key => $value) {
         $field->{$key} = $value;

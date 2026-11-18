@@ -3,8 +3,8 @@
 use Brain\Monkey\Functions;
 use Wereldkundig\GravityForms\Api\Client;
 
-function wk_client_live_api(array $response_body, int $code = 200, ?array &$captured = null): void {
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+function wk_gf_client_live_api(array $response_body, int $code = 200, ?array &$captured = null): void {
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
 
     Functions\when('get_option')->justReturn([
         'api_url'      => 'platform.example.nl',
@@ -24,7 +24,7 @@ function wk_client_live_api(array $response_body, int $code = 200, ?array &$capt
 
 it('reads the themes from the subscribe fields endpoint', function () {
     $captured = null;
-    wk_client_live_api([
+    wk_gf_client_live_api([
         'fields'  => ['email' => ['type' => 'email', 'label' => 'E-mail', 'required' => true]],
         'options' => [
             'title'      => 'Onderwerpen',
@@ -63,7 +63,7 @@ it('reads the themes from the subscribe fields endpoint', function () {
 });
 
 it('serves themes from the fields option', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
     $settings = ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
     Functions\when('get_option')->alias(static function ($name) use ($settings) {
         return Client::FIELDS_OPTION === $name
@@ -80,7 +80,7 @@ it('serves themes from the fields option', function () {
 
 it('refetches when the fields option belongs to other credentials', function () {
     $captured = null;
-    wk_client_live_api(['fields' => [], 'options' => ['categories' => [['id' => '4', 'name' => 'Fresh']]]], 200, $captured);
+    wk_gf_client_live_api(['fields' => [], 'options' => ['categories' => [['id' => '4', 'name' => 'Fresh']]]], 200, $captured);
     Functions\expect('update_option')->once();
 
     expect((new Client())->themes())->toBe(['theme-4' => 'Fresh'])
@@ -92,7 +92,7 @@ it('stores the full fields response in an option on refresh', function () {
         'fields'  => ['email' => ['type' => 'email', 'label' => 'E-mail', 'required' => true]],
         'options' => ['title' => 'Onderwerpen', 'categories' => []],
     ];
-    wk_client_live_api($body);
+    wk_gf_client_live_api($body);
     Functions\expect('update_option')->once()->andReturnUsing(static function ($name, $value, $autoload) use ($body) {
         expect($name)->toBe(Client::FIELDS_OPTION)
             ->and($value['response'])->toBe($body)
@@ -106,7 +106,7 @@ it('stores the full fields response in an option on refresh', function () {
 });
 
 it('keeps the fields option when the refresh fails', function () {
-    wk_client_live_api(['code' => 'rest_forbidden', 'message' => 'Nope'], 403);
+    wk_gf_client_live_api(['code' => 'rest_forbidden', 'message' => 'Nope'], 403);
     Functions\expect('update_option')->never();
 
     expect((new Client())->refresh_fields())->toBeInstanceOf(WP_Error::class);
@@ -114,7 +114,7 @@ it('keeps the fields option when the refresh fails', function () {
 
 it('posts the theme as an option to the subscribe endpoint', function () {
     $captured = null;
-    wk_client_live_api(['success' => true, 'data' => ['user_id' => 3]], 201, $captured);
+    wk_gf_client_live_api(['success' => true, 'data' => ['user_id' => 3]], 201, $captured);
 
     $result = (new Client())->subscribe('theme-2', [
         'email'       => 'reader@example.com',
@@ -138,7 +138,7 @@ it('posts the theme as an option to the subscribe endpoint', function () {
 
 it('drops empty subscriber fields from the subscribe payload', function () {
     $captured = null;
-    wk_client_live_api(['success' => true], 201, $captured);
+    wk_gf_client_live_api(['success' => true], 201, $captured);
 
     (new Client())->subscribe('theme-2', [
         'email'       => 'reader@example.com',
@@ -154,7 +154,7 @@ it('drops empty subscriber fields from the subscribe payload', function () {
 });
 
 it('returns the API error message on a failed request', function () {
-    wk_client_live_api(['code' => 'rest_invalid', 'message' => 'Geen geldig thema.', 'data' => ['status' => 400]], 400);
+    wk_gf_client_live_api(['code' => 'rest_invalid', 'message' => 'Geen geldig thema.', 'data' => ['status' => 400]], 400);
 
     $result = (new Client())->subscribe('theme-2', ['email' => 'reader@example.com']);
 
@@ -163,7 +163,7 @@ it('returns the API error message on a failed request', function () {
 });
 
 it('reads all subscriber fields from the fields option', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
     $settings = ['api_url' => 'platform.example.nl', 'api_auth' => 'abc'];
     Functions\when('get_option')->alias(static function ($name) use ($settings) {
         return Client::FIELDS_OPTION === $name
@@ -187,50 +187,50 @@ it('reads all subscriber fields from the fields option', function () {
 });
 
 it('has no subscriber fields when the API is unreachable', function () {
-    wk_client_live_api(['message' => 'down'], 500);
+    wk_gf_client_live_api(['message' => 'down'], 500);
 
     expect((new Client())->subscriber_fields())->toBe([]);
 });
 
 it('decodes HTML entities in theme names', function () {
-    wk_client_live_api(['fields' => [], 'options' => ['categories' => [['id' => 'theme-12865', 'name' => 'TEst &#8211; check &amp; tel']]]]);
+    wk_gf_client_live_api(['fields' => [], 'options' => ['categories' => [['id' => 'theme-12865', 'name' => 'TEst &#8211; check &amp; tel']]]]);
     Functions\when('update_option')->justReturn(true);
 
     expect((new Client())->themes())->toBe(['theme-12865' => 'TEst – check & tel']);
 });
 
 it('requires credentials before calling the live API', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->justReturn([]);
     Functions\expect('wp_remote_request')->never();
 
     $result = (new Client())->request('GET', '/v1/subscribe/fields');
 
     expect($result)->toBeInstanceOf(WP_Error::class)
-        ->and($result->get_error_code())->toBe('wk_api_credentials_missing');
+        ->and($result->get_error_code())->toBe('wk_gf_api_credentials_missing');
 });
 
 it('does not fall back to the mock when credentials are missing', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_api_use_mock'] = false;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_api_use_mock'] = false;
     Functions\when('get_option')->justReturn([]);
     Functions\expect('wp_remote_request')->never();
 
     $result = (new Client())->subscribe('theme-1', ['email' => 'reader@example.com']);
 
     expect($result)->toBeInstanceOf(WP_Error::class)
-        ->and($result->get_error_code())->toBe('wk_api_credentials_missing')
+        ->and($result->get_error_code())->toBe('wk_gf_api_credentials_missing')
         ->and((new Client())->themes())->toBe([]);
 });
 
 it('refuses to send credentials over plain http', function () {
-    wk_client_live_api(['success' => true]);
+    wk_gf_client_live_api(['success' => true]);
     Functions\when('get_option')->justReturn(['api_url' => 'http://platform.example.nl', 'api_auth' => 'abc']);
     Functions\expect('wp_remote_request')->never();
 
     $result = (new Client())->subscribe('theme-2', ['email' => 'reader@example.com']);
 
     expect($result)->toBeInstanceOf(WP_Error::class)
-        ->and($result->get_error_code())->toBe('wk_api_insecure_url');
+        ->and($result->get_error_code())->toBe('wk_gf_api_insecure_url');
 });
 
 it('only accepts https or local http API URLs', function (string $url, bool $secure) {
@@ -255,7 +255,7 @@ it('uses the mock inside the test suite', function () {
 
 it('sends chosen categories without their theme, and a theme without categories whole', function () {
     $captured = null;
-    wk_client_live_api(['success' => true], 201, $captured);
+    wk_gf_client_live_api(['success' => true], 201, $captured);
 
     (new Client())->subscribe([
         'theme-1'     => [],
@@ -270,7 +270,7 @@ it('sends chosen categories without their theme, and a theme without categories 
 });
 
 it('reads the message of a problem details error response', function () {
-    wk_client_live_api(['type' => 'member-exists', 'title' => 'Member Exists', 'status' => 409, 'detail' => 'Already a list member.'], 409);
+    wk_gf_client_live_api(['type' => 'member-exists', 'title' => 'Member Exists', 'status' => 409, 'detail' => 'Already a list member.'], 409);
 
     $result = (new Client())->subscribe('theme-1', ['email' => 'reader@example.com']);
 
@@ -279,11 +279,11 @@ it('reads the message of a problem details error response', function () {
 });
 
 it('fails when the platform does not report success', function () {
-    wk_client_live_api(['success' => false, 'message' => 'Nope.'], 200);
+    wk_gf_client_live_api(['success' => false, 'message' => 'Nope.'], 200);
 
     $result = (new Client())->subscribe('theme-1', ['email' => 'reader@example.com']);
 
-    expect($result->get_error_code())->toBe('wk_api_subscribe_failed')
+    expect($result->get_error_code())->toBe('wk_gf_api_subscribe_failed')
         ->and($result->get_error_message())->toBe('Nope.');
 });
 
@@ -305,7 +305,7 @@ it('reads settings that Gravity Forms stored encrypted', function () {
 });
 
 it('calls the API once per request for repeated lookups, a failure included', function () {
-    wk_client_live_api(['message' => 'down'], 500);
+    wk_gf_client_live_api(['message' => 'down'], 500);
     $calls = 0;
     Functions\when('wp_remote_request')->alias(static function () use (&$calls) {
         $calls++;
@@ -322,7 +322,7 @@ it('calls the API once per request for repeated lookups, a failure included', fu
 });
 
 it('only reads the cache when fetching is off', function () {
-    wk_client_live_api(['fields' => [], 'options' => ['categories' => [['id' => '4', 'name' => 'Fresh']]]]);
+    wk_gf_client_live_api(['fields' => [], 'options' => ['categories' => [['id' => '4', 'name' => 'Fresh']]]]);
     Functions\when('get_option')->justReturn(['api_url' => 'platform.example.nl', 'api_auth' => 'abc']);
     Functions\expect('wp_remote_request')->never();
 
@@ -331,7 +331,7 @@ it('only reads the cache when fetching is off', function () {
 
 it('gives up on the API after 10 seconds', function () {
     $captured = null;
-    wk_client_live_api(['success' => true], 200, $captured);
+    wk_gf_client_live_api(['success' => true], 200, $captured);
 
     (new Client())->subscribe('theme-2', ['email' => 'reader@example.com']);
 

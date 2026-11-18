@@ -3,7 +3,7 @@
 use Wereldkundig\GravityForms\Addon;
 use Wereldkundig\GravityForms\Mapper;
 
-function wk_test_field(int $id, string $type, string $label = '', array $properties = []): GF_Field {
+function wk_gf_test_field(int $id, string $type, string $label = '', array $properties = []): GF_Field {
     // Gravity Forms gives every form field as a GF_Field object.
     $field = new GF_Field();
     foreach (array_merge([
@@ -20,7 +20,7 @@ function wk_test_field(int $id, string $type, string $label = '', array $propert
 /**
  * The add-on, with a feed that maps no fields.
  */
-function wk_mapper_addon(): Mockery\MockInterface {
+function wk_gf_mapper_addon(): Mockery\MockInterface {
     $addon = Mockery::mock(Addon::class);
     $addon->shouldReceive('get_field_map_fields')->andReturn([]);
 
@@ -28,13 +28,13 @@ function wk_mapper_addon(): Mockery\MockInterface {
 }
 
 it('auto-maps the first Gravity Forms email and name fields', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_auto_map_fields'] = true;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_auto_map_fields'] = true;
 
-    $addon = wk_mapper_addon();
+    $addon = wk_gf_mapper_addon();
     $form  = [
         'fields' => [
-            wk_test_field(1, 'email', 'Email'),
-            wk_test_field(2, 'name', 'Name', ['inputs' => [['id' => '2.3'], ['id' => '2.4'], ['id' => '2.6']]]),
+            wk_gf_test_field(1, 'email', 'Email'),
+            wk_gf_test_field(2, 'name', 'Name', ['inputs' => [['id' => '2.3'], ['id' => '2.4'], ['id' => '2.6']]]),
         ],
     ];
     $entry = [
@@ -53,7 +53,7 @@ it('auto-maps the first Gravity Forms email and name fields', function () {
 });
 
 it('uses explicit feed mappings and auto-maps missing mappings', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_auto_map_fields'] = true;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_auto_map_fields'] = true;
 
     $addon = Mockery::mock(Addon::class);
     $addon->shouldReceive('get_field_map_fields')
@@ -66,9 +66,9 @@ it('uses explicit feed mappings and auto-maps missing mappings', function () {
 
     $form = [
         'fields' => [
-            wk_test_field(1, 'email', 'Email'),
-            wk_test_field(2, 'text', 'Voornaam'),
-            wk_test_field(3, 'text', 'Achternaam'),
+            wk_gf_test_field(1, 'email', 'Email'),
+            wk_gf_test_field(2, 'text', 'Voornaam'),
+            wk_gf_test_field(3, 'text', 'Achternaam'),
         ],
     ];
     $entry = [
@@ -87,7 +87,7 @@ it('uses explicit feed mappings and auto-maps missing mappings', function () {
 });
 
 it('maps every subscriber field configured in the feed', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_auto_map_fields'] = true;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_auto_map_fields'] = true;
 
     $addon = Mockery::mock(Addon::class);
     $addon->shouldReceive('get_field_map_fields')
@@ -98,10 +98,10 @@ it('maps every subscriber field configured in the feed', function () {
 
     $form = [
         'fields' => [
-            wk_test_field(1, 'email', 'Email'),
-            wk_test_field(2, 'text', 'Voornaam'),
-            wk_test_field(3, 'text', 'Tussen'),
-            wk_test_field(4, 'text', 'Bedrijf'),
+            wk_gf_test_field(1, 'email', 'Email'),
+            wk_gf_test_field(2, 'text', 'Voornaam'),
+            wk_gf_test_field(3, 'text', 'Tussen'),
+            wk_gf_test_field(4, 'text', 'Bedrijf'),
         ],
     ];
     $entry = ['1' => 'reader@example.com', '2' => 'Vincent', '3' => 'van', '4' => ' <b>Acme</b> '];
@@ -116,17 +116,17 @@ it('maps every subscriber field configured in the feed', function () {
 });
 
 it('auto-maps a tussenvoegsel text field', function () {
-    $GLOBALS['wk_test_filter_values']['wk_gf_auto_map_fields'] = true;
+    $GLOBALS['wk_gf_test_filter_values']['wk_gf_auto_map_fields'] = true;
 
-    $form  = ['fields' => [wk_test_field(1, 'text', 'Tussenvoegsel')]];
+    $form  = ['fields' => [wk_gf_test_field(1, 'text', 'Tussenvoegsel')]];
 
-    expect((new Mapper(wk_mapper_addon()))->map($form, ['1' => 'de'], ['meta' => []])['middle_name'])->toBe('de');
+    expect((new Mapper(wk_gf_mapper_addon()))->map($form, ['1' => 'de'], ['meta' => []])['middle_name'])->toBe('de');
 });
 
 it('does not auto-map by default', function () {
-    $form = ['fields' => [wk_test_field(1, 'email', 'Email')]];
+    $form = ['fields' => [wk_gf_test_field(1, 'email', 'Email')]];
 
-    expect((new Mapper(wk_mapper_addon()))->map($form, ['1' => 'reader@example.com'], ['meta' => []]))->toBe([
+    expect((new Mapper(wk_gf_mapper_addon()))->map($form, ['1' => 'reader@example.com'], ['meta' => []]))->toBe([
         'email'       => '',
         'first_name'  => '',
         'middle_name' => '',

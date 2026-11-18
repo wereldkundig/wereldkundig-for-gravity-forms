@@ -5,7 +5,7 @@ use Yoast\WPTestUtils\BrainMonkey\TestCase;
 
 uses(TestCase::class)
     ->beforeEach(function () {
-        $GLOBALS['wk_test_filter_values'] = [];
+        $GLOBALS['wk_gf_test_filter_values'] = [];
         // Client keeps fields_setup() results per request; every test is a new request.
         (new ReflectionProperty(Wereldkundig\GravityForms\Api\Client::class, 'memo'))->setValue(null, []);
 
@@ -37,8 +37,8 @@ uses(TestCase::class)
         Functions\when('sanitize_text_field')->alias(static fn ($value): string => trim(strip_tags((string) $value)));
         Functions\when('is_wp_error')->alias(static fn ($value): bool => $value instanceof WP_Error);
         Functions\when('apply_filters')->alias(static function ($hook, $value) {
-            return array_key_exists($hook, $GLOBALS['wk_test_filter_values'])
-                ? $GLOBALS['wk_test_filter_values'][$hook]
+            return array_key_exists($hook, $GLOBALS['wk_gf_test_filter_values'])
+                ? $GLOBALS['wk_gf_test_filter_values'][$hook]
                 : $value;
         });
         Functions\when('__')->alias(static fn ($text): string => $text);

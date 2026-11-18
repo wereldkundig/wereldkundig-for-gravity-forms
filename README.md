@@ -45,9 +45,9 @@ app/
   Component.php                 on gform_loaded: registers the add-on and the field
   Addon.php                     GFFeedAddOn: settings, feed settings (checkbox, themes, mapping), status notice
   ApiAuthSettingField.php       masked Basic Auth settings field
-  ThemesSettingField.php        the feed's theme and category checkboxes (type wk_themes)
+  ThemesSettingField.php        the feed's theme and category checkboxes (type wk_gf_themes)
   FieldsRefresh.php             hourly WP-Cron refresh of the cache
-  SubscribeField.php            the wk_subscribe consent checkbox and its editor settings
+  SubscribeField.php            the wk_gf_subscribe consent checkbox and its editor settings
   Submission.php                what happens on submit
   Mapper.php                    form entry → subscriber fields
   Api/Client.php                API calls, cache, credentials, mock
@@ -70,7 +70,7 @@ The user-facing behaviour is described in the docs; these are the parts behind i
 - Return values for Gravity Forms: `true` success, a `WP_Error` failure, `null` skipped. Gravity Forms saves them as the feed status of the entry, the error with its code and message.
 - Theme IDs are public, but checking them against the cached themes stops tampered or stale IDs. Themes added by the `wk_gf_subscribe_themes` filters are not checked.
 - The theme filters only run when the feed has at least one valid theme.
-- Themes used to be a field setting (`wk_theme_ids`, `wk_category_ids` on the field). Those values are ignored now and were not migrated to feeds.
+- Themes used to be a field setting (`wk_gf_theme_ids`, `wk_gf_category_ids` on the field). Those values are ignored now and were not migrated to feeds.
 
 ### Sending in the background
 
@@ -109,15 +109,15 @@ Feeds are processed asynchronously, like Brevo (`$_async_feed_processing = true`
 
 - **Forms > Settings > Wereldkundig** (`Addon::settings_url()`). The connection status is rendered from stored data only, after a save is processed, so it is current right after saving.
 - A failed fetch after saving or in the background is stored in the `wk_gf_api_fields_error` option (message, error code, time and `source`: `settings` or `cron`). Any successful fetch deletes it; removing the credentials or uninstalling does too.
-- The Basic Auth code is never put in the page (`app/ApiAuthSettingField.php`, field type `wk_api_auth`, like Mailchimp for WP does with its API key). The mask is the first few characters and 16 asterisks: at most 4 characters and at most a third of the code. Nothing from the end (the end of a base64 Basic Auth code is the end of the password) and not its length. Saving the unchanged mask keeps the saved code (base64 never contains `*`). On a Gravity Forms version without the settings field classes it falls back to a password field.
+- The Basic Auth code is never put in the page (`app/ApiAuthSettingField.php`, field type `wk_gf_api_auth`, like Mailchimp for WP does with its API key). The mask is the first few characters and 16 asterisks: at most 4 characters and at most a third of the code. Nothing from the end (the end of a base64 Basic Auth code is the end of the password) and not its length. Saving the unchanged mask keeps the saved code (base64 never contains `*`). On a Gravity Forms version without the settings field classes it falls back to a password field.
 - Gravity Forms 2.7.17+ encrypts add-on settings when `GF_ENCRYPTION_KEY` is defined; `Client::credentials()` decrypts them. Without that key the code is stored as plain text in `gravityformsaddon_wereldkundig_settings`, like other add-ons (Brevo, Laposta) do.
 
 ### Saved feed settings
 
-- `subscribe_field` is a plain Gravity Forms select of the form's `wk_subscribe` fields (`Addon::subscribe_field_choices()`), required.
-- `wk_themes` is our own settings field type (`app/ThemesSettingField.php`, registered like `wk_api_auth` by `Addon::register_setting_field()`). It posts nested inputs, `_gform_setting_wk_themes[theme-1][theme]` and `…[theme-1][categories][]`. `Addon::themes_from_posted()` turns them into theme ID => category keys, and `Addon::clean_themes()` keeps only valid IDs. Categories of an unchecked theme are disabled in the browser, so they aren't posted. At least one theme is required.
+- `subscribe_field` is a plain Gravity Forms select of the form's `wk_gf_subscribe` fields (`Addon::subscribe_field_choices()`), required.
+- `wk_gf_themes` is our own settings field type (`app/ThemesSettingField.php`, registered like `wk_gf_api_auth` by `Addon::register_setting_field()`). It posts nested inputs, `_gform_setting_wk_gf_themes[theme-1][theme]` and `…[theme-1][categories][]`. `Addon::themes_from_posted()` turns them into theme ID => category keys, and `Addon::clean_themes()` keeps only valid IDs. Categories of an unchecked theme are disabled in the browser, so they aren't posted. At least one theme is required.
 - After a failed validation Gravity Forms renders the posted value instead of the saved one; the field's markup reads both shapes.
-- When the platform's themes or subscriber fields can't be loaded, the feed shows a notice instead of the field, so nothing is posted for it. `Addon::save_feed_settings()` then keeps the saved `wk_themes` and `mapped_fields_*`.
+- When the platform's themes or subscriber fields can't be loaded, the feed shows a notice instead of the field, so nothing is posted for it. `Addon::save_feed_settings()` then keeps the saved `wk_gf_themes` and `mapped_fields_*`.
 
 ## Debugging
 
@@ -126,7 +126,7 @@ Feeds are processed asynchronously, like Brevo (`$_async_feed_processing = true`
 
 ## Local development
 
-- **Herd SSL**: Herd signs `*.test` with its own CA, which PHP doesn't trust, so calls to `https://wereldkundig-platform.test` fail with cURL error 60. The mu-plugin `wp-content/mu-plugins/wk-local-ssl.php` turns off SSL verification for `localhost` and `*.test` only, and only when `WP_ENVIRONMENT_TYPE` is `local`.
+- **Herd SSL**: Herd signs `*.test` with its own CA, which PHP doesn't trust, so calls to `https://wereldkundig-platform.test` fail with cURL error 60. The mu-plugin `wp-content/mu-plugins/wk-gf-local-ssl.php` turns off SSL verification for `localhost` and `*.test` only, and only when `WP_ENVIRONMENT_TYPE` is `local`.
 - WP-CLI is handy for checking things on a site, e.g. `wp --url=wereldkundig-platform.test/nissewaard cron event run wk_gf_refresh_fields`.
 
 ## Tests
@@ -173,7 +173,7 @@ They read `.env.local.tests` too:
 - `WK_E2E_URL`: the local site, e.g. `https://wereldkundig-platform.test/nissewaard/`. It must have `WP_ENVIRONMENT_TYPE` `local` and a cached theme with categories (save the Wereldkundig settings first).
 - `WK_E2E_WP_PATH`: the WordPress root for WP-CLI, relative to this plugin (default `../../..`).
 
-Each run creates a local super admin `wk-e2e` with a new password (logged in at the network's `wp-login.php`, since a subsite's own login redirects to itself locally), creates a throwaway form `WK E2E …` and deletes that form afterwards.
+Each run creates a local super admin `wk-gf-e2e` with a new password (logged in at the network's `wp-login.php`, since a subsite's own login redirects to itself locally), creates a throwaway form `WK E2E …` and deletes that form afterwards.
 
 ## Translations
 

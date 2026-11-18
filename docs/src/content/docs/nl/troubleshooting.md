@@ -25,7 +25,7 @@ Ga naar **Formulieren > Instellingen > Loggen** en zet **Wereldkundig** aan. Ove
 **Een nieuw thema verschijnt niet in de feed.**
 De feed gebruikt de thema's uit de cache. Sla de Wereldkundig-instellingen op om ze nu op te halen, of wacht op de [verversing van elk uur](/nl/guides/themes-and-refresh/).
 
-**De notitie zegt `wk_email_invalid`.**
+**De notitie zegt `wk_gf_email_invalid`.**
 De abonnee heeft geen e-mailadres. Koppel het veld E-mailadres onder **Velden koppelen** in de feed van het formulier, of zet [automatisch gevonden velden](/nl/guides/feeds-and-mapping/#automatisch-gevonden-velden) aan.
 
 **De notitie zegt `member-exists`.**

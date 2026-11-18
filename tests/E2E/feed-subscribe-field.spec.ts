@@ -23,9 +23,9 @@ test.describe('Feed subscribe checkbox', () => {
         await expect(page.getByText('Nieuwsbrief (field 2), the only subscribe checkbox of this form.')).toBeVisible();
         await expect(page.locator('select[name="_gform_setting_subscribe_field"]')).toHaveCount(0);
 
-        await page.locator(`.wk-theme-checkbox[name$="[${choice!.theme}][theme]"]`).check();
+        await page.locator(`.wk-gf-theme-checkbox[name$="[${choice!.theme}][theme]"]`).check();
         await Promise.all([page.waitForLoadState('load'), page.locator('#gform-settings-save').click()]);
 
-        expect(savedFeed(formId)).toMatchObject({ subscribe_field: String(SUBSCRIBE_FIELD_ID), wk_themes: { [choice!.theme]: [] } });
+        expect(savedFeed(formId)).toMatchObject({ subscribe_field: String(SUBSCRIBE_FIELD_ID), wk_gf_themes: { [choice!.theme]: [] } });
     });
 });
