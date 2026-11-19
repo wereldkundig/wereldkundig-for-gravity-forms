@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Wereldkundig for Gravity Forms
  * Description: Add people to your Wereldkundig themes when they fill in your Gravity Forms.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 6.9
  * Requires PHP: 8.2
  * License: GPL-2.0-or-later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
 // Core classes load without Composer, so a deploy without vendor/ still works.
 spl_autoload_register(

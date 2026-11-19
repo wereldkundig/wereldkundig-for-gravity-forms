@@ -4,7 +4,7 @@ Tags: gravity forms, newsletter, subscribe, signup form, wereldkundig
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,11 +56,15 @@ Open the entry. Its notes say whether the subscriber was sent, or why not.
 This plugin connects to the Wereldkundig platform you configure under **Forms > Settings > Wereldkundig** (or with the `WK_GF_API_URL` constant). It is needed to fetch your themes and to subscribe the people who fill in your forms. Every request carries the Basic Auth code you entered, and only goes over `https://`.
 
 * **Fetching the themes and subscriber fields** (`GET /v1/subscribe/fields`): when you save the settings, and once an hour in the background while the platform is configured. No personal data is sent.
-* **Subscribing** (`POST /v1/subscribe`): when a visitor submits a form with the Wereldkundig subscribe box checked. It sends the email address, the names and other fields mapped in the feed, and the chosen themes and categories. Nothing is sent when the box is not checked.
+* **Subscribing** (`POST /v2/subscribe`): when a visitor submits a form with the Wereldkundig subscribe box checked. It sends the email address, the names and other fields mapped in the feed, the chosen themes and categories, and whether existing subscribers may be updated. Nothing is sent when the box is not checked.
 
 The service is provided by Wereldkundig: [wereldkundig.nl](https://wereldkundig.nl/), API documentation at [docs.wereldkundig.nl/api](https://docs.wereldkundig.nl/api).
 
 == Changelog ==
+
+= 1.1.0 =
+* Feed setting to update an existing subscriber on the Wereldkundig newsletter platform (off by default).
+* Subscribe via `POST /v2/subscribe`; entry notes distinguish a new subscriber from an updated one.
 
 = 1.0.0 =
 * First release.
