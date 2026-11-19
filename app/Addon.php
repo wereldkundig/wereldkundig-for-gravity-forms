@@ -182,7 +182,7 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public function feed_list_columns() {
 		return array(
-			'feedName'  => esc_html__( 'Name', 'wereldkundig-for-gravity-forms' ),
+			'feedName'     => esc_html__( 'Name', 'wereldkundig-for-gravity-forms' ),
 			'wk_gf_themes' => esc_html__( 'Themes', 'wereldkundig-for-gravity-forms' ),
 		);
 	}
