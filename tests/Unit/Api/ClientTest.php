@@ -126,14 +126,35 @@ it('posts the theme as an option to the subscribe endpoint', function () {
     ]);
 
     expect($result)->toBe(['user_id' => 3])
-        ->and($captured['url'])->toBe('https://platform.example.nl/wp-json/wereldkundig/v1/subscribe')
+        ->and($captured['url'])->toBe('https://platform.example.nl/wp-json/wereldkundig/v2/subscribe')
         ->and(json_decode($captured['args']['body'], true))->toBe([
             'email'       => 'reader@example.com',
+            'upsert'      => false,
             'first_name'  => 'Vincent',
             'middle_name' => 'van',
             'last_name'   => 'Gogh',
             'options'     => ['theme-2' => true],
         ]);
+});
+
+it('sends upsert true when updating an existing subscriber is allowed', function () {
+    $captured = null;
+    wk_gf_client_live_api(['success' => true, 'data' => ['user_id' => 3, 'created' => false]], 200, $captured);
+
+    (new Client())->subscribe('theme-1', ['email' => 'reader@example.com'], true);
+
+    expect(json_decode($captured['args']['body'], true))->toBe([
+        'email'   => 'reader@example.com',
+        'upsert'  => true,
+        'options' => ['theme-1' => true],
+    ]);
+});
+
+it('returns created false from the subscribe response data unchanged', function () {
+    wk_gf_client_live_api(['success' => true, 'data' => ['user_id' => 9, 'created' => false]], 200);
+
+    expect((new Client())->subscribe('theme-1', ['email' => 'reader@example.com'], true))
+        ->toBe(['user_id' => 9, 'created' => false]);
 });
 
 it('drops empty subscriber fields from the subscribe payload', function () {
@@ -149,6 +170,7 @@ it('drops empty subscriber fields from the subscribe payload', function () {
 
     expect(json_decode($captured['args']['body'], true))->toBe([
         'email'   => 'reader@example.com',
+        'upsert'  => false,
         'options' => ['theme-2' => true],
     ]);
 });

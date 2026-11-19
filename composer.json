@@ -60,7 +60,7 @@
         "test:live": "@php vendor/bin/pest --configuration phpunit.live.xml.dist",
         "test:phpstan": "phpstan --memory-limit=2g",
         "test:phpcs": "phpcs",
-        "fix:phpcs": "phpcbf || [ $? -eq 1 ]",
+        "fix": "phpcbf || [ $? -eq 1 ]",
         "docs:hooks": "sh docs/tools/hooks.sh",
         "i18n": [
             "@i18n:make-pot",

@@ -22,7 +22,8 @@ Het veldtype is `wk_gf_subscribe`. De enige eigen instelling, `wk_gf_default_che
 Een Wereldkundig-feed slaat deze op in zijn `meta`, naast de eigen `feedName`, `mapped_fields_*` en `feed_condition_*` van Gravity Forms:
 
 - `subscribe_field`: het veld-ID van het inschrijfvinkje, het enige van het formulier als het er één heeft;
-- `wk_gf_themes`: thema-ID => de categoriesleutels die in dat thema zijn aangevinkt, waarbij een lege lijst het hele thema betekent. Bijvoorbeeld `{"theme-1": [], "theme-2": ["category-36-37"]}`.
+- `wk_gf_themes`: thema-ID => de categoriesleutels die in dat thema zijn aangevinkt, waarbij een lege lijst het hele thema betekent. Bijvoorbeeld `{"theme-1": [], "theme-2": ["category-36-37"]}`;
+- `wk_gf_upsert`: `1` als **Bijwerken als een e-mailadres al bestaat op het Wereldkundig-nieuwsbriefplatform** is aangevinkt; anders afwezig of leeg (de standaard).
 
 Alleen geldige thema- en categorie-ID's worden opgeslagen.
 

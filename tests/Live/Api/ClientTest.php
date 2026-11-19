@@ -98,9 +98,13 @@ it('reads the themes from the platform', function () {
 it('subscribes to the first theme on the platform', function () {
     wk_gf_live_require_credentials();
     $email = wk_gf_live_env('WK_TEST_API_SUBSCRIBE_EMAIL');
-    if ('' === $email) {
+    if ('' === $email || ! str_contains($email, '@')) {
         $this->markTestSkipped('WK_TEST_API_SUBSCRIBE_EMAIL is not set in .env.local.tests.');
     }
+
+    // Unique address so a repeat run is a create, not member-exists (upsert off by default).
+    [$local, $domain] = explode('@', $email, 2);
+    $email            = sprintf('%s+wk-%s@%s', $local, bin2hex(random_bytes(3)), $domain);
 
     wk_gf_live_api();
     $client = new Client();
@@ -114,5 +118,37 @@ it('subscribes to the first theme on the platform', function () {
     ]);
 
     expect($result)->toBeArray()
-        ->and($result['user_id'] ?? null)->not->toBeEmpty();
+        ->and($result['user_id'] ?? null)->not->toBeEmpty()
+        ->and($result['created'] ?? null)->toBeTrue();
+});
+
+it('updates an existing subscriber when upsert is on', function () {
+    wk_gf_live_require_credentials();
+    $email = wk_gf_live_env('WK_TEST_API_SUBSCRIBE_EMAIL');
+    if ('' === $email) {
+        $this->markTestSkipped('WK_TEST_API_SUBSCRIBE_EMAIL is not set in .env.local.tests.');
+    }
+
+    wk_gf_live_api();
+    $client = new Client();
+    $themes = $client->themes();
+    expect($themes)->not->toBeEmpty();
+    $theme = (string) array_key_first($themes);
+
+    // Ensure the address exists, then update it.
+    $client->subscribe($theme, [
+        'email'      => $email,
+        'first_name' => 'Wereldkundig',
+        'last_name'  => 'GF test',
+    ], true);
+
+    $result = $client->subscribe($theme, [
+        'email'      => $email,
+        'first_name' => 'Wereldkundig',
+        'last_name'  => 'GF upsert',
+    ], true);
+
+    expect($result)->toBeArray()
+        ->and($result['user_id'] ?? null)->not->toBeEmpty()
+        ->and($result['created'] ?? null)->toBeFalse();
 });

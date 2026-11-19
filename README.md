@@ -32,7 +32,7 @@ Feed settings ◄───┐           │    yes → queued, sent in the backg
  (checkbox, themes│           │    no  → skipped                         │
   and categories) │           │  no feed → nothing is sent               │
                   │           ▼                                          ▼
-Settings save ────┴──► GET /v1/subscribe/fields          POST /v1/subscribe
+Settings save ────┴──► GET /v1/subscribe/fields          POST /v2/subscribe
 Hourly WP-Cron ──────► (themes + subscriber fields,       (email, names, mapped
                         cached in an option)               fields, feed's themes)
 ```
@@ -88,8 +88,8 @@ Feeds are processed asynchronously, like Brevo (`$_async_feed_processing = true`
 
 - `GET /v1/subscribe/fields` returns the subscriber `fields` (key => type, label, required) and `options.categories`: the platform's **themes**. Theme IDs are normalized to `theme-{id}`. Names come with HTML entities from WordPress and are decoded; output is escaped again on render.
 - Chosen categories are sent **without** their theme. The platform adds the theme of every category itself, but a theme it receives also gets all of that theme's main categories, which would subscribe to the whole theme after all.
-- Success is `"success": true` in the response; its `data` has the platform `user_id` and the `rejected_options`.
-- The platform also accepts `upsert` (default `false`) and `confirmed`, which the add-on doesn't send. See the notes in [todo.md](todo.md).
+- Success is `"success": true` in the response; its `data` has the platform `user_id`, `created` (false when an existing member was updated), and the `rejected_options`.
+- Subscribe uses `POST /v2/subscribe` with `upsert` from the feed's **Existing subscribers** setting (off by default). The platform also accepts `confirmed`, which the add-on doesn't send yet; see [todo.md](todo.md).
 
 ### The mock
 

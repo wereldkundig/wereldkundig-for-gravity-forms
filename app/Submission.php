@@ -136,7 +136,7 @@ class Submission {
 			return $this->fail( $feed, $entry, $form, new \WP_Error( 'wk_gf_email_invalid', __( 'No valid email address to subscribe.', 'wereldkundig-for-gravity-forms' ) ) );
 		}
 
-		$result = $client->subscribe( $themes, $subscriber );
+		$result = $client->subscribe( $themes, $subscriber, Addon::feed_upsert( $feed ) );
 
 		// Debug: the subscribe from this submission and its result to Ray (spatie-ray plugin), when it is active.
 		// Client::request() sends the raw API request and response to Ray as well.
@@ -192,18 +192,29 @@ class Submission {
 			$names[] = $name;
 		}
 
-		$note = isset( $data['user_id'] )
-			? sprintf(
+		$updated_existing = array_key_exists( 'created', $data ) && false === $data['created'];
+
+		if ( $updated_existing && isset( $data['user_id'] ) ) {
+			$note = sprintf(
+				/* translators: 1: email address, 2: user ID on the platform. */
+				__( '%1$s was already a Wereldkundig subscriber and was updated (platform user ID %2$s).', 'wereldkundig-for-gravity-forms' ),
+				$email,
+				(string) $data['user_id']
+			);
+		} elseif ( isset( $data['user_id'] ) ) {
+			$note = sprintf(
 				/* translators: 1: email address, 2: user ID on the platform. */
 				__( '%1$s was sent to Wereldkundig (platform user ID %2$s).', 'wereldkundig-for-gravity-forms' ),
 				$email,
 				(string) $data['user_id']
-			)
-			: sprintf(
+			);
+		} else {
+			$note = sprintf(
 				/* translators: %s: email address. */
 				__( '%s was sent to Wereldkundig.', 'wereldkundig-for-gravity-forms' ),
 				$email
 			);
+		}
 
 		$note .= ' ' . sprintf(
 			/* translators: %s: semicolon separated theme names, with the chosen categories in parentheses. */

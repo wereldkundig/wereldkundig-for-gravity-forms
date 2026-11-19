@@ -21,6 +21,10 @@ Bij succes:
 
 > **reader@example.com is naar Wereldkundig verstuurd (gebruikers-ID op het platform: 12). Thema's: Nieuwsbrief; Wijken (Noord, Zuid).**
 
+Als het platform een bestaande abonnee heeft bijgewerkt (upsert / legacy `/v1/`), zegt de notitie dat:
+
+> **reader@example.com was al abonnee van Wereldkundig en is bijgewerkt (gebruikers-ID op het platform: 12). Thema's: Nieuwsbrief; Wijken (Noord, Zuid).**
+
 De notitie noemt ook de opties die het platform heeft geweigerd.
 
 Bij een fout:
@@ -47,7 +51,7 @@ Een fout is een feedfout: die verschijnt als notitie bij de inzending, in het Gr
 | `wk_gf_api_credentials_missing` | Geen platform-URL of Basic Auth-code. |
 | `wk_gf_api_insecure_url` | De URL gebruikt geen `https://`. |
 | `wk_gf_api_json_encode` | De abonneegegevens konden niet naar JSON worden omgezet, bijvoorbeeld door tekst die geen geldige UTF-8 is. Er is niets verstuurd. |
-| `member-exists` | Het e-mailadres is al lid van de platformsite. Het platform slaat niets op, ook de nieuwe thema's niet. |
+| `member-exists` | Het e-mailadres is al lid van de platformsite, en **Bestaande abonnees** staat uit in de feed. Het platform slaat niets op, ook de nieuwe thema's niet. Zet die optie aan om de abonnee wél bij te werken. |
 | De eigen foutcode van het platform, of `wk_gf_api_http` | Elk ander antwoord dat geen succes is. De notitie toont de melding van het platform als het die meestuurt. |
 | `wk_gf_api_subscribe_failed` | Het platform antwoordde, maar bevestigde de inschrijving niet. |
 | `wk_gf_api_json` | Het antwoord van het platform is geen geldige JSON. |

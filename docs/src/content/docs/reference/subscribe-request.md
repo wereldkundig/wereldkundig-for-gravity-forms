@@ -14,7 +14,7 @@ Returns the subscriber fields and the platform's **themes**, each with categorie
 
 Theme IDs are always written as `theme-{id}`: `1`, `theme-1` and `theme_1` all become `theme-1`.
 
-## POST /v1/subscribe
+## POST /v2/subscribe
 
 Subscribes one person to all chosen themes, in one request:
 
@@ -23,6 +23,7 @@ Subscribes one person to all chosen themes, in one request:
   "email": "jan@example.nl",
   "first_name": "Jan",
   "last_name": "Jansen",
+  "upsert": false,
   "options": { "theme-1": true, "category-36-37": true, "category-36-38": true }
 }
 ```
@@ -30,7 +31,8 @@ Subscribes one person to all chosen themes, in one request:
 - `options` holds a whole theme as `theme-{id}`, or only the chosen categories of a theme as the platform's category keys: `category-{id}`, `category-{parent}-{id}` for a child category, or `select-all-{id}` for everything in a parent category.
 - Chosen categories are sent without their theme; the platform adds the theme itself. Sending the theme as well would subscribe to the whole theme.
 - `email` is always sent. Other fields are only sent when they have a value, so an empty field can't clear a value stored on the platform.
+- `upsert` comes from the feed's **Existing subscribers** setting (off by default). When `false`, an email that is already a member of the platform site gets `409 member-exists` and nothing is saved. When `true`, that member is updated and the themes are merged.
 - Field keys must match `[a-z0-9_]+`. Values that aren't text or numbers are left out.
-- The platform's answer contains the platform `user_id` and any `rejected_options`. Both appear in the [entry note](/reference/entry-notes-and-errors/#entry-notes).
+- The platform's answer contains the platform `user_id`, `created` (false when an existing member was updated), and any `rejected_options`. Those appear in the [entry note](/reference/entry-notes-and-errors/#entry-notes).
 
 The fields come from [`wk_gf_subscriber_pre_subscribe`](/reference/hooks/#wk_gf_subscriber_pre_subscribe) and the themes from [`wk_gf_subscribe_themes`](/reference/hooks/#wk_gf_subscribe_themes): theme ID => category keys, an empty array meaning the whole theme.

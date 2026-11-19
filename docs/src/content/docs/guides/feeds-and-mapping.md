@@ -13,6 +13,7 @@ Open the form and go to **Form Settings > Wereldkundig**, then add a feed. You c
 - **Subscribe checkbox**: the **Wereldkundig subscribe me** field of this form that gives consent. Only a choice when the form has more than one; otherwise the feed uses the only one.
 - **Themes**: the themes and categories to subscribe to. Check at least one.
 - **Map Fields**: which form field fills each subscriber field.
+- **Existing subscribers**: off by default. When checked, an email that is already a member of the platform site is updated and the feed's themes are merged in. When off, that email gets `member-exists` and nothing is saved. The subscribe checkbox must still be checked either way.
 - **Conditional Logic**: when enabled, the subscriber is only sent when the condition matches. The subscribe checkbox chosen above must still be checked.
 
 The feed list shows the name and the themes of each feed. Feeds can be duplicated.

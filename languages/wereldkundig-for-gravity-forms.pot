@@ -1,180 +1,193 @@
 # Copyright (C) 2026 
-# This file is distributed under the MIT.
+# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wereldkundig Add-On for Gravity Forms 1.0.0\n"
+"Project-Id-Version: Wereldkundig for Gravity Forms 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wereldkundig-for-gravity-forms\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-07T20:40:09+00:00\n"
+"POT-Creation-Date: 2026-11-19T13:44:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wereldkundig-for-gravity-forms\n"
 
 #. Plugin Name of the plugin
 #: wereldkundig-for-gravity-forms.php:3
-msgid "Wereldkundig Add-On for Gravity Forms"
+msgid "Wereldkundig for Gravity Forms"
 msgstr ""
 
 #. Description of the plugin
 #: wereldkundig-for-gravity-forms.php:4
-msgid "Subscribe Gravity Forms submitters to Wereldkundig themes."
+msgid "Add people to your Wereldkundig themes when they fill in your Gravity Forms."
 msgstr ""
 
-#: app/Addon.php:122
+#: app/Addon.php:168
 msgid "Wereldkundig settings"
 msgstr ""
 
 #. translators: %s: "Wereldkundig settings", linked to the settings page for users who may open it.
-#: app/Addon.php:129
+#: app/Addon.php:175
 #, php-format
 msgid "Enter the platform URL and Basic Auth code under %s (Forms > Settings > Wereldkundig) to start sending subscribers."
 msgstr ""
 
-#: app/Addon.php:139
-#: app/Addon.php:179
+#: app/Addon.php:185
+#: app/Addon.php:225
 msgid "Name"
 msgstr ""
 
-#: app/Addon.php:140
-#: app/Addon.php:188
-#: app/Addon.php:191
-#: app/Addon.php:194
-#: app/SubscribeField.php:220
+#: app/Addon.php:186
+#: app/Addon.php:234
+#: app/Addon.php:237
+#: app/Addon.php:240
+#: app/SubscribeField.php:247
 msgid "Themes"
 msgstr ""
 
-#: app/Addon.php:170
+#: app/Addon.php:216
 msgid "Wereldkundig Feed"
 msgstr ""
 
-#: app/Addon.php:191
+#: app/Addon.php:237
 msgid "Subscribers are added to every checked Wereldkundig theme. Check categories of a theme to subscribe to only those; without checked categories the whole theme is subscribed."
 msgstr ""
 
-#: app/Addon.php:196
+#: app/Addon.php:242
 msgid "Could not load the themes from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. The checked themes are kept."
 msgstr ""
 
-#: app/Addon.php:200
-#: app/Addon.php:203
-#: app/Addon.php:207
+#: app/Addon.php:246
+#: app/Addon.php:249
+#: app/Addon.php:253
 msgid "Map Fields"
 msgstr ""
 
-#: app/Addon.php:203
+#: app/Addon.php:249
 msgid "Select which form field fills each Wereldkundig subscriber field. Map at least the email address: without it, the subscriber is not sent."
 msgstr ""
 
-#: app/Addon.php:204
+#: app/Addon.php:250
 msgid "An empty mapping is not sent. To fill empty email and name mappings from the first matching form field, turn on auto-mapping with the wk_gf_auto_map_fields filter."
 msgstr ""
 
-#: app/Addon.php:209
+#: app/Addon.php:255
 msgid "Could not load the subscriber fields from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. Existing mappings are kept."
 msgstr ""
 
-#: app/Addon.php:213
-#: app/Addon.php:215
+#: app/Addon.php:259
+#: app/Addon.php:268
+msgid "Existing subscribers"
+msgstr ""
+
+#: app/Addon.php:263
+msgid "Update when an e-mail already exists within the Wereldkundig newsletter platform"
+msgstr ""
+
+#: app/Addon.php:268
+msgid "Off by default: an email that is already a member of the platform site is not saved again (the entry gets member-exists). When checked, that subscriber is updated and the feed's themes are merged in. The subscribe checkbox above must still be checked."
+msgstr ""
+
+#: app/Addon.php:272
+#: app/Addon.php:274
 msgid "Conditional Logic"
 msgstr ""
 
-#: app/Addon.php:215
+#: app/Addon.php:274
 msgid "When enabled, the subscriber is only sent when the condition is met. The subscribe checkbox chosen above must still be checked."
 msgstr ""
 
-#: app/Addon.php:226
+#: app/Addon.php:285
 msgid "Connect to your Wereldkundig platform with the Basic Auth code supplied by Wereldkundig."
 msgstr ""
 
 #. translators: %s: comma separated constant names.
-#: app/Addon.php:238
+#: app/Addon.php:297
 #, php-format
 msgid "%s defined in wp-config.php, so the matching field below is ignored."
 msgstr ""
 
-#: app/Addon.php:248
+#: app/Addon.php:307
 msgid "Wereldkundig API"
 msgstr ""
 
-#: app/Addon.php:258
+#: app/Addon.php:317
 msgid "Platform URL"
 msgstr ""
 
-#: app/Addon.php:267
+#: app/Addon.php:326
 msgid "Basic Auth code"
 msgstr ""
 
-#: app/Addon.php:274
+#: app/Addon.php:333
 msgid "The base64 encoded credentials, without \"Basic \". Only the start is shown once saved; leave it as is to keep the saved code, or paste a new one."
 msgstr ""
 
-#: app/Addon.php:335
+#: app/Addon.php:394
 msgid "Subscribe checkbox"
 msgstr ""
 
-#: app/Addon.php:343
+#: app/Addon.php:402
 msgid "This form has no Wereldkundig subscribe me field. Add one in the form editor: the feed then uses it, no need to edit the feed again."
 msgstr ""
 
 #. translators: %s: the field label and ID, like "Nieuwsbrief (field 5)".
-#: app/Addon.php:358
+#: app/Addon.php:417
 #, php-format
 msgid "%s, the only subscribe checkbox of this form."
 msgstr ""
 
-#: app/Addon.php:376
+#: app/Addon.php:435
 msgid "Select a checkbox"
 msgstr ""
 
-#: app/Addon.php:394
+#: app/Addon.php:453
 msgid "The Wereldkundig subscribe me field of this form that gives consent. The feed only sends the subscriber when this checkbox is checked. For other themes behind another checkbox, add a feed for that checkbox."
 msgstr ""
 
 #. translators: 1: field label, 2: field ID.
-#: app/Addon.php:408
+#: app/Addon.php:467
 #, php-format
 msgid "%1$s (field %2$s)"
 msgstr ""
 
-#: app/Addon.php:502
+#: app/Addon.php:571
 msgid "Use an https:// URL. Plain http is only allowed for localhost and *.test."
 msgstr ""
 
-#: app/Addon.php:569
+#: app/Addon.php:638
 msgid "Successfully connected to Wereldkundig."
 msgstr ""
 
-#: app/Addon.php:570
+#: app/Addon.php:639
 msgid "Platform"
 msgstr ""
 
 #. translators: 1: number of themes, 2: date and time the themes were fetched.
-#: app/Addon.php:575
+#: app/Addon.php:644
 #, php-format
 msgid "Connected, %1$d theme (fetched %2$s)."
 msgid_plural "Connected, %1$d themes (fetched %2$s)."
 msgstr[0] ""
 msgstr[1] ""
 
-#: app/Addon.php:597
+#: app/Addon.php:666
 msgid "The background refresh of the Wereldkundig themes failed."
 msgstr ""
 
-#: app/Addon.php:598
+#: app/Addon.php:667
 msgid "Settings saved, but the Wereldkundig API call failed."
 msgstr ""
 
 #. translators: 1: date and time of the failed call, 2: API error message.
-#: app/Addon.php:602
+#: app/Addon.php:671
 #, php-format
 msgid "Last attempt %1$s: %2$s"
 msgstr ""
 
-#: app/Addon.php:607
+#: app/Addon.php:676
 msgid "The themes and subscriber fields were not updated. Check the URL and Basic Auth code, then save the settings to try again. The background refresh also retries every hour."
 msgstr ""
 
@@ -182,27 +195,27 @@ msgstr ""
 msgid "Invalid subscribe fields response."
 msgstr ""
 
-#: app/Api/Client.php:298
+#: app/Api/Client.php:302
 msgid "Wereldkundig API request failed."
 msgstr ""
 
-#: app/Api/Client.php:396
+#: app/Api/Client.php:400
 msgid "Configure the Wereldkundig API URL and Basic Auth code under Forms > Settings > Wereldkundig, or define WK_GF_API_URL and WK_GF_API_AUTH in wp-config.php."
 msgstr ""
 
-#: app/Api/Client.php:406
+#: app/Api/Client.php:410
 msgid "The Wereldkundig API URL must use https:// (plain http is only allowed for localhost and *.test)."
 msgstr ""
 
-#: app/Api/Client.php:433
+#: app/Api/Client.php:437
 msgid "Could not encode the API request."
 msgstr ""
 
-#: app/Api/Client.php:462
+#: app/Api/Client.php:466
 msgid "API request failed."
 msgstr ""
 
-#: app/Api/Client.php:468
+#: app/Api/Client.php:472
 msgid "Invalid API response."
 msgstr ""
 
@@ -229,43 +242,49 @@ msgid "No valid email address to subscribe."
 msgstr ""
 
 #. translators: 1: email address, 2: user ID on the platform.
-#: app/Submission.php:198
+#: app/Submission.php:200
+#, php-format
+msgid "%1$s was already a Wereldkundig subscriber and was updated (platform user ID %2$s)."
+msgstr ""
+
+#. translators: 1: email address, 2: user ID on the platform.
+#: app/Submission.php:207
 #, php-format
 msgid "%1$s was sent to Wereldkundig (platform user ID %2$s)."
 msgstr ""
 
 #. translators: %s: email address.
-#: app/Submission.php:204
+#: app/Submission.php:214
 #, php-format
 msgid "%s was sent to Wereldkundig."
 msgstr ""
 
 #. translators: %s: semicolon separated theme names, with the chosen categories in parentheses.
-#: app/Submission.php:210
+#: app/Submission.php:221
 #, php-format
 msgid "Themes: %s."
 msgstr ""
 
 #. translators: %s: the options the platform did not accept, as JSON.
-#: app/Submission.php:217
+#: app/Submission.php:228
 #, php-format
 msgid "Rejected by the platform: %s."
 msgstr ""
 
 #. translators: 1: email address, 2: error message, 3: error code.
-#: app/Submission.php:284
+#: app/Submission.php:295
 #, php-format
 msgid "%1$s was not sent to Wereldkundig: %2$s (code: %3$s)"
 msgstr ""
 
 #. translators: 1: error message, 2: error code.
-#: app/Submission.php:291
+#: app/Submission.php:302
 #, php-format
 msgid "%1$s (code: %2$s)"
 msgstr ""
 
 #: app/SubscribeField.php:17
-#: app/SubscribeField.php:250
+#: app/SubscribeField.php:230
 msgid "Wereldkundig subscribe me"
 msgstr ""
 
@@ -279,32 +298,32 @@ msgid "Yes"
 msgstr ""
 
 #. translators: %s: "Wereldkundig feed", linked to the form's Wereldkundig feeds.
-#: app/SubscribeField.php:226
+#: app/SubscribeField.php:253
 #, php-format
 msgid "Choose the themes in a %s of this form, which also chooses this checkbox. Without a feed, nothing is sent."
 msgstr ""
 
-#: app/SubscribeField.php:227
+#: app/SubscribeField.php:254
 msgid "Wereldkundig feed"
 msgstr ""
 
-#: app/SubscribeField.php:235
-#: app/SubscribeField.php:284
+#: app/SubscribeField.php:262
+#: app/SubscribeField.php:278
 msgid "Checked by default"
 msgstr ""
 
-#: app/SubscribeField.php:240
+#: app/SubscribeField.php:267
 msgid "A pre-checked box is not valid consent under the GDPR. Only use this when visitors expect to be subscribed by submitting this form."
 msgstr ""
 
-#: app/SubscribeField.php:284
+#: app/SubscribeField.php:278
 msgid "Shows the checkbox already checked when the form loads. Visitors can still uncheck it; that choice is kept when the form is shown again after a validation error."
 msgstr ""
 
-#: app/ThemesSettingField.php:85
+#: app/ThemesSettingField.php:66
 msgid "A checked theme without checked categories is subscribed whole."
 msgstr ""
 
-#: app/ThemesSettingField.php:102
+#: app/ThemesSettingField.php:79
 msgid "Check at least one theme."
 msgstr ""

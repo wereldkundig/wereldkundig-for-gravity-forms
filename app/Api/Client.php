@@ -255,22 +255,26 @@ class Client {
 	}
 
 	/**
-	 * POST /v1/subscribe. Creates or updates the subscriber and adds them to the theme(s), in one request.
+	 * POST /v2/subscribe. Creates the subscriber and adds them to the theme(s), in one request.
 	 *
 	 * Empty fields are left out of the payload; only email is always included.
+	 * Without `$upsert`, an email that is already a member of the platform site is refused (`member-exists`).
+	 * With `$upsert`, that member is updated and the themes are merged; omitted profile fields keep their value.
 	 *
 	 * @param string|string[]|array<string,string[]> $themes     Theme option key(s), e.g. "theme-1" or ["theme-1", "theme-2"],
 	 *                                                           or theme => category option keys, e.g. ["theme-1" => [], "theme-2" => ["category-36-37"]].
 	 *                                                           No categories means the whole theme.
 	 * @param array<string,mixed>                    $subscriber Subscriber field key => value, e.g. email, first_name, middle_name.
 	 *                                                           Empty and non-scalar values are left out.
-	 * @return array<mixed>|\WP_Error The response's `data` (e.g. user_id, sanitized_options, rejected_options) on success.
+	 * @param bool                                   $upsert     When true, update an existing platform member instead of failing.
+	 * @return array<mixed>|\WP_Error The response's `data` (e.g. user_id, created, rejected_options) on success.
 	 */
-	public function subscribe( $themes, array $subscriber ) {
+	public function subscribe( $themes, array $subscriber, bool $upsert = false ) {
 		// Email is the only field always sent: the API needs it to find or create the subscriber.
 		// Submission already rejects entries without a valid email before we get here.
 		$payload = array(
-			'email' => (string) ( $subscriber['email'] ?? '' ),
+			'email'  => (string) ( $subscriber['email'] ?? '' ),
+			'upsert' => $upsert,
 		);
 
 		// Every other field, first_name and last_name included, is only sent when filled.
@@ -287,7 +291,7 @@ class Client {
 
 		$payload['options'] = $this->subscribe_options( $themes );
 
-		$response = $this->request( 'POST', '/v1/subscribe', $payload );
+		$response = $this->request( 'POST', '/v2/subscribe', $payload );
 		if ( is_wp_error( $response ) ) {
 			return $response;
 		}
@@ -303,7 +307,7 @@ class Client {
 	}
 
 	/**
-	 * The `options` of POST /v1/subscribe: a whole theme as `theme-{id}`, or only its chosen categories.
+	 * The `options` of POST /v2/subscribe: a whole theme as `theme-{id}`, or only its chosen categories.
 	 *
 	 * Chosen categories are sent without their theme on purpose. The platform adds the theme of every category
 	 * itself, but a theme it receives also gets all of that theme's main categories ("select-all-{id}"), which
@@ -634,7 +638,7 @@ class Client {
 	}
 
 	/**
-	 * Stand-in for GET /v1/subscribe/fields and POST /v1/subscribe, shaped like the OpenAPI spec. Always succeeds.
+	 * Stand-in for GET /v1/subscribe/fields and POST /v2/subscribe, shaped like the OpenAPI spec. Always succeeds.
 	 * Test suite only, see use_mock().
 	 *
 	 * @param string              $method
@@ -712,6 +716,7 @@ class Client {
 			'message' => 'Subscriber saved.',
 			'data'    => array(
 				'user_id' => 1,
+				'created' => true,
 				'options' => $body['options'] ?? array(),
 			),
 		);

@@ -13,6 +13,7 @@ Open het formulier en ga naar **Formulierinstellingen > Wereldkundig**, en voeg 
 - **Inschrijfvinkje**: het veld **Inschrijven bij Wereldkundig** van dit formulier dat de toestemming geeft. Alleen te kiezen als het formulier er meer dan één heeft; anders gebruikt de feed het enige.
 - **Thema's**: de thema's en categorieën waarvoor wordt ingeschreven. Vink er minstens één aan.
 - **Velden koppelen**: welk formulierveld elk abonneeveld vult.
+- **Bestaande abonnees**: standaard uit. Staat dit aan, dan wordt een e-mailadres dat al lid is van de platformsite bijgewerkt en worden de thema's van de feed erbij gemengd. Staat dit uit, dan krijgt dat adres `member-exists` en wordt er niets opgeslagen. Het inschrijfvinkje moet in beide gevallen nog steeds aangevinkt zijn.
 - **Voorwaardelijke logica**: staat dit aan, dan wordt de abonnee alleen verstuurd als de voorwaarde klopt. Het hierboven gekozen inschrijfvinkje moet nog steeds aangevinkt zijn.
 
 De lijst met feeds toont de naam en de thema's van elke feed. Feeds kun je dupliceren.

@@ -21,6 +21,10 @@ On success:
 
 > **reader@example.com was sent to Wereldkundig (platform user ID 12). Themes: Nieuwsbrief; Wijken (Noord, Zuid).**
 
+When the platform updated an existing subscriber (upsert / legacy `/v1/`), the note says so instead:
+
+> **reader@example.com was already a Wereldkundig subscriber and was updated (platform user ID 12). Themes: Nieuwsbrief; Wijken (Noord, Zuid).**
+
 The note also lists any options the platform rejected.
 
 On failure:
@@ -47,7 +51,7 @@ A failure is a feed error: it shows as an entry note, in the Gravity Forms log, 
 | `wk_gf_api_credentials_missing` | No platform URL or Basic Auth code. |
 | `wk_gf_api_insecure_url` | The URL doesn't use `https://`. |
 | `wk_gf_api_json_encode` | The subscriber data couldn't be converted to JSON, e.g. text that isn't valid UTF-8. Nothing was sent. |
-| `member-exists` | The email address is already a member of the platform site. The platform saves nothing, not even the new themes. |
+| `member-exists` | The email address is already a member of the platform site, and the feed's **Existing subscribers** option is off. The platform saves nothing, not even the new themes. Check that option to update the member instead. |
 | The platform's own error code, or `wk_gf_api_http` | Any other response that isn't a success. The note shows the platform's message when it sends one. |
 | `wk_gf_api_subscribe_failed` | The platform answered, but didn't confirm the subscribe. |
 | `wk_gf_api_json` | The platform's answer isn't valid JSON. |

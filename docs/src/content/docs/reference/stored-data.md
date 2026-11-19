@@ -22,7 +22,8 @@ The field type is `wk_gf_subscribe`. Its only own setting, `wk_gf_default_checke
 A Wereldkundig feed saves these in its `meta`, next to Gravity Forms' own `feedName`, `mapped_fields_*` and `feed_condition_*`:
 
 - `subscribe_field`: the field ID of the subscribe checkbox, the only one of the form when it has one;
-- `wk_gf_themes`: theme ID => the category keys checked in that theme, an empty list meaning the whole theme. For example `{"theme-1": [], "theme-2": ["category-36-37"]}`.
+- `wk_gf_themes`: theme ID => the category keys checked in that theme, an empty list meaning the whole theme. For example `{"theme-1": [], "theme-2": ["category-36-37"]}`;
+- `wk_gf_upsert`: `1` when **Update when an e-mail already exists within the Wereldkundig newsletter platform** is checked; absent or empty when off (the default).
 
 Only valid theme and category IDs are saved.
 

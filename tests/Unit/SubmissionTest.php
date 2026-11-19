@@ -224,6 +224,25 @@ it('subscribes a valid entry after explicit consent', function () {
     expect((new Submission($addon))->handle($entry, $form, wk_gf_submission_feed()))->toBeTrue();
 });
 
+it('notes when the platform updated an existing subscriber', function () {
+    $bodies = null;
+    wk_gf_submission_live_api(
+        wk_gf_submission_themes(),
+        $bodies,
+        ['success' => true, 'data' => ['user_id' => 12, 'created' => false]]
+    );
+
+    $addon = wk_gf_submission_addon();
+    $addon->shouldReceive('log_debug')->once()->with(Mockery::pattern('/Subscriber sent/'));
+    $addon->shouldReceive('add_note')
+        ->once()
+        ->with(42, 'reader@example.com was already a Wereldkundig subscriber and was updated (platform user ID 12). Themes: Evenementen.', 'success');
+
+    $form = ['fields' => [wk_gf_submission_field(1, 'email'), wk_gf_submission_field(5, 'wk_gf_subscribe')]];
+
+    expect((new Submission($addon))->handle(['id' => 42, '1' => 'reader@example.com', '5' => '1'], $form, wk_gf_submission_feed()))->toBeTrue();
+});
+
 it('sends nothing without an email mapping while auto-detection is off', function () {
     unset($GLOBALS['wk_gf_test_filter_values']['wk_gf_auto_map_fields']);
 
@@ -322,7 +341,22 @@ it('lets the subscriber and the themes be changed before subscribing', function 
     $form = ['id' => 3, 'fields' => [wk_gf_submission_field(1, 'email'), wk_gf_submission_field(5, 'wk_gf_subscribe')]];
 
     expect((new Submission($addon))->handle(['id' => 42, '1' => 'reader@example.com', '5' => '1'], $form, wk_gf_submission_feed(['theme-1' => []])))->toBeTrue()
-        ->and($bodies[0])->toBe(['email' => 'other@example.com', 'company' => 'Wereldkundig', 'options' => ['theme-5' => true]]);
+        ->and($bodies[0])->toBe(['email' => 'other@example.com', 'upsert' => false, 'company' => 'Wereldkundig', 'options' => ['theme-5' => true]]);
+});
+
+it('sends upsert when the feed allows updating existing subscribers', function () {
+    wk_gf_submission_live_api(wk_gf_submission_themes(), $bodies);
+
+    $addon = wk_gf_submission_addon();
+    $addon->shouldReceive('log_debug');
+    $addon->shouldReceive('add_note')->once();
+
+    $feed = wk_gf_submission_feed(['theme-1' => []]);
+    $feed['meta']['wk_gf_upsert'] = '1';
+    $form = ['fields' => [wk_gf_submission_field(1, 'email'), wk_gf_submission_field(5, 'wk_gf_subscribe')]];
+
+    expect((new Submission($addon))->handle(['id' => 42, '1' => 'reader@example.com', '5' => '1'], $form, $feed))->toBeTrue()
+        ->and($bodies[0]['upsert'])->toBeTrue();
 });
 
 it('skips the subscribe when the filter returns false', function () {

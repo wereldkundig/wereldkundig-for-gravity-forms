@@ -316,7 +316,16 @@ it('offers the form\'s subscribe checkboxes in the feed settings', function () {
             ['label' => 'Select a checkbox', 'value' => ''],
             ['label' => 'Nieuwsbrief (field 5)', 'value' => '5'],
             ['label' => 'Events (field 7)', 'value' => '7'],
-        ]);
+        ])
+        ->and($fields['wk_gf_upsert']['type'])->toBe('checkbox')
+        ->and($fields['wk_gf_upsert']['choices'][0]['name'])->toBe('wk_gf_upsert')
+        ->and($fields['wk_gf_upsert']['choices'][0]['default_value'])->toBe(0);
+});
+
+it('reads whether the feed updates existing subscribers', function () {
+    expect(Addon::feed_upsert(['meta' => []]))->toBeFalse()
+        ->and(Addon::feed_upsert(['meta' => ['wk_gf_upsert' => '0']]))->toBeFalse()
+        ->and(Addon::feed_upsert(['meta' => ['wk_gf_upsert' => '1']]))->toBeTrue();
 });
 
 it('uses the only subscribe checkbox of the form without a select', function () {

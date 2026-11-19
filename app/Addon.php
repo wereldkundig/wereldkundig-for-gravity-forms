@@ -255,6 +255,19 @@ class Addon extends \GFFeedAddOn {
 						'html'  => '<div class="alert gforms_note_error">' . esc_html__( 'Could not load the subscriber fields from Wereldkundig. Check the connection under Forms > Settings > Wereldkundig and save those settings to try again. Existing mappings are kept.', 'wereldkundig-for-gravity-forms' ) . '</div>',
 					),
 					array(
+						'name'    => 'wk_gf_upsert',
+						'label'   => esc_html__( 'Existing subscribers', 'wereldkundig-for-gravity-forms' ),
+						'type'    => 'checkbox',
+						'choices' => array(
+							array(
+								'label'         => esc_html__( 'Update when an e-mail already exists within the Wereldkundig newsletter platform', 'wereldkundig-for-gravity-forms' ),
+								'name'          => 'wk_gf_upsert',
+								'default_value' => 0,
+							),
+						),
+						'tooltip' => '<h6>' . esc_html__( 'Existing subscribers', 'wereldkundig-for-gravity-forms' ) . '</h6>' . esc_html__( 'Off by default: an email that is already a member of the platform site is not saved again (the entry gets member-exists). When checked, that subscriber is updated and the feed\'s themes are merged in. The subscribe checkbox above must still be checked.', 'wereldkundig-for-gravity-forms' ),
+					),
+					array(
 						'name'    => 'feed_condition',
 						'label'   => esc_html__( 'Conditional Logic', 'wereldkundig-for-gravity-forms' ),
 						'type'    => 'feed_condition',
@@ -465,6 +478,16 @@ class Addon extends \GFFeedAddOn {
 	 */
 	public static function feed_themes( $feed ): array {
 		return self::clean_themes( rgars( (array) $feed, 'meta/wk_gf_themes' ) );
+	}
+
+	/**
+	 * Whether the feed updates an email that is already a member of the platform site.
+	 * Off by default: the platform then answers member-exists and saves nothing.
+	 *
+	 * @param array<string,mixed>|null $feed
+	 */
+	public static function feed_upsert( $feed ): bool {
+		return (bool) rgars( (array) $feed, 'meta/wk_gf_upsert' );
 	}
 
 	/**
