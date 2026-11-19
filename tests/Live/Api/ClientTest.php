@@ -113,5 +113,6 @@ it('subscribes to the first theme on the platform', function () {
         'last_name'  => 'GF test',
     ]);
 
-    expect($result)->toBeTrue();
+    expect($result)->toBeArray()
+        ->and($result['user_id'] ?? null)->not->toBeEmpty();
 });
