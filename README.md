@@ -139,7 +139,7 @@ npm install           # also sets up the git hooks (husky)
 composer test         # composer validate, PHPCS, unit tests (against the mock) and PHPStan
 composer test:unit    # only the unit tests
 composer test:phpcs   # coding standards of app/
-composer fix:phpcs    # fix what PHPCS can fix automatically
+composer fix          # fix what PHPCS can fix automatically
 composer test:live    # real calls to a test platform
 composer test:phpstan # static analysis (level 8) of app/
 ```

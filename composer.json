@@ -77,7 +77,7 @@
         "build": "Stages a release copy (via .distignore), installs production Composer deps, regenerates languages, and writes a zip with wp dist-archive.",
         "test": "Validates composer.json, then runs PHPCS, the unit tests and PHPStan. Runs before every git push.",
         "docs:hooks": "Regenerates the hooks reference of the docs site (needs PHP 8.3+).",
-        "fix:phpcs": "Fixes what PHPCS can fix automatically.",
+        "fix": "Fixes what PHPCS can fix automatically.",
         "i18n": "Regenerates the POT from the files that ship, merges it into every PO file in languages/, then compiles the MO and .l10n.php files. Run after changing a translatable string or a PO file."
     },
     "autoload-dev": {
