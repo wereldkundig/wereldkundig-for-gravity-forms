@@ -5,6 +5,7 @@
 #    the one list of what doesn't ship, for the zip and WordPress.org alike, and checks what it holds.
 # 3. Creates a GitHub Release with the zip, and the notes of that version from the readme.txt changelog.
 # 4. Deploys that same package, the readme and the .wordpress-org/ assets to WordPress.org SVN.
+#    Currently dry-run only (no SVN commit) until the plugin is approved and ready to go live.
 #
 # A version with alpha, beta, rc, dev or test in it (`v1.2.0-beta1`) is a pre-release: GitHub only, no WordPress.org.
 # Run it by hand (Actions > Release > Run workflow) to only test and build a branch; the package is attached to the
@@ -213,6 +214,9 @@ jobs:
 
       - name: Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          # Skip the SVN commit until WordPress.org is ready; remove dry-run to go live.
+          dry-run: true
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
