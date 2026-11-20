@@ -1,7 +1,7 @@
 ---
-
-## title: Installation
+title: Installation
 description: Requirements, installing and activating the add-on, and removing it again.
+---
 
 ## Requirements
 
