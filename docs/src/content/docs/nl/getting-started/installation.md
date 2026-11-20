@@ -14,11 +14,30 @@ De add-on werkt op losse sites en op multisite-netwerken. In een netwerk heeft e
 
 ## Installeren en activeren
 
-1. Zet de map `wereldkundig-for-gravity-forms` in `wp-content/plugins/`, of upload de zip van de plugin op het scherm **Plugins**.
-2. Activeer de plugin. Op multisite activeer je hem voor het hele netwerk.
-3. Ga verder met [Koppelen aan het platform](/nl/getting-started/connect/).
+:::note
+De plugin "Wereldkundig for Gravity Forms" wordt momenteel beoordeeld door het WordPress.org-pluginteam.
+Download in de tussentijd de release [wereldkundig-for-gravity-forms.1.1.0.zip](https://github.com/wereldkundig/wereldkundig-for-gravity-forms/releases/tag/v1.1.0) van GitHub.
+:::
+
+1. Download de zip [wereldkundig-for-gravity-forms.1.1.0.zip](https://github.com/wereldkundig/wereldkundig-for-gravity-forms/releases/tag/v1.1.0) van GitHub.
+2. Pak uit en zet de map `wereldkundig-for-gravity-forms` in `wp-content/plugins/`, of upload de zip van de plugin op het scherm **Plugins**.
+3. Activeer de plugin. Op multisite activeer je hem voor het hele netwerk.
+4. Ga verder met [Koppelen aan het platform](/nl/getting-started/connect/).
 
 De add-on laadt alleen als Gravity Forms actief is.
+
+### Laden via Composer
+
+Voeg de repo toe aan je `composer.json` en voer daarna `composer require wereldkundig/wereldkundig-for-gravity-forms` uit.
+
+```
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/wereldkundig/wereldkundig-for-gravity-forms.git"
+    }
+],
+```
 
 ## Deactiveren en verwijderen
 
