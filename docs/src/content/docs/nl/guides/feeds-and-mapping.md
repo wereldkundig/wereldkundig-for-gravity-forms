@@ -1,6 +1,6 @@
 ---
 title: Feeds en veldkoppeling
-description: Waarom een formulier een Wereldkundig-feed nodig heeft, hoe die het vinkje en de thema's kiest, en hoe velden worden gekoppeld of automatisch gevonden.
+description: Waarom een formulier een Wereldkundig-feed nodig heeft, hoe die het vinkje en de thema's kiest, hoe velden worden gekoppeld, en wat er gebeurt als een e-mailadres al bestaat.
 ---
 
 Een formulier heeft een feed nodig om abonnees te versturen. De feed kiest welk inschrijfvinkje de toestemming geeft, voor welke thema's en categorieën wordt ingeschreven, en welk formulierveld het e-mailadres bevat. Een feed voegt ook voorwaardelijke logica toe, en verstuurt op de achtergrond, direct na het versturen. Zonder feed wordt er niets verstuurd, ook niet als het vinkje aan staat.
@@ -13,7 +13,7 @@ Open het formulier en ga naar **Formulierinstellingen > Wereldkundig**, en voeg 
 - **Inschrijfvinkje**: het veld **Inschrijven bij Wereldkundig** van dit formulier dat de toestemming geeft. Alleen te kiezen als het formulier er meer dan één heeft; anders gebruikt de feed het enige.
 - **Thema's**: de thema's en categorieën waarvoor wordt ingeschreven. Vink er minstens één aan.
 - **Velden koppelen**: welk formulierveld elk abonneeveld vult.
-- **Bestaande abonnees**: standaard uit. Staat dit aan, dan wordt een e-mailadres dat al lid is van de platformsite bijgewerkt en worden de thema's van de feed erbij gemengd. Staat dit uit, dan krijgt dat adres `member-exists` en wordt er niets opgeslagen. Het inschrijfvinkje moet in beide gevallen nog steeds aangevinkt zijn.
+- **Bestaande abonnees**: standaard uit. Of een e-mailadres dat al lid is van de platformsite wordt bijgewerkt; zie [Bestaande abonnees](#bestaande-abonnees).
 - **Voorwaardelijke logica**: staat dit aan, dan wordt de abonnee alleen verstuurd als de voorwaarde klopt. Het hierboven gekozen inschrijfvinkje moet nog steeds aangevinkt zijn.
 
 De lijst met feeds toont de naam en de thema's van elke feed. Feeds kun je dupliceren.
@@ -51,6 +51,17 @@ De thema's komen uit de cache op je site, gevuld vanaf het platform. Een thema d
 - Een veld dat bij het versturen leeg is, wordt niet meegestuurd, dus het kan geen waarde wissen die al op het platform staat.
 
 Kunnen de abonneevelden niet van het platform worden geladen, dan toont de feedpagina een foutmelding in plaats van de koppeling. Sla je de feed dan op, dan blijft de bestaande koppeling bewaard.
+
+## Bestaande abonnees
+
+**Bestaande abonnees** bepaalt wat er gebeurt als het e-mailadres al lid is van de platformsite. Standaard uit.
+
+- **Uit**: het platform antwoordt met `member-exists` en slaat niets op, ook de nieuwe thema's niet. De inzending krijgt een [foutnotitie](/nl/reference/entry-notes-and-errors/).
+- **Aan** (vink **Bijwerken als een e-mailadres al bestaat op het Wereldkundig-nieuwsbriefplatform** aan): die abonnee wordt bijgewerkt en de thema's van de feed worden gemengd met de thema's die ze al hebben. De notitie bij de inzending zegt dat de abonnee al bij Wereldkundig stond en is bijgewerkt.
+
+Lege gekoppelde velden worden niet meegestuurd, dus een update kan geen naam of andere waarde wissen die al op het platform staat. Het inschrijfvinkje moet nog steeds aangevinkt zijn; deze instelling verandert alleen wat er gebeurt als het e-mailadres al bestaat.
+
+De add-on stuurt dit als `upsert` in het [inschrijfverzoek](/nl/reference/subscribe-request/).
 
 ## Automatisch gevonden velden
 

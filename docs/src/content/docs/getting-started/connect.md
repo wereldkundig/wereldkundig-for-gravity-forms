@@ -14,6 +14,8 @@ Go to **Forms > Settings > Wereldkundig** and fill in:
 
 Then click **Save**. Saving fetches the themes and subscriber fields from the platform straight away, so you know right away whether the connection works.
 
+![Wereldkundig settings page with Platform URL and Basic Auth code fields](../../../assets/connect-settings.png)
+
 :::note
 The URL must start with `https://`. The Basic Auth code is sent with every request, so plain `http://` is refused. For local development it is allowed for `localhost`, `*.localhost` and `*.test`.
 :::

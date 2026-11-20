@@ -6,11 +6,18 @@ description: Add the subscribe checkbox to a form, choose the themes in a feed a
 1. Open a form in the form editor. It needs an **Email** field.
 2. Add a **Wereldkundig subscribe me** field from the **Standard Fields** group.
 3. Change the field label. It is the text next to the checkbox, so replace "Wereldkundig subscribe me" with something like "Yes, send me the newsletter".
+
+<div class="float-right">
+
+![Wereldkundig subscribe me field in the Gravity Forms editor](../../../assets/subscribe-field.png)
+
+</div>
+
 4. Save the form. Go to **Form Settings > Wereldkundig** and add a feed.
 5. In the feed, check one or more themes under **Themes**. With more than one subscribe field on the form, also choose the field under **Subscribe checkbox**. Check categories of a theme to subscribe to only those.
 6. Under **Map Fields**, choose the Email field for the email address. Save the feed.
 7. Open the form and submit it with the box checked.
-8. Open the entry. Its notes say whether the subscriber was sent, for example: **reader@example.com was sent to Wereldkundig (platform user ID 12). Themes: Nieuwsbrief.**
+8. Open the entry. Its notes say whether the subscriber was sent, for example: **reader@example.com was sent to Wereldkundig. Themes: Nieuwsbrief.**
 
 The feed is what sends the subscriber, in the background right after the submit. Without a feed, nothing is sent.
 

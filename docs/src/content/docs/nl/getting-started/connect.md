@@ -14,6 +14,8 @@ Ga naar **Formulieren > Instellingen > Wereldkundig** en vul in:
 
 Klik daarna op **Instellingen opslaan**. Bij het opslaan worden de thema's en abonneevelden meteen van het platform opgehaald, zodat je direct ziet of de verbinding werkt.
 
+![Wereldkundig-instellingenpagina met de velden Platform-URL en Basic Auth-code](../../../../assets/connect-settings.png)
+
 :::note
 De URL moet met `https://` beginnen. De Basic Auth-code gaat met elk verzoek mee, dus gewoon `http://` wordt geweigerd. Voor lokale ontwikkeling mag het wel voor `localhost`, `*.localhost` en `*.test`.
 :::

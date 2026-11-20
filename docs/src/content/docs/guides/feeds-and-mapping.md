@@ -1,6 +1,6 @@
 ---
 title: Feeds and field mapping
-description: Why a form needs a Wereldkundig feed, how it chooses the checkbox and the themes, and how fields are mapped or found automatically.
+description: Why a form needs a Wereldkundig feed, how it chooses the checkbox and the themes, how fields are mapped, and what happens when an email already exists.
 ---
 
 A form needs a feed to send subscribers. The feed chooses which subscribe checkbox gives consent, which themes and categories to subscribe to, and which form field holds the email address. It also adds conditional logic, and sends in the background right after the submit. Without a feed, nothing is sent, even when the box is checked.
@@ -13,7 +13,7 @@ Open the form and go to **Form Settings > Wereldkundig**, then add a feed. You c
 - **Subscribe checkbox**: the **Wereldkundig subscribe me** field of this form that gives consent. Only a choice when the form has more than one; otherwise the feed uses the only one.
 - **Themes**: the themes and categories to subscribe to. Check at least one.
 - **Map Fields**: which form field fills each subscriber field.
-- **Existing subscribers**: off by default. When checked, an email that is already a member of the platform site is updated and the feed's themes are merged in. When off, that email gets `member-exists` and nothing is saved. The subscribe checkbox must still be checked either way.
+- **Existing subscribers**: off by default. Whether to update an email that is already a member of the platform site; see [Existing subscribers](#existing-subscribers).
 - **Conditional Logic**: when enabled, the subscriber is only sent when the condition matches. The subscribe checkbox chosen above must still be checked.
 
 The feed list shows the name and the themes of each feed. Feeds can be duplicated.
@@ -51,6 +51,17 @@ The themes come from the cache on your site, filled from the platform. A theme t
 - A field that is empty on submit isn't sent, so it can't clear a value that is already stored on the platform.
 
 When the subscriber fields can't be loaded from the platform, the feed page shows an error instead of the mapping. Saving the feed then keeps the existing mapping.
+
+## Existing subscribers
+
+**Existing subscribers** controls what happens when the email address is already a member of the platform site. Off by default.
+
+- **Off**: the platform answers `member-exists` and saves nothing, not even the new themes. The entry gets a [failure note](/reference/entry-notes-and-errors/).
+- **On** (check **Update when an e-mail already exists within the Wereldkundig newsletter platform**): that member is updated and the feed's themes are merged with the themes they already have. The entry note says the subscriber was already a Wereldkundig subscriber and was updated.
+
+Empty mapped fields aren't sent, so an update can't clear a name or other value already stored on the platform. The subscribe checkbox must still be checked; this setting only changes what happens when the email already exists.
+
+The add-on sends this as `upsert` in the [subscribe request](/reference/subscribe-request/).
 
 ## Auto-detected fields
 
